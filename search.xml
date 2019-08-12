@@ -4,13 +4,19 @@
   
     
     <entry>
-      <title>Flink基础教程</title>
-      <link href="/2019/08/12/Flink%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/"/>
-      <url>/2019/08/12/Flink%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/</url>
+      <title>flink quick start</title>
+      <link href="/2019/08/12/flink-quick-start/"/>
+      <url>/2019/08/12/flink-quick-start/</url>
       
-        <content type="html"><![CDATA[<p><img src="/.top//flink-home-graphic.png" alt="数据流上的有状态计算"></p>]]></content>
+        <content type="html"><![CDATA[<h3 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h3><p><img src="https://i.imgur.com/ti2p2OW.png" alt="flink基础"></p>]]></content>
       
       
+      
+        <tags>
+            
+            <tag> flink </tag>
+            
+        </tags>
       
     </entry>
     
