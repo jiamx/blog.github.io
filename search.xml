@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>Flink自学系列教程</title>
+      <link href="/2019/08/13/Flink%E8%87%AA%E5%AD%A6%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/"/>
+      <url>/2019/08/13/Flink%E8%87%AA%E5%AD%A6%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<p>Apache Flink is a framework and distributed processing engine for stateful computations over unbounded and bounded data streams. Flink has been designed to run in all common cluster environments, perform computations at in-memory speed and at any scale.</p><hr><ol><li><h4 id="有状态的流处理"><a href="#有状态的流处理" class="headerlink" title="有状态的流处理"></a>有状态的流处理</h4></li><li><h4 id="流处理基础"><a href="#流处理基础" class="headerlink" title="流处理基础"></a>流处理基础</h4></li><li><h4 id="Apache-Flink架构"><a href="#Apache-Flink架构" class="headerlink" title="Apache Flink架构"></a>Apache Flink架构</h4></li><li><h4 id="DataFrame-API"><a href="#DataFrame-API" class="headerlink" title="DataFrame API"></a>DataFrame API</h4></li><li><h4 id="基于时间的算子"><a href="#基于时间的算子" class="headerlink" title="基于时间的算子"></a>基于时间的算子</h4></li><li><h4 id="状态与容错"><a href="#状态与容错" class="headerlink" title="状态与容错"></a>状态与容错</h4></li><li><h4 id="source-sink-Connectors"><a href="#source-sink-Connectors" class="headerlink" title="source/sink Connectors"></a>source/sink Connectors</h4></li><li><h4 id="集群与部署"><a href="#集群与部署" class="headerlink" title="集群与部署"></a>集群与部署</h4></li><li><h4 id="运维与监控"><a href="#运维与监控" class="headerlink" title="运维与监控"></a>运维与监控</h4></li></ol>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> flink </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Hello World</title>
       <link href="/2019/08/12/hello-world/"/>
       <url>/2019/08/12/hello-world/</url>
