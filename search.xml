@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>test picture</title>
+      <link href="/test-picture.html"/>
+      <url>/test-picture.html</url>
+      
+        <content type="html"><![CDATA[<hr><p>hello world<br><img src="//jiamaoxiang.top/logo.png" alt></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>浅析数据库缓冲池与SQL查询成本</title>
       <link href="/%E6%B5%85%E6%9E%90%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BC%93%E5%86%B2%E6%B1%A0%E4%B8%8ESQL%E6%9F%A5%E8%AF%A2%E6%88%90%E6%9C%AC.html"/>
       <url>/%E6%B5%85%E6%9E%90%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BC%93%E5%86%B2%E6%B1%A0%E4%B8%8ESQL%E6%9F%A5%E8%AF%A2%E6%88%90%E6%9C%AC.html</url>
