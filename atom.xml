@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-08-18T08:04:01.513Z</updated>
+  <updated>2019-08-14T04:01:47.628Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,28 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>test picture</title>
-    <link href="https://jiamaoxiang.top/2019/08/18/test-picture/"/>
-    <id>https://jiamaoxiang.top/2019/08/18/test-picture/</id>
-    <published>2019-08-18T05:47:49.000Z</published>
-    <updated>2019-08-18T08:04:01.513Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-    
-  </entry>
   
   <entry>
     <title>浅析数据库缓冲池与SQL查询成本</title>
