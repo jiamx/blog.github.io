@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-08-21T05:27:42.306Z</updated>
+  <updated>2019-08-21T05:23:51.657Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,32 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>test</title>
-    <link href="https://jiamaoxiang.top/2019/08/21/test/"/>
-    <id>https://jiamaoxiang.top/2019/08/21/test/</id>
-    <published>2019-08-21T05:27:13.000Z</published>
-    <updated>2019-08-21T05:27:42.306Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/tags/Flink/"/>
-    
-  </entry>
   
   <entry>
     <title>Flink自学系列教程之--运维与监控(七)</title>
