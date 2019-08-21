@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Jmx&#39;s Blog</title>
   
-  
+  <subtitle>Keep it Simple and Stupid!</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
