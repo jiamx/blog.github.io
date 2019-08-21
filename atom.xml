@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-08-21T05:18:22.044Z</updated>
+  <updated>2019-08-21T05:23:51.657Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://jiamaoxiang.top/2019/08/19/%E8%BF%90%E7%BB%B4%E4%B8%8E%E7%9B%91%E6%8E%A7/"/>
     <id>https://jiamaoxiang.top/2019/08/19/运维与监控/</id>
     <published>2019-08-19T05:10:32.000Z</published>
-    <updated>2019-08-21T05:18:22.044Z</updated>
+    <updated>2019-08-21T05:23:51.657Z</updated>
     
     <summary type="html">
     
@@ -37,6 +37,8 @@
     
       <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
     
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
     
   </entry>
   
@@ -45,7 +47,7 @@
     <link href="https://jiamaoxiang.top/2019/08/19/%E9%9B%86%E7%BE%A4%E4%B8%8E%E9%83%A8%E7%BD%B2/"/>
     <id>https://jiamaoxiang.top/2019/08/19/集群与部署/</id>
     <published>2019-08-19T05:10:19.000Z</published>
-    <updated>2019-08-21T05:18:13.863Z</updated>
+    <updated>2019-08-21T05:23:56.078Z</updated>
     
     <summary type="html">
     
@@ -61,6 +63,8 @@
     
       <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
     
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
     
   </entry>
   
@@ -95,7 +99,7 @@
     <link href="https://jiamaoxiang.top/2019/08/19/%E7%8A%B6%E6%80%81%E4%B8%8E%E5%AE%B9%E9%94%99/"/>
     <id>https://jiamaoxiang.top/2019/08/19/状态与容错/</id>
     <published>2019-08-19T05:09:53.000Z</published>
-    <updated>2019-08-21T05:18:25.914Z</updated>
+    <updated>2019-08-21T05:23:46.988Z</updated>
     
     <summary type="html">
     
@@ -111,6 +115,8 @@
     
       <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
     
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
     
   </entry>
   
@@ -119,7 +125,7 @@
     <link href="https://jiamaoxiang.top/2019/08/19/%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E7%9A%84%E7%AE%97%E5%AD%90/"/>
     <id>https://jiamaoxiang.top/2019/08/19/基于时间的算子/</id>
     <published>2019-08-19T05:09:41.000Z</published>
-    <updated>2019-08-21T05:18:02.809Z</updated>
+    <updated>2019-08-21T05:24:00.458Z</updated>
     
     <summary type="html">
     
@@ -135,6 +141,8 @@
     
       <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
     
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
     
   </entry>
   
@@ -143,7 +151,7 @@
     <link href="https://jiamaoxiang.top/2019/08/19/DataStream-API%E7%AE%80%E4%BB%8B/"/>
     <id>https://jiamaoxiang.top/2019/08/19/DataStream-API简介/</id>
     <published>2019-08-19T05:09:27.000Z</published>
-    <updated>2019-08-21T05:18:30.540Z</updated>
+    <updated>2019-08-21T05:23:42.563Z</updated>
     
     <summary type="html">
     
@@ -159,6 +167,8 @@
     
       <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
     
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
     
   </entry>
   
@@ -167,7 +177,7 @@
     <link href="https://jiamaoxiang.top/2019/08/19/Flink%E7%9A%84%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5/"/>
     <id>https://jiamaoxiang.top/2019/08/19/Flink的几个重要概念/</id>
     <published>2019-08-19T05:09:03.000Z</published>
-    <updated>2019-08-21T05:18:35.484Z</updated>
+    <updated>2019-08-21T05:23:36.767Z</updated>
     
     <summary type="html">
     
@@ -183,6 +193,8 @@
     
       <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
     
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
     
   </entry>
   
