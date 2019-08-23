@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-08-23T05:59:55.196Z</updated>
+  <updated>2019-08-23T06:04:52.674Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -21,17 +21,11 @@
     <link href="https://jiamaoxiang.top/2019/08/23/Flink%E7%9A%84%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF-State-Backends/"/>
     <id>https://jiamaoxiang.top/2019/08/23/Flink的状态后端-State-Backends/</id>
     <published>2019-08-23T03:38:00.000Z</published>
-    <updated>2019-08-23T05:59:55.196Z</updated>
+    <updated>2019-08-23T06:04:52.674Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          
-        
-      
+      &lt;p&gt;当使用checkpoint时，状态(state)会被持久化到checkpoint上，以防止数据的丢失并确保发生故障时能够完全恢复。状态是通过什么方式在哪里持久化，取决于使用的状态后端。&lt;/p&gt;
     
     </summary>
     
