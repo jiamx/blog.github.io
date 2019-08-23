@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Flink的状态后端(State Backends)</title>
+      <link href="/2019/08/23/Flink%E7%9A%84%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF-State-Backends/"/>
+      <url>/2019/08/23/Flink%E7%9A%84%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF-State-Backends/</url>
+      
+        <content type="html"><![CDATA[<p>当使用checkpoint时，状态(state)会被持久化到checkpoint上，以防止数据的丢失并确保发生故障时能够完全恢复。状态是通过什么方式在哪里持久化，取决于使用的状态后端。</p><h1 id="可用的状态后端"><a href="#可用的状态后端" class="headerlink" title="可用的状态后端"></a>可用的状态后端</h1><ul><li><p><em>MemoryStateBackend</em></p></li><li><p><em>FsStateBackend</em></p></li><li><p><em>FsStateBackend</em></p><p>注意：如果什么都不配置，系统默认的是MemoryStateBackend</p><h1 id="MemoryStateBackend"><a href="#MemoryStateBackend" class="headerlink" title="MemoryStateBackend"></a>MemoryStateBackend</h1><p>MemoryStateBackend 是将状态维护在 Java 堆上的一个内部状态后端。键值状态和窗口算子使用哈希表来存储数据（values）和定时器（timers）。当应用程序 checkpoint 时，此后端会在将状态发给 JobManager 之前快照下状态，JobManager 也将状态存储在 Java 堆上。默认情况下，<!--MemoryStateBackend--> 配置成支持异步快照。异步快照可以避免阻塞数据流的处理，从而避免反压的发生。当然，也可以禁用该特点，使用 new MemoryStateBackend(MAX_MEM_STATE_SIZE, false);</p></li></ul><h1 id="FsStateBackend"><a href="#FsStateBackend" class="headerlink" title="FsStateBackend"></a>FsStateBackend</h1><h1 id="RocksDBStateBackend"><a href="#RocksDBStateBackend" class="headerlink" title="RocksDBStateBackend"></a>RocksDBStateBackend</h1>]]></content>
+      
+      
+      <categories>
+          
+          <category> flink </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> flink </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Flink自学系列教程之--运维与监控(七)</title>
       <link href="/2019/08/19/%E8%BF%90%E7%BB%B4%E4%B8%8E%E7%9B%91%E6%8E%A7/"/>
       <url>/2019/08/19/%E8%BF%90%E7%BB%B4%E4%B8%8E%E7%9B%91%E6%8E%A7/</url>
