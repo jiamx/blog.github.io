@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-08-23T06:04:52.674Z</updated>
+  <updated>2019-08-23T06:28:12.690Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -21,11 +21,11 @@
     <link href="https://jiamaoxiang.top/2019/08/23/Flink%E7%9A%84%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF-State-Backends/"/>
     <id>https://jiamaoxiang.top/2019/08/23/Flink的状态后端-State-Backends/</id>
     <published>2019-08-23T03:38:00.000Z</published>
-    <updated>2019-08-23T06:04:52.674Z</updated>
+    <updated>2019-08-23T06:28:12.690Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;当使用checkpoint时，状态(state)会被持久化到checkpoint上，以防止数据的丢失并确保发生故障时能够完全恢复。状态是通过什么方式在哪里持久化，取决于使用的状态后端。&lt;/p&gt;
+      &lt;p&gt;&amp;emsp;&amp;emsp;当使用checkpoint时，状态(state)会被持久化到checkpoint上，以防止数据的丢失并确保发生故障时能够完全恢复。状态是通过什么方式在哪里持久化，取决于使用的状态后端。&lt;/p&gt;
     
     </summary>
     
@@ -223,7 +223,7 @@
     <link href="https://jiamaoxiang.top/2019/08/14/%E6%B5%85%E6%9E%90%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BC%93%E5%86%B2%E6%B1%A0%E4%B8%8ESQL%E6%9F%A5%E8%AF%A2%E6%88%90%E6%9C%AC/"/>
     <id>https://jiamaoxiang.top/2019/08/14/浅析数据库缓冲池与SQL查询成本/</id>
     <published>2019-08-14T01:44:43.000Z</published>
-    <updated>2019-08-19T05:25:47.670Z</updated>
+    <updated>2019-08-23T06:26:43.134Z</updated>
     
     <summary type="html">
     
@@ -249,7 +249,7 @@
     <link href="https://jiamaoxiang.top/2019/08/13/Flink%E8%87%AA%E5%AD%A6%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/"/>
     <id>https://jiamaoxiang.top/2019/08/13/Flink自学系列教程/</id>
     <published>2019-08-13T06:02:43.000Z</published>
-    <updated>2019-08-21T05:21:30.935Z</updated>
+    <updated>2019-08-23T06:27:07.340Z</updated>
     
     <summary type="html">
     
