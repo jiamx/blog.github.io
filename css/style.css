@@ -241,9 +241,6 @@ div {
         padding: 0 5px;
         background: #f7f8f8;
         font-family: Menlo, Consolas, monospace !important; }
-      .post .post-content p a[target="_blank"]:before {
-        content: "\f0c1";
-        font-family: FontAwesome; }
       .post .post-content p a {
         color: #01579f;
         padding-bottom: 2px;
