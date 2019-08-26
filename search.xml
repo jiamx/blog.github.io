@@ -8,7 +8,7 @@
       <link href="/2019/08/26/%E5%9F%BA%E4%BA%8ESparkStreaming%E7%9A%84%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E9%A1%B9%E7%9B%AE/"/>
       <url>/2019/08/26/%E5%9F%BA%E4%BA%8ESparkStreaming%E7%9A%84%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E9%A1%B9%E7%9B%AE/</url>
       
-        <content type="html"><![CDATA[<p>&emsp;&emsp;基于SparkStreaming实现实时的日志分析，首先基于discuz搭建一个论坛平台，然后将该论坛的日志写入到指定文件，最后通过SparkStreaming实时对日志进行分析。</p><a id="more"></a><h1 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h1><ul><li>统计指定时间段的热门文章</li><li>统计指定时间段内的最受欢迎的用户（以 ip 为单位）</li><li>统计指定时间段内的不同模块的访问量  <h1 id="项目架构"><a href="#项目架构" class="headerlink" title="项目架构"></a>项目架构</h1>![](基于SparkStreaming的日志分析项目/项目架构.png</li></ul>]]></content>
+        <content type="html"><![CDATA[<p>&emsp;&emsp;基于SparkStreaming实现实时的日志分析，首先基于discuz搭建一个论坛平台，然后将该论坛的日志写入到指定文件，最后通过SparkStreaming实时对日志进行分析。</p><a id="more"></a><p>#需求分析</p><ul><li>统计指定时间段的热门文章</li><li>统计指定时间段内的最受欢迎的用户（以 ip 为单位）</li><li>统计指定时间段内的不同模块的访问量<br>#项目架构<br><img src="//jiamaoxiang.top/2019/08/26/基于SparkStreaming的日志分析项目/%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84.png" alt></li></ul>]]></content>
       
       
       <categories>
