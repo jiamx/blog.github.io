@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-08-27T01:32:30.026Z</updated>
+  <updated>2019-08-27T15:03:41.141Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -21,17 +21,11 @@
     <link href="https://jiamaoxiang.top/2019/08/27/Flink%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     <id>https://jiamaoxiang.top/2019/08/27/Flink的数据类型/</id>
     <published>2019-08-27T01:27:09.000Z</published>
-    <updated>2019-08-27T01:32:30.026Z</updated>
+    <updated>2019-08-27T15:03:41.141Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          
-        
-      
+      &lt;p&gt;Flink使用type information来代表数据类型，Flink还具有一个类型提取系统，该系统分析函数的输入和返回类型，以自动获取类型信息(type information)，从而获得序列化程序和反序列化程序。但是，在某些情况下，例如lambda函数或泛型类型，需要显式地提供类型信息((type information)),从而提高其性能。本文主要讨论包括：(1)Flink支持的数据类型,(2)如何为数据类型创建type information，（3）如果无法自动推断函数的返回类型，如何使用提示(hints)来帮助Flink的类型系统识别类型信息。&lt;/p&gt;
     
     </summary>
     
