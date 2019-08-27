@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Flink的数据类型</title>
+      <link href="/2019/08/27/Flink%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
+      <url>/2019/08/27/Flink%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+      
+        <content type="html"><![CDATA[<p>hello world</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Flink </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Flink </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>基于SparkStreaming的日志分析项目</title>
       <link href="/2019/08/26/%E5%9F%BA%E4%BA%8ESparkStreaming%E7%9A%84%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E9%A1%B9%E7%9B%AE/"/>
       <url>/2019/08/26/%E5%9F%BA%E4%BA%8ESparkStreaming%E7%9A%84%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E9%A1%B9%E7%9B%AE/</url>
