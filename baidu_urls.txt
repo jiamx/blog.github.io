@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2019/08/28/Azkaban安装部署/
 https://jiamaoxiang.top/2019/08/27/Flink的数据类型/
 https://jiamaoxiang.top/2019/08/26/基于SparkStreaming的日志分析项目/
 https://jiamaoxiang.top/2019/08/23/Flink的状态后端-State-Backends/

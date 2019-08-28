@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-08-27T15:18:54.942Z</updated>
+  <updated>2019-08-28T04:57:43.315Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Azkaban安装部署</title>
+    <link href="https://jiamaoxiang.top/2019/08/28/Azkaban%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"/>
+    <id>https://jiamaoxiang.top/2019/08/28/Azkaban安装部署/</id>
+    <published>2019-08-28T02:22:04.000Z</published>
+    <updated>2019-08-28T04:57:43.315Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Azkaban是由Linkedin开源的一个批量工作流任务调度器。用于在一个工作流内以一个特定的顺序运行一组工作和流程。Azkaban定义了一种KV文件格式来建立任务之间的依赖关系，并提供一个易于使用的web用户界面维护和跟踪你的工作流。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Azkaban" scheme="https://jiamaoxiang.top/categories/Azkaban/"/>
+    
+    
+      <category term="Azkaban" scheme="https://jiamaoxiang.top/tags/Azkaban/"/>
+    
+  </entry>
   
   <entry>
     <title>Flink的数据类型</title>
