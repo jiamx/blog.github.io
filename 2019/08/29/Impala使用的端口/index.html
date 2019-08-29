@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>Impala使用的端口 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Impala使用的端口</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Impala使用的端口</h1><div class="post-meta">Aug 29, 2019<span> | </span><span class="category"><a href="/categories/Impala/">Impala</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 382</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 1</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>本文主要介绍了Impala所使用的端口号，在部署Impala的时候，确保下面列出的端口是开启的。</p>
+<a id="more"></a>
+
+<table>
+<thead>
+<tr>
+<th align="center">组件</th>
+<th>服务</th>
+<th>端口</th>
+<th>访问需求</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Impala Daemon</td>
+<td>Impala Daemon Frontend Port</td>
+<td>21000</td>
+<td>外部</td>
+<td>被 impala-shell, Beeswax, Cloudera ODBC 1.2 驱动 用于传递命令和接收结果</td>
+</tr>
+<tr>
+<td align="center">Impala Daemon</td>
+<td>Impala Daemon Frontend Port</td>
+<td>21050</td>
+<td>外部</td>
+<td>被使用 JDBC 或 Cloudera ODBC 2.0 及以上驱动的诸如 BI 工具之类的应用用来传递命令和接收结果</td>
+</tr>
+<tr>
+<td align="center">Impala Daemon</td>
+<td>Impala Daemon Backend Port</td>
+<td>22000</td>
+<td>内部</td>
+<td>仅内部使用。Impala</td>
+</tr>
+<tr>
+<td align="center">Impala Daemon</td>
+<td>StateStoreSubscriber Service Port</td>
+<td>23000</td>
+<td>内部</td>
+<td>仅内部使用。Impala 守护进程监听该端口接收来源于 state store 的更新</td>
+</tr>
+<tr>
+<td align="center">Catalog Daemon</td>
+<td>StateStoreSubscriber Service Port</td>
+<td>23020</td>
+<td>内部</td>
+<td>仅内部使用，catalog daemon监听该端口接收来源于 state store 的更新</td>
+</tr>
+<tr>
+<td align="center">Impala Daemon</td>
+<td>Impala Daemon HTTP Server Port</td>
+<td>25000</td>
+<td>外部</td>
+<td>Impala Daemon的Web端口，用于管理员监控和线上故障排查</td>
+</tr>
+<tr>
+<td align="center">Impala StateStore Daemon</td>
+<td>StateStore HTTP Server Port</td>
+<td>25010</td>
+<td>外部</td>
+<td>StateStore的Web端口，用于管理员监控和线上故障排查</td>
+</tr>
+<tr>
+<td align="center">Impala Catalog Daemon</td>
+<td>Catalog HTTP Server Port</td>
+<td>25020</td>
+<td>外部</td>
+<td>Catalog的Web端口，用于管理员监控和线上故障排查，从Impala1.2开始加入</td>
+</tr>
+<tr>
+<td align="center">Impala StateStore Daemon</td>
+<td>StateStore Service Port</td>
+<td>24000</td>
+<td>内部</td>
+<td>仅内部使用，statestore daemon监听的端口，用于registration/unregistration请求</td>
+</tr>
+<tr>
+<td align="center">Impala Catalog Daemon</td>
+<td>Catalog Service Port</td>
+<td>26000</td>
+<td>内部</td>
+<td>仅内部使用，catalog服务使用此端口与Impala Daemon进行通信，从Impala1.2开始加入</td>
+</tr>
+<tr>
+<td align="center">Impala Daemon</td>
+<td>KRPC Port</td>
+<td>27000</td>
+<td>内部</td>
+<td>仅内部使用，Impala daemon使用此端口进行基于krpc的相互通信。</td>
+</tr>
+</tbody></table>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2019/08/28/Azkaban安装部署/" target="_blank">Azkaban安装部署</a></li><li><a href="https://jiamaoxiang.top/2019/08/27/Flink的数据类型/" target="_blank">Flink的数据类型</a></li><li><a href="https://jiamaoxiang.top/2019/08/26/基于SparkStreaming的日志分析项目/" target="_blank">基于SparkStreaming的日志分析项目</a></li><li><a href="https://jiamaoxiang.top/2019/08/23/Flink的状态后端-State-Backends/" target="_blank">Flink的状态后端(State Backends)</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2019/08/29/Impala使用的端口/">https://jiamaoxiang.top/2019/08/29/Impala使用的端口/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2019/08/29/Impala使用的端口/" data-id="cjzwavxs7000dqc7qkq2hcuvp" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACIUlEQVR42u3ay26EMAwF0Pn/n6bbLgpzbUMlksOqQkyaw0geP/L5xNfx6zq7f/ZMb7XPExcGBsZrGcfldfYPkk1c37nG5HvDwMDYh3EWwc6WuyscJ4zrvWFgYGBUk7ZeSM3DOgYGBkaP0XsyKW4xMDAwqkVs3hrLk8VqSnpDLY6BgfFCRt51//+/H5lvYGBgvIpxtK7qCtVUsrwfDAyMpRnV8WTy/L1JZCFBxMDAWJRxV/Mrb7rN23Cn3wMGBsaijGrhWk3peiE12c+o/sbAwHgVo3pIKwmFyWr5ECI6qIGBgbEBYzJPSDaUr58UwFEVjoGBsTSj2qCfH6FI0srCu8TAwFiO0UsB58OAXnsuSlsxMDCWZkw6V70g21s/CscYGBgLMfIw2gugk8I4TygxMDB2YOQlazWwVoegVQwGBsZujLyU7Y0Ennh+NHfFwMB4CWOy9XmvPjmKkQ8eMDAwVmXMt1Vt6FfLZgwMDIz5oLF3aDVJ/sq/GBgYGIsy7hpVTl7BpN2GgYGxA6N30GE+zqyG6S/3MTAwlmbME7678rTqaqffCQYGxnKMo3hNANWEsvy7gYGBsSijt3Q1gFZL2eSVNTEYGBivZVSDbJWUN9HyQcIf62NgYGzAyIvGebOsOZ68DscYGBgYccCdbLR6aAwDAwOjuvXCyY4g+OZHMTAwMPZhJEXshJE31HrjCgwMjLUZ1dJx0iB74rMYGBhLM34ACYgD8fWRqTwAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/Impala/">Impala</a></div><div class="post-nav"><a class="next" href="/2019/08/28/Azkaban安装部署/">Azkaban安装部署</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2019 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

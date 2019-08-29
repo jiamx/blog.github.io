@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-08-28T05:32:11.269Z</updated>
+  <updated>2019-08-29T06:20:48.430Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Impala使用的端口</title>
+    <link href="https://jiamaoxiang.top/2019/08/29/Impala%E4%BD%BF%E7%94%A8%E7%9A%84%E7%AB%AF%E5%8F%A3/"/>
+    <id>https://jiamaoxiang.top/2019/08/29/Impala使用的端口/</id>
+    <published>2019-08-29T05:49:15.000Z</published>
+    <updated>2019-08-29T06:20:48.430Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文主要介绍了Impala所使用的端口号，在部署Impala的时候，确保下面列出的端口是开启的。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Impala" scheme="https://jiamaoxiang.top/categories/Impala/"/>
+    
+    
+      <category term="Impala" scheme="https://jiamaoxiang.top/tags/Impala/"/>
+    
+  </entry>
   
   <entry>
     <title>Azkaban安装部署</title>
