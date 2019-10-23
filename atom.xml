@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-10-15T05:42:07.195Z</updated>
+  <updated>2019-10-23T05:10:53.536Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -17,11 +17,37 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>经典Hive SQL面试题</title>
+    <title>Flink运行架构剖析</title>
+    <link href="https://jiamaoxiang.top/2019/10/23/Flink%E8%BF%90%E8%A1%8C%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/"/>
+    <id>https://jiamaoxiang.top/2019/10/23/Flink运行架构剖析/</id>
+    <published>2019-10-23T03:18:10.000Z</published>
+    <updated>2019-10-23T05:10:53.536Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
+    
+  </entry>
+  
+  <entry>
+    <title></title>
     <link href="https://jiamaoxiang.top/2019/10/15/%E7%BB%8F%E5%85%B8Hive-SQL%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
     <id>https://jiamaoxiang.top/2019/10/15/经典Hive-SQL面试题/</id>
     <published>2019-10-15T03:04:40.000Z</published>
-    <updated>2019-10-15T05:42:07.195Z</updated>
+    <updated>2019-10-15T05:48:54.337Z</updated>
     
     <summary type="html">
     

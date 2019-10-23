@@ -4,7 +4,32 @@
   
     
     <entry>
-      <title>经典Hive SQL面试题</title>
+      <title>Flink运行架构剖析</title>
+      <link href="/2019/10/23/Flink%E8%BF%90%E8%A1%8C%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/"/>
+      <url>/2019/10/23/Flink%E8%BF%90%E8%A1%8C%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/</url>
+      
+        <content type="html"><![CDATA[<p>本文主要介绍 Flink Runtime 的作业执行的核心机制。首先介绍 Flink Runtime 的整体架构以及 Job 的基本执行流程，然后介绍Flink 的Standalone运行架构，最后对Flink on YARN的两种模式进行了详细剖析。</p><hr><h2 id="Flink-Runtime作业执行流程分析"><a href="#Flink-Runtime作业执行流程分析" class="headerlink" title="Flink Runtime作业执行流程分析"></a>Flink Runtime作业执行流程分析</h2><h3 id="整体架构图"><a href="#整体架构图" class="headerlink" title="整体架构图"></a>整体架构图</h3><p>Flink Runtime 层的主要架构如下图所示，它展示了一个 Flink 集群的基本结构。整体来说，它采用了标准 master-slave 的结构，master负责管理整个集群中的资源和作业；TaskExecutor 则是 Slave，负责提供具体的资源并实际执行作业。  </p><p>![](Flink运行架构剖析/Flink Runtime.png)</p><h3 id="执行流程分析"><a href="#执行流程分析" class="headerlink" title="执行流程分析"></a>执行流程分析</h3><h4 id="组件介绍"><a href="#组件介绍" class="headerlink" title="组件介绍"></a>组件介绍</h4><p>Application Master 部分包含了三个组件，即 Dispatcher、ResourceManager 和 JobManager。其中，Dispatcher 负责接收用户提供的作业，并且负责为这个新提交的作业拉起一个新的 JobManager 组件。ResourceManager 负责资源的管理，在整个 Flink 集群中只有一个 ResourceManager。JobManager 负责管理作业的执行，在一个 Flink 集群中可能有多个作业同时执行，每个作业都有自己的 JobManager 组件。这三个组件都包含在 AppMaster 进程。  </p><p>TaskManager主要负责执行具体的task任务，<a href="https://jiamaoxiang.top/2019/08/23/Flink%E7%9A%84%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF-State-Backends/">StateBackend</a> 主要应用于状态的checkpoint。  </p><p>Cluster Manager是集群管理器，比如Standalone、YARN、K8s等。  </p><h4 id="流程分析"><a href="#流程分析" class="headerlink" title="流程分析"></a>流程分析</h4><p>1.当用户提交作业的时候，提交脚本会首先启动一个 Client进程负责作业的编译与提交。它首先将用户编写的代码编译为一个 JobGraph，在这个过程，它还会进行一些检查或优化等工作，例如判断哪些 Operator 可以 Chain 到同一个 Task 中。然后，Client 将产生的 JobGraph 提交到集群中执行。此时有两种情况，一种是类似于 Standalone 这种 Session 模式，AM 会预先启动，此时 Client 直接与 Dispatcher 建立连接并提交作业即可。另一种是 Per-Job 模式，AM 不会预先启动，此时 Client 将首先向资源管理系统 （如Yarn、K8S）申请资源来启动 AM，然后再向 AM 中的 Dispatcher 提交作业。  </p><p>2.当作业到 Dispatcher 后，Dispatcher 会首先启动一个 JobManager 组件，然后 JobManager 会向 ResourceManager 申请资源来启动作业中具体的任务。如果是Session模式，则TaskManager已经启动了，就可以直接分配资源。如果是per-Job模式，ResourceManager 也需要首先向外部资源管理系统申请资源来启动 TaskExecutor，然后等待 TaskExecutor 注册相应资源后再继续选择空闲资源进程分配，JobManager 收到 TaskExecutor 注册上来的 Slot 后，就可以实际提交 Task 了。  </p><p>3.TaskExecutor 收到 JobManager 提交的 Task 之后，会启动一个新的线程来执行该 Task。Task 启动后就会开始进行预先指定的计算，并通过数据 Shuffle 模块互相交换数据。</p><h2 id="Flink-Standalone运行架构"><a href="#Flink-Standalone运行架构" class="headerlink" title="Flink Standalone运行架构"></a>Flink Standalone运行架构</h2><p>Flink Standalone运行架构如下图所示：</p><p><img src="//jiamaoxiang.top/2019/10/23/Flink运行架构剖析/standalone.png" alt><br>Standalone模式需要先启动Jobmanager和TaskManager进程，每一个作业都是自己的JobManager。<br>Client：任务提交，生成JobGraph  </p><p>JobManager：调度Job，协调Task，通信，申请资源  </p><p>TaskManager：具体任务执行，请求资源</p><h2 id="Flink-On-YARN运行架构"><a href="#Flink-On-YARN运行架构" class="headerlink" title="Flink On YARN运行架构"></a>Flink On YARN运行架构</h2><p>关于YARN的基本架构原理，详见另一篇我的博客<img src="https://blog.csdn.net/jmx_bigdata/article/details/84320188" alt="YARN架构原理"></p><h3 id="Per-Job模式"><a href="#Per-Job模式" class="headerlink" title="Per-Job模式"></a>Per-Job模式</h3><p>Per-job 模式下整个 Flink 集群只执行单个作业，即每个作业会独享 Dispatcher 和 ResourceManager 组件。此外，Per-job 模式下 AppMaster 和 TaskExecutor 都是按需申请的。因此，Per-job 模式更适合运行执行时间较长的大作业，这些作业对稳定性要求较高，并且对申请资源的时间不敏感。<br>1.独享Dispatcher与ResourceManager  </p><p>2.按需申请资源(TaskExecutor)  </p><p>3.适合执行时间较长的大作业  </p><p><img src="//jiamaoxiang.top/2019/10/23/Flink运行架构剖析/perjob.png" alt></p><h3 id="Session模式"><a href="#Session模式" class="headerlink" title="Session模式"></a>Session模式</h3><p>在 Session 模式下，Flink 预先启动 AppMaster 以及一组 TaskExecutor，然后在整个集群的生命周期中会执行多个作业。可以看出，Session 模式更适合规模小，执行时间短的作业。<br>1.共享Dispatcher与ResourceManager  </p><p>2.共享资源  </p><p>3.适合小规模，执行时间较短的作业  </p><p><img src="//jiamaoxiang.top/2019/10/23/Flink运行架构剖析/session.png" alt></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Flink </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> flink </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
       <link href="/2019/10/15/%E7%BB%8F%E5%85%B8Hive-SQL%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
       <url>/2019/10/15/%E7%BB%8F%E5%85%B8Hive-SQL%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
       
