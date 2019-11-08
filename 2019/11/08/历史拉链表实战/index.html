@@ -4,7 +4,7 @@
   hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
   var s = document.getElementsByTagName("script")[0];
   s.parentNode.insertBefore(hm, s);
-  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">历史拉链表实战</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">历史拉链表实战</h1><div class="post-meta">Nov 8, 2019<span> | </span><span class="category"><a href="/categories/数据仓库/">数据仓库</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 2.6k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 12</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>历史拉链表是一种数据模型，主要是针对数据仓库设计中表存储数据的方式而定义的。所谓历史拉链表，就是指记录一个事物从开始一直到当前状态的所有变化信息。拉所有记录链表可以避免按每一天存储造成的海量存储问题，同时也是处理缓慢变化数据的一种常见方式。</p>
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">历史拉链表实战</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">历史拉链表实战</h1><div class="post-meta">Nov 8, 2019<span> | </span><span class="category"><a href="/categories/数据仓库/">数据仓库</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 2.4k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 11</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>历史拉链表是一种数据模型，主要是针对数据仓库设计中表存储数据的方式而定义的。所谓历史拉链表，就是指记录一个事物从开始一直到当前状态的所有变化信息。拉所有记录链表可以避免按每一天存储造成的海量存储问题，同时也是处理缓慢变化数据的一种常见方式。</p>
 <a id="more"></a>
 
 <h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>现假设有如下场景：一个企业拥有5000万会员信息，每天有20万会员资料变更，需要在数仓中记录会员表的历史变化以备分析使用，即每天都要保留一个快照供查询，反映历史数据的情况。在此场景中，需要反映5000万会员的历史变化，如果保留快照，存储两年就需要2X365X5000W条数据存储空间，数据量为365亿，如果存储更长时间，则无法估计需要的存储空间。而利用拉链算法存储，每日只向历史表中添加新增和变化的数据，每日不过20万条，存储4年也只需要3亿存储空间。</p>
@@ -38,27 +38,27 @@
 <h2 id="Demo数据准备"><a href="#Demo数据准备" class="headerlink" title="Demo数据准备"></a>Demo数据准备</h2><p>2019-11-08的数据为：</p>
 <p>member_id |    phoneno | create_time |update_time<br>-|-|-<br>10001 |13500000001 |2019-11-08 14:47:55    |2019-11-08 14:47:55<br>10002 |13500000002 |2019-11-08 14:48:33    |2019-11-08 14:48:33<br>10003 |13500000003 |2019-11-08 14:48:53    |2019-11-08 14:48:53<br>10004 |13500000004 |2019-11-08 14:49:02    |2019-11-08 14:49:02</p>
 <p>2019-11-09的数据为：其中蓝色代表新增数据，红色代表修改的数据</p>
-<pre><code>&lt;table&gt;
-&lt;tr&gt;
-    &lt;td&gt; member_id&lt;/td&gt; 
-    &lt;td&gt;phoneno&lt;/td&gt;
-    &lt;td&gt;create_time&lt;/td&gt;
-    &lt;td&gt;update_time&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;10001&lt;/td&gt;
-    &lt;td&gt;13500000001&lt;/td&gt;  
-    &lt;td&gt;2019-11-08 14:47:55&lt;/td&gt; 
-    &lt;td&gt;2019-11-08 14:47:55&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td bgcolor=#DC143C&gt;10002&lt;/td&gt;
-    &lt;td bgcolor=#DC143C&gt;13600000002&lt;/td&gt; 
-    &lt;td bgcolor=#DC143C&gt;2019-11-08 14:48:33&lt;/td&gt;
-    &lt;td bgcolor=#DC143C&gt;2019-11-09 14:48:33&lt;/td&gt;   
-&lt;/tr&gt;
+<table>
+    <tr>
+        <td> member_id</td> 
+        <td>phoneno</td>
+        <td>create_time</td>
+        <td>update_time</td> 
+    </tr>
+    <tr>
+        <td>10001</td>
+        <td>13500000001</td>  
+        <td>2019-11-08 14:47:55</td> 
+        <td>2019-11-08 14:47:55</td> 
+    </tr>
+    <tr>
+        <td bgcolor="#DC143C">10002</td>
+        <td bgcolor="#DC143C">13600000002</td> 
+        <td bgcolor="#DC143C">2019-11-08 14:48:33</td>
+        <td bgcolor="#DC143C">2019-11-09 14:48:33</td>   
+    </tr>
 
-&lt;tr&gt;
+<pre><code>&lt;tr&gt;
     &lt;td&gt;10003&lt;/td&gt;
     &lt;td&gt;13500000003&lt;/td&gt; 
     &lt;td&gt;2019-11-08 14:48:53&lt;/td&gt;
@@ -81,30 +81,31 @@
     &lt;td bgcolor=#6495ED&gt;13500000006&lt;/td&gt;
     &lt;td bgcolor=#6495ED&gt;2019-11-09 09:54:25 &lt;/td&gt;
     &lt;td bgcolor=#6495ED&gt;2019-11-09 09:54:25&lt;/td&gt;
-&lt;/tr&gt;
+&lt;/tr&gt;</code></pre></table>
 
-&lt;/table&gt;</code></pre><p>2019-11-10的数据：其中蓝色代表新增数据，红色代表修改的数据</p>
-<pre><code>&lt;table&gt;
-&lt;tr&gt;
-    &lt;td&gt; member_id&lt;/td&gt; 
-    &lt;td&gt;phoneno&lt;/td&gt;
-    &lt;td&gt;create_time&lt;/td&gt;
-    &lt;td&gt;update_time&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;10001&lt;/td&gt;
-    &lt;td&gt;13500000001&lt;/td&gt;  
-    &lt;td&gt;2019-11-08 14:47:55&lt;/td&gt; 
-    &lt;td&gt;2019-11-08 14:47:55&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td &gt;10002&lt;/td&gt;
-    &lt;td &gt;13600000002&lt;/td&gt; 
-    &lt;td &gt;2019-11-08 14:48:33&lt;/td&gt;
-    &lt;td &gt;2019-11-09 14:48:33&lt;/td&gt;   
-&lt;/tr&gt;
 
-&lt;tr&gt;
+<p>2019-11-10的数据：其中蓝色代表新增数据，红色代表修改的数据  </p>
+<table>
+    <tr>
+        <td> member_id</td> 
+        <td>phoneno</td>
+        <td>create_time</td>
+        <td>update_time</td> 
+    </tr>
+    <tr>
+        <td>10001</td>
+        <td>13500000001</td>  
+        <td>2019-11-08 14:47:55</td> 
+        <td>2019-11-08 14:47:55</td> 
+    </tr>
+    <tr>
+        <td>10002</td>
+        <td>13600000002</td> 
+        <td>2019-11-08 14:48:33</td>
+        <td>2019-11-09 14:48:33</td>   
+    </tr>
+
+<pre><code>&lt;tr&gt;
     &lt;td&gt;10003&lt;/td&gt;
     &lt;td&gt;13500000003&lt;/td&gt; 
     &lt;td&gt;2019-11-08 14:48:53&lt;/td&gt;
@@ -133,9 +134,10 @@
     &lt;td bgcolor=#6495ED&gt;13500000007&lt;/td&gt;
     &lt;td bgcolor=#6495ED&gt;2019-11-10 17:41:49 &lt;/td&gt;
     &lt;td bgcolor=#6495ED&gt;2019-11-10 17:41:49&lt;/td&gt;
-&lt;/tr&gt;
+&lt;/tr&gt;</code></pre></table>
 
-&lt;/table&gt;</code></pre><h2 id="全量初始装载"><a href="#全量初始装载" class="headerlink" title="全量初始装载"></a>全量初始装载</h2><p>在启用拉链表时，先对其进行初始装载，比如以2019-11-08为开始时间，<br>那么将MySQL源表全量抽取到ODS层member_delta表的2018-11-08的分区中，<br>然后初始装载DW层的拉链表member_his</p>
+
+<h2 id="全量初始装载"><a href="#全量初始装载" class="headerlink" title="全量初始装载"></a>全量初始装载</h2><p>在启用拉链表时，先对其进行初始装载，比如以2019-11-08为开始时间，<br>那么将MySQL源表全量抽取到ODS层member_delta表的2018-11-08的分区中，<br>然后初始装载DW层的拉链表member_his</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">INSERT overwrite TABLE member_his </span><br><span class="line">SELECT</span><br><span class="line">   member_id,</span><br><span class="line">   phoneno,</span><br><span class="line">   to_date ( create_time ) AS effective_date,</span><br><span class="line">  <span class="string">'3000-12-31'</span> </span><br><span class="line">FROM</span><br><span class="line">	member_delta </span><br><span class="line">WHERE</span><br><span class="line">	DAY = <span class="string">'2019-11-08'</span></span><br></pre></td></tr></table></figure>
 
 <p>查询初始的历史拉链表数据</p>
@@ -165,7 +167,7 @@
 <p>将以上脚本封装成shell调度的脚本</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#如果是输入的日期按照取输入日期；如果没输入日期取当前时间的前一天</span></span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">"<span class="variable">$1</span>"</span> ] ;<span class="keyword">then</span></span><br><span class="line">	do_date=<span class="variable">$1</span></span><br><span class="line"><span class="keyword">else</span> </span><br><span class="line">	do_date=`date -d <span class="string">"-1 day"</span> +%F`  </span><br><span class="line"><span class="keyword">fi</span> </span><br><span class="line"></span><br><span class="line">sql=<span class="string">"</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">INSERT overwrite TABLE member_his_tmp</span></span><br><span class="line"><span class="string">SELECT *</span></span><br><span class="line"><span class="string">FROM</span></span><br><span class="line"><span class="string">  (</span></span><br><span class="line"><span class="string">-- 2019-11-10增量数据，代表最新的状态，该数据的生效时间是2019-11-10，过期时间为3000-12-31</span></span><br><span class="line"><span class="string">-- 这些增量的数据需要被全部加载到历史拉链表中</span></span><br><span class="line"><span class="string">SELECT member_id,</span></span><br><span class="line"><span class="string">       phoneno,</span></span><br><span class="line"><span class="string">       '<span class="variable">$do_date</span>' effective_date,</span></span><br><span class="line"><span class="string">       '3000-12-31' expire_date</span></span><br><span class="line"><span class="string">   FROM member_delta</span></span><br><span class="line"><span class="string">   WHERE DAY='<span class="variable">$do_date</span>'</span></span><br><span class="line"><span class="string">   UNION ALL </span></span><br><span class="line"><span class="string">-- 用当前为生效状态的拉链数据，去left join 增量数据，</span></span><br><span class="line"><span class="string">-- 如果匹配得上，则表示该数据已发生了更新，</span></span><br><span class="line"><span class="string">-- 此时，需要将发生更新的数据的过期时间更改为当前时间.</span></span><br><span class="line"><span class="string">-- 如果匹配不上，则表明该数据没有发生更新，此时过期时间不变</span></span><br><span class="line"><span class="string">SELECT a.member_id,</span></span><br><span class="line"><span class="string">       a.phoneno,</span></span><br><span class="line"><span class="string">       a.effective_date,</span></span><br><span class="line"><span class="string">       if(b.member_id IS NULL, to_date(a.expire_date), to_date(b.day)) expire_date</span></span><br><span class="line"><span class="string">   FROM</span></span><br><span class="line"><span class="string">     (SELECT *</span></span><br><span class="line"><span class="string">      FROM member_his</span></span><br><span class="line"><span class="string">      WHERE expire_date='3000-12-31') a</span></span><br><span class="line"><span class="string">   LEFT JOIN</span></span><br><span class="line"><span class="string">     (SELECT *</span></span><br><span class="line"><span class="string">      FROM member_delta</span></span><br><span class="line"><span class="string">      WHERE DAY='<span class="variable">$do_date</span>') b ON a.member_id=b.member_id)his;</span></span><br><span class="line"><span class="string">"</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$hive</span> -e <span class="string">"<span class="variable">$sql</span>"</span></span><br></pre></td></tr></table></figure>
 
-</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2019/10/29/记一道Hive-SQL面试题/" target="_blank">记一道Hive SQL面试题</a></li><li><a href="https://jiamaoxiang.top/2019/10/23/Flink运行架构剖析/" target="_blank">Flink运行架构剖析</a></li><li><a href="https://jiamaoxiang.top/2019/10/15/经典Hive-SQL面试题/" target="_blank">经典Hive-SQL面试题</a></li><li><a href="https://jiamaoxiang.top/2019/09/26/Flink的Window-Function介绍/" target="_blank">Flink的Window Function介绍</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2019/11/08/历史拉链表实战/">https://jiamaoxiang.top/2019/11/08/历史拉链表实战/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2019/11/08/历史拉链表实战/" data-id="ck2q07kpl001qrk7qxk41i9el" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACOElEQVR42u3aQXLCMAwFUO5/abpth2K+ZGDGysuqA2mSl8VHsny7xcf94fj9+eM5ydXWd7l94sDAwDiWcV8e68d9vGX1k+Tb9bNhYGBch7GOxReXeBKXzx5xHdPrKzz9HAMDA2MZr0lEJmVi8iIwMDAwkgIuL916ZSIGBgbGThNbLf561/l4L46BgXEgI191//7fH5lvYGBgHMW4t46kUCuUdPvPg4GBMZqx36zmEZnHa1JW/vO/GBgYl2H04q86SHhXEJf3mmFgYBzIyMOuN9RMzu99i4GBcU1GNUZ744R8PFkoDTEwMEYz8lZz5zbVhf781ZQ7ZgwMjMMZvTJxf9tEtfQsRC0GBsYgRh6LyTiz+goSRuG3AgMD4wKM6lJ+NXD3C8EXi24YGBjjGL22M19WS15Kb3j55/oYGBijGcml8/KuN0LoFZrRnhEMDIxBjP1CsPd59QrR8BIDA2MoY6fI21kyqxamhd8NDAyMoYw8m3vDyGRQ2ttEi4GBMZuRB1wPnG+/eMM+EQwMjKGMapG3v/2i1zBHrwwDA2Mooxem1aWxfdKLsMbAwBjNyDdY7Ley1YqufEcMDIyhjN5miDyO8w0ZebkZjQQwMDAGMXrxmreg1SFBfn4Tg4GBcSwjD9nesLM3Zii3yhgYGBdgvHf02GuJe9GPgYGB0dsYUZ0t9kIfAwMDIwncZMksb3TzUSgGBsY1GXnY5SOB5KXsjDa3enEMDIyjGDtNZvVxk/Ori3oYGBijGT9KlXrA7q0OqwAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/数据仓库/">数据仓库</a></div><div class="post-nav"><a class="next" href="/2019/10/29/记一道Hive-SQL面试题/">记一道Hive SQL面试题</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用场景"><span class="toc-number">1.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现步骤"><span class="toc-number">2.</span> <span class="toc-text">实现步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#表结构"><span class="toc-number">3.</span> <span class="toc-text">表结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo数据准备"><span class="toc-number">4.</span> <span class="toc-text">Demo数据准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全量初始装载"><span class="toc-number">5.</span> <span class="toc-text">全量初始装载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增量抽取数据"><span class="toc-number">6.</span> <span class="toc-text">增量抽取数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增量刷新历史拉链数据"><span class="toc-number">7.</span> <span class="toc-text">增量刷新历史拉链数据</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2019 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2019/10/29/记一道Hive-SQL面试题/" target="_blank">记一道Hive SQL面试题</a></li><li><a href="https://jiamaoxiang.top/2019/10/23/Flink运行架构剖析/" target="_blank">Flink运行架构剖析</a></li><li><a href="https://jiamaoxiang.top/2019/10/15/经典Hive-SQL面试题/" target="_blank">经典Hive-SQL面试题</a></li><li><a href="https://jiamaoxiang.top/2019/09/26/Flink的Window-Function介绍/" target="_blank">Flink的Window Function介绍</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2019/11/08/历史拉链表实战/">https://jiamaoxiang.top/2019/11/08/历史拉链表实战/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2019/11/08/历史拉链表实战/" data-id="ck2q0daol001ptw7qz4ausa3q" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACOElEQVR42u3aQXLCMAwFUO5/abpth2K+ZGDGysuqA2mSl8VHsny7xcf94fj9+eM5ydXWd7l94sDAwDiWcV8e68d9vGX1k+Tb9bNhYGBch7GOxReXeBKXzx5xHdPrKzz9HAMDA2MZr0lEJmVi8iIwMDAwkgIuL916ZSIGBgbGThNbLf561/l4L46BgXEgI191//7fH5lvYGBgHMW4t46kUCuUdPvPg4GBMZqx36zmEZnHa1JW/vO/GBgYl2H04q86SHhXEJf3mmFgYBzIyMOuN9RMzu99i4GBcU1GNUZ744R8PFkoDTEwMEYz8lZz5zbVhf781ZQ7ZgwMjMMZvTJxf9tEtfQsRC0GBsYgRh6LyTiz+goSRuG3AgMD4wKM6lJ+NXD3C8EXi24YGBjjGL22M19WS15Kb3j55/oYGBijGcml8/KuN0LoFZrRnhEMDIxBjP1CsPd59QrR8BIDA2MoY6fI21kyqxamhd8NDAyMoYw8m3vDyGRQ2ttEi4GBMZuRB1wPnG+/eMM+EQwMjKGMapG3v/2i1zBHrwwDA2Mooxem1aWxfdKLsMbAwBjNyDdY7Ley1YqufEcMDIyhjN5miDyO8w0ZebkZjQQwMDAGMXrxmreg1SFBfn4Tg4GBcSwjD9nesLM3Zii3yhgYGBdgvHf02GuJe9GPgYGB0dsYUZ0t9kIfAwMDIwncZMksb3TzUSgGBsY1GXnY5SOB5KXsjDa3enEMDIyjGDtNZvVxk/Ori3oYGBijGT9KlXrA7q0OqwAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/数据仓库/">数据仓库</a></div><div class="post-nav"><a class="next" href="/2019/10/29/记一道Hive-SQL面试题/">记一道Hive SQL面试题</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用场景"><span class="toc-number">1.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现步骤"><span class="toc-number">2.</span> <span class="toc-text">实现步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#表结构"><span class="toc-number">3.</span> <span class="toc-text">表结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo数据准备"><span class="toc-number">4.</span> <span class="toc-text">Demo数据准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全量初始装载"><span class="toc-number">5.</span> <span class="toc-text">全量初始装载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增量抽取数据"><span class="toc-number">6.</span> <span class="toc-text">增量抽取数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增量刷新历史拉链数据"><span class="toc-number">7.</span> <span class="toc-text">增量刷新历史拉链数据</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2019 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
 if (search_path.length == 0) {
    search_path = 'search.xml';
 }
