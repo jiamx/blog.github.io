@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-10-23T05:30:32.793Z</updated>
+  <updated>2019-11-08T04:12:48.835Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,40 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>历史拉链表实战</title>
+    <link href="https://jiamaoxiang.top/2019/11/08/%E5%8E%86%E5%8F%B2%E6%8B%89%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/"/>
+    <id>https://jiamaoxiang.top/2019/11/08/历史拉链表实战/</id>
+    <published>2019-11-08T03:12:41.000Z</published>
+    <updated>2019-11-08T04:12:48.835Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;历史拉链表是一种数据模型，主要是针对数据仓库设计中表存储数据的方式而定义的。所谓历史拉链表，就是指记录一个事物从开始一直到当前状态的所有变化信息。拉所有记录链表可以避免按每一天存储造成的海量存储问题，同时也是处理缓慢变化数据的一种常见方式。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="数据仓库" scheme="https://jiamaoxiang.top/categories/%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93/"/>
+    
+    
+      <category term="数据仓库" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>记一道Hive SQL面试题</title>
+    <link href="https://jiamaoxiang.top/2019/10/29/%E8%AE%B0%E4%B8%80%E9%81%93Hive-SQL%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
+    <id>https://jiamaoxiang.top/2019/10/29/记一道Hive-SQL面试题/</id>
+    <published>2019-10-29T13:39:04.000Z</published>
+    <updated>2019-10-29T13:39:04.784Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Flink运行架构剖析</title>
