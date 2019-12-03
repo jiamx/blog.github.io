@@ -4,372 +4,361 @@
   hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
   var s = document.getElementsByTagName("script")[0];
   s.parentNode.insertBefore(hm, s);
-  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">CDH集群之YARN性能调优</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">CDH集群之YARN性能调优</h1><div class="post-meta">Dec 3, 2019<span> | </span><span class="category"><a href="/categories/CDH-YARN/">CDH,YARN</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 3.7k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 19</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>本文主要讨论CDH集群的YARN调优配置，关于YARN的调优配置，主要关注CPU和内存的调优，其中CPU是指物理CPU个数乘以CPU核数，即Vcores = CPU数量*CPU核数。YARN是以container容器的形式封装资源的，task在container内部执行。</p>
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">CDH集群之YARN性能调优</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">CDH集群之YARN性能调优</h1><div class="post-meta">Dec 3, 2019<span> | </span><span class="category"><a href="/categories/CDH-YARN/">CDH,YARN</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.8k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 7</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>本文主要讨论CDH集群的YARN调优配置，关于YARN的调优配置，主要关注CPU和内存的调优，其中CPU是指物理CPU个数乘以CPU核数，即Vcores = CPU数量*CPU核数。YARN是以container容器的形式封装资源的，task在container内部执行。</p>
 <a id="more"></a>
 
 <h2 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h2><p>集群的配置主要包括三步，第一是先规划集群的工作主机以及每台主机的配置，第二是规划每台主机的安装的组件及其资源分配，第三是规划集群的规模大小。</p>
 <h3 id="工作主机的配置"><a href="#工作主机的配置" class="headerlink" title="工作主机的配置"></a>工作主机的配置</h3><p>如下表所示：主机的内存为256G，4个6核CPU，CPU支持超线程，网络带宽为2G</p>
 <table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;主机组件&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;数量&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;大小&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;总计&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;RAM&lt;/td&gt;
-    &lt;td&gt;256G&lt;/td&gt; 
-    &lt;td&gt;&lt;/td&gt;
-    &lt;td&gt;256G&lt;/td&gt;  
-    &lt;td&gt;内存大小&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;CPU&lt;/td&gt;
-    &lt;td&gt;4&lt;/td&gt; 
-    &lt;td&gt;6&lt;/td&gt;
-    &lt;td&gt;48&lt;/td&gt; 
-    &lt;td&gt;总CPU核数&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;HyperThreading CPU&lt;/td&gt;
-    &lt;td&gt;YES&lt;/td&gt; 
-    &lt;td&gt;&lt;/td&gt;
-    &lt;td&gt;&lt;/td&gt; 
-    &lt;td&gt;超线程CPU，使操作系统认为处理器的核心数是实际核心数的2倍，因此如果有24个核心的处理器，操作系统会认为处理器有48个核心&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;网络&lt;/td&gt;
-    &lt;td&gt;2&lt;/td&gt; 
-    &lt;td&gt;1G&lt;/td&gt;
-    &lt;td&gt;2G&lt;/td&gt; 
-    &lt;td&gt;网络带宽&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">主机组件</td>
+        <td bgcolor="#6495ED">数量</td> 
+        <td bgcolor="#6495ED">大小</td>
+        <td bgcolor="#6495ED">总计</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>RAM</td>
+        <td>256G</td> 
+        <td></td>
+        <td>256G</td>  
+        <td>内存大小</td> 
+    </tr>
+    <tr>
+        <td>CPU</td>
+        <td>4</td> 
+        <td>6</td>
+        <td>48</td> 
+        <td>总CPU核数</td>  
+    </tr>
+    <tr>
+        <td>HyperThreading CPU</td>
+        <td>YES</td> 
+        <td></td>
+        <td></td> 
+        <td>超线程CPU，使操作系统认为处理器的核心数是实际核心数的2倍，因此如果有24个核心的处理器，操作系统会认为处理器有48个核心</td>  
+    </tr>
+    <tr>
+        <td>网络</td>
+        <td>2</td> 
+        <td>1G</td>
+        <td>2G</td> 
+        <td>网络带宽</td>  
+    </tr>  
+</table>
 
 <h3 id="工作主机安装组件配置"><a href="#工作主机安装组件配置" class="headerlink" title="工作主机安装组件配置"></a>工作主机安装组件配置</h3><p>第一步已经明确每台主机的内存和CPU配置，下面为每台节点的服务分配资源，主要分配CPU和内存</p>
 <table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;服务&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;类别&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;CPU核数&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;内存(MB)&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;操作系统&lt;/td&gt;
-    &lt;td&gt;Overhead&lt;/td&gt; 
-    &lt;td&gt;1&lt;/td&gt;
-    &lt;td&gt;8192&lt;/td&gt;  
-    &lt;td&gt;为操作系统分配1核8G内存，一般4~8G&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;其它服务&lt;/td&gt;
-    &lt;td&gt;Overhead&lt;/td&gt; 
-    &lt;td&gt;0&lt;/td&gt;
-    &lt;td&gt;0&lt;/td&gt; 
-    &lt;td&gt;非CDH集群、非操作系统占用的资源&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;Cloudera Manager agent&lt;/td&gt;
-    &lt;td&gt;Overhead&lt;/td&gt; 
-    &lt;td&gt;1&lt;/td&gt;
-    &lt;td&gt;1024&lt;/td&gt; 
-    &lt;td&gt;分配1核1G&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;HDFS DataNode&lt;/td&gt;
-    &lt;td&gt;CDH&lt;/td&gt; 
-    &lt;td&gt;1&lt;/td&gt;
-    &lt;td&gt;1024&lt;/td&gt; 
-    &lt;td&gt;默认1核1G&lt;/td&gt;  
-&lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td&gt;YARN NodeManager&lt;/td&gt;
-    &lt;td&gt;CDH&lt;/td&gt; 
-    &lt;td&gt;1&lt;/td&gt;
-    &lt;td&gt;1024&lt;/td&gt; 
-    &lt;td&gt;默认1核1G&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td&gt;Impala daemon&lt;/td&gt;
-    &lt;td&gt;CDH&lt;/td&gt; 
-    &lt;td&gt;0&lt;/td&gt;
-    &lt;td&gt;0&lt;/td&gt; 
-    &lt;td&gt;可选的服务，建议至少为impala demon分配16G内存&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td&gt;Hbase RegionServer&lt;/td&gt;
-    &lt;td&gt;CDH&lt;/td&gt; 
-    &lt;td&gt;0&lt;/td&gt;
-    &lt;td&gt;0&lt;/td&gt; 
-    &lt;td&gt;可选的服务，建议12~16G内存&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td&gt;Solr Server&lt;/td&gt;
-    &lt;td&gt;CDH&lt;/td&gt; 
-    &lt;td&gt;0&lt;/td&gt;
-    &lt;td&gt;0&lt;/td&gt; 
-    &lt;td&gt;可选的服务，最低1G内存&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td&gt;Kudu Server&lt;/td&gt;
-    &lt;td&gt;CDH&lt;/td&gt; 
-    &lt;td&gt;0&lt;/td&gt;
-    &lt;td&gt;0&lt;/td&gt; 
-    &lt;td&gt;可选的服务，kudu Tablet server最低1G内存&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td&gt;Available Container  Resources&lt;/td&gt;
-    &lt;td&gt;&lt;/td&gt; 
-    &lt;td&gt;44&lt;/td&gt;
-    &lt;td&gt;250880&lt;/td&gt; 
-    &lt;td&gt;剩余分配给yarn的container&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">服务</td>
+        <td bgcolor="#6495ED">类别</td> 
+        <td bgcolor="#6495ED">CPU核数</td>
+        <td bgcolor="#6495ED">内存(MB)</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>操作系统</td>
+        <td>Overhead</td> 
+        <td>1</td>
+        <td>8192</td>  
+        <td>为操作系统分配1核8G内存，一般4~8G</td> 
+    </tr>
+    <tr>
+        <td>其它服务</td>
+        <td>Overhead</td> 
+        <td>0</td>
+        <td>0</td> 
+        <td>非CDH集群、非操作系统占用的资源</td>  
+    </tr>
+    <tr>
+        <td>Cloudera Manager agent</td>
+        <td>Overhead</td> 
+        <td>1</td>
+        <td>1024</td> 
+        <td>分配1核1G</td>  
+    </tr>
+    <tr>
+        <td>HDFS DataNode</td>
+        <td>CDH</td> 
+        <td>1</td>
+        <td>1024</td> 
+        <td>默认1核1G</td>  
+    </tr>
+       <tr>
+        <td>YARN NodeManager</td>
+        <td>CDH</td> 
+        <td>1</td>
+        <td>1024</td> 
+        <td>默认1核1G</td>  
+    </tr>
+    
+       <tr>
+        <td>Impala daemon</td>
+        <td>CDH</td> 
+        <td>0</td>
+        <td>0</td> 
+        <td>可选的服务，建议至少为impala demon分配16G内存</td>  
+    </tr>
+    
+       <tr>
+        <td>Hbase RegionServer</td>
+        <td>CDH</td> 
+        <td>0</td>
+        <td>0</td> 
+        <td>可选的服务，建议12~16G内存</td>  
+    </tr>
+    
+       <tr>
+        <td>Solr Server</td>
+        <td>CDH</td> 
+        <td>0</td>
+        <td>0</td> 
+        <td>可选的服务，最低1G内存</td>  
+    </tr>
+    
+       <tr>
+        <td>Kudu Server</td>
+        <td>CDH</td> 
+        <td>0</td>
+        <td>0</td> 
+        <td>可选的服务，kudu Tablet server最低1G内存</td>  
+    </tr>
+    
+       <tr>
+        <td>Available Container  Resources</td>
+        <td></td> 
+        <td>44</td>
+        <td>250880</td> 
+        <td>剩余分配给yarn的container</td>  
+    </tr>
+</table>
 
 <p>container资源分配<br>Physical Cores to Vcores Multiplier：每个container的cpu core的并发线程数，本文设置为1</p>
 <p>YARN Available Vcores：YARN可用的CPU核数=Available Container  Resources * Physical Cores to Vcores Multiplier，即为44</p>
 <p>YARN Available Memory：250880</p>
 <h3 id="集群大小"><a href="#集群大小" class="headerlink" title="集群大小"></a>集群大小</h3><p>集群的工作节点个数：10</p>
-<h2 id="YARN配置"><a href="#YARN配置" class="headerlink" title="YARN配置"></a>YARN配置</h2><h3 id="YARN-NodeManager配置属性"><a href="#YARN-NodeManager配置属性" class="headerlink" title="YARN NodeManager配置属性"></a>YARN NodeManager配置属性</h3><table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;配置参数&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;值&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.nodemanager.resource.cpu-vcores&lt;/td&gt;
-    &lt;td&gt;44&lt;/td&gt;  
-    &lt;td&gt;yarn 的nodemanager分配44核，每台节点剩余的CPU&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.nodemanager.resource.memory-mb&lt;/td&gt;
-    &lt;td&gt;250800&lt;/td&gt; 
-    &lt;td&gt;分配的内存大小，每台节点剩余的内存&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+<h2 id="YARN配置"><a href="#YARN配置" class="headerlink" title="YARN配置"></a>YARN配置</h2><h3 id="YARN-NodeManager配置属性"><a href="#YARN-NodeManager配置属性" class="headerlink" title="YARN NodeManager配置属性"></a>YARN NodeManager配置属性</h3><table> 
+    <tr>
+        <td bgcolor="#6495ED">配置参数</td>
+        <td bgcolor="#6495ED">值</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>yarn.nodemanager.resource.cpu-vcores</td>
+        <td>44</td>  
+        <td>yarn 的nodemanager分配44核，每台节点剩余的CPU</td> 
+    </tr>
+    <tr>
+        <td>yarn.nodemanager.resource.memory-mb</td>
+        <td>250800</td> 
+        <td>分配的内存大小，每台节点剩余的内存</td>  
+    </tr>
+</table>
 
 <h3 id="验证YARN的配置"><a href="#验证YARN的配置" class="headerlink" title="验证YARN的配置"></a>验证YARN的配置</h3><p>登录YARN的resourcemanager的WEBUI：http://<resourcemanagerip>:8088/，验证’Memory Total’与’Vcores Total’，如果节点都正常，那么Vcores Total应该为440，Memory应该为2450G，即250800/1024*10</resourcemanagerip></p>
 <h3 id="YARN的container配置"><a href="#YARN的container配置" class="headerlink" title="YARN的container配置"></a>YARN的container配置</h3><p>YARN的container的Vcore配置</p>
 <table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;配置参数&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;值&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.minimum-allocation-vcores&lt;/td&gt;
-    &lt;td&gt;1&lt;/td&gt;  
-    &lt;td&gt;分配给container的最小vcore个数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.maximum-allocation-vcores&lt;/td&gt;
-    &lt;td&gt;44&lt;/td&gt; 
-    &lt;td&gt;分配给container的最大vcore数&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.increment-allocation-vcores&lt;/td&gt;
-    &lt;td&gt;1&lt;/td&gt; 
-    &lt;td&gt;容器虚拟CPU内核增量&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">配置参数</td>
+        <td bgcolor="#6495ED">值</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>yarn.scheduler.minimum-allocation-vcores</td>
+        <td>1</td>  
+        <td>分配给container的最小vcore个数</td> 
+    </tr>
+    <tr>
+        <td>yarn.scheduler.maximum-allocation-vcores</td>
+        <td>44</td> 
+        <td>分配给container的最大vcore数</td>  
+    </tr>
+    <tr>
+        <td>yarn.scheduler.increment-allocation-vcores</td>
+        <td>1</td> 
+        <td>容器虚拟CPU内核增量</td>  
+    </tr>
+</table>
 
 
 <p>YARN的container内存配置</p>
 <table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;配置参数&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;值&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.minimum-allocation-mb&lt;/td&gt;
-    &lt;td&gt;1024&lt;/td&gt;  
-    &lt;td&gt;分配给container的最小内存大小，为1G&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.maximum-allocation-mb&lt;/td&gt;
-    &lt;td&gt;250880&lt;/td&gt; 
-    &lt;td&gt;分配给container的最大内存，等于245G，即为每台节点剩余的最大内存&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.increment-allocation-mb&lt;/td&gt;
-    &lt;td&gt;512&lt;/td&gt; 
-    &lt;td&gt;容器内存增量，默认512M&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">配置参数</td>
+        <td bgcolor="#6495ED">值</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>yarn.scheduler.minimum-allocation-mb</td>
+        <td>1024</td>  
+        <td>分配给container的最小内存大小，为1G</td> 
+    </tr>
+    <tr>
+        <td>yarn.scheduler.maximum-allocation-mb</td>
+        <td>250880</td> 
+        <td>分配给container的最大内存，等于245G，即为每台节点剩余的最大内存</td>  
+    </tr>
+    <tr>
+        <td>yarn.scheduler.increment-allocation-mb</td>
+        <td>512</td> 
+        <td>容器内存增量，默认512M</td>  
+    </tr>
+</table>
 
 <h3 id="集群资源分配估计"><a href="#集群资源分配估计" class="headerlink" title="集群资源分配估计"></a>集群资源分配估计</h3><table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;最小值&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;最大值&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;根据每个container的最小内存分配，集群最大的container数量为&lt;/td&gt;
-    &lt;td&gt;&lt;/td&gt;  
-    &lt;td&gt;2450&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;根据每个container的最小Vcore分配，集群最大的container数量为&lt;/td&gt;
-    &lt;td&gt;&lt;/td&gt; 
-    &lt;td&gt;440&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;根据每个container的最大内存分配，集群的最小container数为&lt;/td&gt;
-    &lt;td&gt;10&lt;/td&gt; 
-    &lt;td&gt;&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;根据每个container的最大Vcores分配，集群的最小container数为&lt;/td&gt;
-    &lt;td&gt;10&lt;/td&gt; 
-    &lt;td&gt;&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">描述</td>
+        <td bgcolor="#6495ED">最小值</td> 
+        <td bgcolor="#6495ED">最大值</td>  
+    </tr>
+    <tr>
+        <td>根据每个container的最小内存分配，集群最大的container数量为</td>
+        <td></td>  
+        <td>2450</td> 
+    </tr>
+    <tr>
+        <td>根据每个container的最小Vcore分配，集群最大的container数量为</td>
+        <td></td> 
+        <td>440</td>  
+    </tr>
+    <tr>
+        <td>根据每个container的最大内存分配，集群的最小container数为</td>
+        <td>10</td> 
+        <td></td>  
+    </tr>
+    <tr>
+        <td>根据每个container的最大Vcores分配，集群的最小container数为</td>
+        <td>10</td> 
+        <td></td>  
+    </tr>
+</table>
 
 
 <h3 id="container合理配置检查"><a href="#container合理配置检查" class="headerlink" title="container合理配置检查"></a>container合理配置检查</h3><table>
+    <tr>
+        <td bgcolor="#6495ED">配置约束</td>
+        <td bgcolor="#6495ED">描述</td> 
+    </tr>
+    <tr>
+        <td>最大的Vcore数量必须大于等于分配的最小Vcore数</td>
+        <td>yarn.scheduler.maximum-allocation-vcores >= yarn.scheduler.minimum-allocation-vcores</td>  
+    </tr>
+    <tr>
+        <td>分配的最大内存数必须大于等于分配的最小内存数</td>
+        <td>yarn.scheduler.maximum-allocation-mb >= yarn.scheduler.minimum-allocation-mb</td> 
+    </tr>
+    <tr>
+        <td>分配的最小核数必须大于等于0</td>
+        <td>yarn.scheduler.minimum-allocation-vcores >= 0</td>  
+    </tr>
+    <tr>
+        <td>分配的最大Vcore数必须大于等于1</td>
+        <td>yarn.scheduler.maximum-allocation-vcores >= 1</td>  
+    </tr>
+    <tr>
+        <td>每台主机分配给nodemanaer的vcore总数必须大于分配的最小vcore数</td>
+        <td> yarn.nodemanager.resource.cpu-vcores >= yarn.scheduler.minimum-allocation-vcores</td>  
+    </tr>
+    <tr>
+        <td>每台主机分配给nodemanaer的vcore总数必须大于分配的最大vcore数</td>
+        <td>yarn.nodemanager.resource.cpu-vcores >= yarn.scheduler.maximum-allocation-vcores </td>  
+    </tr>
+    <tr>
+        <td>每台主机分配给nodemanaer的内存必须大于调度分配的最小内存</td>
+        <td>yarn.nodemanager.resource.memory-mb >= yarn.scheduler.maximum-allocation-mb</td>  
+    </tr>
+    <tr>
+        <td>每台主机分配给nodemanaer的内存必须大于调度分配的最大内存</td>
+        <td>yarn.nodemanager.resource.memory-mb >= yarn.scheduler.minimum-allocation-mb</td>  
+    </tr>
+    <tr>
+        <td>container最小配置</td>
+        <td>如果yarn.scheduler.minimum-allocation-mb小于1GB，container可能会被YARN杀死，因为会出现OutOfMemory内存溢出的现象</td>  
+    </tr>
+</table>
 
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;配置约束&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;最大的Vcore数量必须大于等于分配的最小Vcore数&lt;/td&gt;
-    &lt;td&gt;yarn.scheduler.maximum-allocation-vcores &gt;= yarn.scheduler.minimum-allocation-vcores&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;分配的最大内存数必须大于等于分配的最小内存数&lt;/td&gt;
-    &lt;td&gt;yarn.scheduler.maximum-allocation-mb &gt;= yarn.scheduler.minimum-allocation-mb&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;分配的最小核数必须大于等于0&lt;/td&gt;
-    &lt;td&gt;yarn.scheduler.minimum-allocation-vcores &gt;= 0&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;分配的最大Vcore数必须大于等于1&lt;/td&gt;
-    &lt;td&gt;yarn.scheduler.maximum-allocation-vcores &gt;= 1&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;每台主机分配给nodemanaer的vcore总数必须大于分配的最小vcore数&lt;/td&gt;
-    &lt;td&gt; yarn.nodemanager.resource.cpu-vcores &gt;= yarn.scheduler.minimum-allocation-vcores&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;每台主机分配给nodemanaer的vcore总数必须大于分配的最大vcore数&lt;/td&gt;
-    &lt;td&gt;yarn.nodemanager.resource.cpu-vcores &gt;= yarn.scheduler.maximum-allocation-vcores &lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;每台主机分配给nodemanaer的内存必须大于调度分配的最小内存&lt;/td&gt;
-    &lt;td&gt;yarn.nodemanager.resource.memory-mb &gt;= yarn.scheduler.maximum-allocation-mb&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;每台主机分配给nodemanaer的内存必须大于调度分配的最大内存&lt;/td&gt;
-    &lt;td&gt;yarn.nodemanager.resource.memory-mb &gt;= yarn.scheduler.minimum-allocation-mb&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;container最小配置&lt;/td&gt;
-    &lt;td&gt;如果yarn.scheduler.minimum-allocation-mb小于1GB，container可能会被YARN杀死，因为会出现OutOfMemory内存溢出的现象&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
-
-<h2 id="MapReduce配置"><a href="#MapReduce配置" class="headerlink" title="MapReduce配置"></a>MapReduce配置</h2><h3 id="ApplicationMaster配置"><a href="#ApplicationMaster配置" class="headerlink" title="ApplicationMaster配置"></a>ApplicationMaster配置</h3><table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;配置参数&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;值&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.app.mapreduce.am.resource.cpu-vcores&lt;/td&gt;
-    &lt;td&gt;1&lt;/td&gt;  
-    &lt;td&gt;ApplicationMaster 的虚拟CPU内核数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.app.mapreduce.am.resource.mb&lt;/td&gt;
-    &lt;td&gt;1024&lt;/td&gt; 
-    &lt;td&gt;ApplicationMaster的物理内存要求(MiB)&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.app.mapreduce.am.command-opts&lt;/td&gt;
-    &lt;td&gt;800&lt;/td&gt; 
-    &lt;td&gt;传递到 MapReduce ApplicationMaster 的 Java 命令行参数，AM Java heap 大小，为800M&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+<h2 id="MapReduce配置"><a href="#MapReduce配置" class="headerlink" title="MapReduce配置"></a>MapReduce配置</h2><h3 id="ApplicationMaster配置"><a href="#ApplicationMaster配置" class="headerlink" title="ApplicationMaster配置"></a>ApplicationMaster配置</h3><table> 
+    <tr>
+        <td bgcolor="#6495ED">配置参数</td>
+        <td bgcolor="#6495ED">值</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>yarn.app.mapreduce.am.resource.cpu-vcores</td>
+        <td>1</td>  
+        <td>ApplicationMaster 的虚拟CPU内核数</td> 
+    </tr>
+    <tr>
+        <td>yarn.app.mapreduce.am.resource.mb</td>
+        <td>1024</td> 
+        <td>ApplicationMaster的物理内存要求(MiB)</td>  
+    </tr>
+    <tr>
+        <td>yarn.app.mapreduce.am.command-opts</td>
+        <td>800</td> 
+        <td>传递到 MapReduce ApplicationMaster 的 Java 命令行参数，AM Java heap 大小，为800M</td>  
+    </tr>
+</table>
 
 <h3 id="堆与容器大小之比"><a href="#堆与容器大小之比" class="headerlink" title="堆与容器大小之比"></a>堆与容器大小之比</h3><table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;配置参数&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;值&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;task自动堆大小&lt;/td&gt;
-    &lt;td&gt;yes&lt;/td&gt;  
-    &lt;td&gt;&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.job.heap.memory-mb.ratio&lt;/td&gt;
-    &lt;td&gt;0.8&lt;/td&gt; 
-    &lt;td&gt;Map 和 Reduce 任务的堆大小与容器大小之比。堆大小应小于容器大小，以允许 JVM 的某些开销，默认为0.8&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">配置参数</td>
+        <td bgcolor="#6495ED">值</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>task自动堆大小</td>
+        <td>yes</td>  
+        <td></td> 
+    </tr>
+    <tr>
+        <td>mapreduce.job.heap.memory-mb.ratio</td>
+        <td>0.8</td> 
+        <td>Map 和 Reduce 任务的堆大小与容器大小之比。堆大小应小于容器大小，以允许 JVM 的某些开销，默认为0.8</td>  
+    </tr>
+</table>
 
 
 <h3 id="map-task配置"><a href="#map-task配置" class="headerlink" title="map task配置"></a>map task配置</h3><table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;配置参数&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;值&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.map.cpu.vcores&lt;/td&gt;
-    &lt;td&gt;1&lt;/td&gt;  
-    &lt;td&gt;分配给map task的vcore数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.map.memory.mb&lt;/td&gt;
-    &lt;td&gt;1024&lt;/td&gt; 
-    &lt;td&gt;分配给map task的内存数，1G&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.task.io.sort.mb&lt;/td&gt;
-    &lt;td&gt;400&lt;/td&gt; 
-    &lt;td&gt;I/O 排序内存缓冲 (MiB),默认256M，一般不用修改&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">配置参数</td>
+        <td bgcolor="#6495ED">值</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>mapreduce.map.cpu.vcores</td>
+        <td>1</td>  
+        <td>分配给map task的vcore数</td> 
+    </tr>
+    <tr>
+        <td>mapreduce.map.memory.mb</td>
+        <td>1024</td> 
+        <td>分配给map task的内存数，1G</td>  
+    </tr>
+    <tr>
+        <td>mapreduce.task.io.sort.mb</td>
+        <td>400</td> 
+        <td>I/O 排序内存缓冲 (MiB),默认256M，一般不用修改</td>  
+    </tr>
+</table>
 
 <h3 id="reduce-task配置"><a href="#reduce-task配置" class="headerlink" title="reduce task配置"></a>reduce task配置</h3><table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;配置参数&lt;/td&gt;
-    &lt;td bgcolor=#6495ED&gt;值&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.reduce.cpu.vcores&lt;/td&gt;
-    &lt;td&gt;1&lt;/td&gt;  
-    &lt;td&gt;分配给reduce task的vcore数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.reduce.memory.mb&lt;/td&gt;
-    &lt;td&gt;1024&lt;/td&gt; 
-    &lt;td&gt;分配给reduce task的内存数，1G&lt;/td&gt;  
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">配置参数</td>
+        <td bgcolor="#6495ED">值</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>mapreduce.reduce.cpu.vcores</td>
+        <td>1</td>  
+        <td>分配给reduce task的vcore数</td> 
+    </tr>
+    <tr>
+        <td>mapreduce.reduce.memory.mb</td>
+        <td>1024</td> 
+        <td>分配给reduce task的内存数，1G</td>  
+    </tr>
+</table>
 
 <h3 id="MapReduce配置合理性检查"><a href="#MapReduce配置合理性检查" class="headerlink" title="MapReduce配置合理性检查"></a>MapReduce配置合理性检查</h3><ul>
 <li>Application Master配置的合理性检查</li>
@@ -389,75 +378,74 @@
 <p>yarn.scheduler.minimum-allocation-vcores &lt;= <strong>mapreduce.reduce.cpu.vcores</strong> &lt;= yarn-scheduler.maximum-allocation-vcores   </p>
 <p>yarn.scheduler.minimum-allocation-mb &lt;= <strong>mapreduce.reduce.memory.mb</strong> &lt;= yarn.scheduler.maximum-allocation-mb</p>
 <h2 id="YARN和MapReduce配置参数总结"><a href="#YARN和MapReduce配置参数总结" class="headerlink" title="YARN和MapReduce配置参数总结"></a>YARN和MapReduce配置参数总结</h2><table>
-
-
-<pre><code>&lt;tr&gt;
-    &lt;td bgcolor=#6495ED&gt;YARN/MapReduce参数配置&lt;/td&gt; 
-    &lt;td bgcolor=#6495ED&gt;描述&lt;/td&gt;  
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.nodemanager.resource.cpu-vcores&lt;/td&gt;
-    &lt;td&gt;分配给container的虚拟cpu数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.nodemanager.resource.memory-mb&lt;/td&gt;
-    &lt;td&gt;分配给container的内存大小&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.minimum-allocation-vcores&lt;/td&gt;
-    &lt;td&gt;分配给container的最小虚拟cpu数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;    yarn.scheduler.maximum-allocation-vcores&lt;/td&gt;
-    &lt;td&gt;分配给container的最大虚拟cpu数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.increment-allocation-vcores&lt;/td&gt;
-    &lt;td&gt;分配给container的递增虚拟cpu数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.minimum-allocation-mb&lt;/td&gt;
-    &lt;td&gt;分配给container的最小内存大小&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.maximum-allocation-mb&lt;/td&gt;
-    &lt;td&gt;分配给container的最大内存&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.scheduler.increment-allocation-mb&lt;/td&gt;
-    &lt;td&gt;分配给container的递增内存大小&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.app.mapreduce.am.resource.cpu-vcores&lt;/td&gt;
-    &lt;td&gt;ApplicationMaste的虚拟cpu数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;yarn.app.mapreduce.am.resource.mb&lt;/td&gt;
-    &lt;td&gt;ApplicationMaste的内存大小&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.map.cpu.vcores&lt;/td&gt;
-    &lt;td&gt;map task的虚拟CPU数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.map.memory.mb&lt;/td&gt;
-    &lt;td&gt;map task的内存大小&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.reduce.cpu.vcores&lt;/td&gt;
-    &lt;td&gt;reduce task的虚拟cpu数&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.reduce.memory.mb&lt;/td&gt;
-    &lt;td&gt;reduce task的内存大小&lt;/td&gt; 
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;td&gt;mapreduce.task.io.sort.mb&lt;/td&gt;
-    &lt;td&gt;I/O排序内存大小&lt;/td&gt; 
-&lt;/tr&gt;</code></pre></table>
+    <tr>
+        <td bgcolor="#6495ED">YARN/MapReduce参数配置</td> 
+        <td bgcolor="#6495ED">描述</td>  
+    </tr>
+    <tr>
+        <td>yarn.nodemanager.resource.cpu-vcores</td>
+        <td>分配给container的虚拟cpu数</td> 
+    </tr>
+    <tr>
+        <td>yarn.nodemanager.resource.memory-mb</td>
+        <td>分配给container的内存大小</td> 
+    </tr>
+    <tr>
+        <td>yarn.scheduler.minimum-allocation-vcores</td>
+        <td>分配给container的最小虚拟cpu数</td> 
+    </tr>
+    <tr>
+        <td>    yarn.scheduler.maximum-allocation-vcores</td>
+        <td>分配给container的最大虚拟cpu数</td> 
+    </tr>
+    <tr>
+        <td>yarn.scheduler.increment-allocation-vcores</td>
+        <td>分配给container的递增虚拟cpu数</td> 
+    </tr>
+    <tr>
+        <td>yarn.scheduler.minimum-allocation-mb</td>
+        <td>分配给container的最小内存大小</td> 
+    </tr>
+    <tr>
+        <td>yarn.scheduler.maximum-allocation-mb</td>
+        <td>分配给container的最大内存</td> 
+    </tr>
+    <tr>
+        <td>yarn.scheduler.increment-allocation-mb</td>
+        <td>分配给container的递增内存大小</td> 
+    </tr>
+    <tr>
+        <td>yarn.app.mapreduce.am.resource.cpu-vcores</td>
+        <td>ApplicationMaste的虚拟cpu数</td> 
+    </tr>
+    <tr>
+        <td>yarn.app.mapreduce.am.resource.mb</td>
+        <td>ApplicationMaste的内存大小</td> 
+    </tr>
+    <tr>
+        <td>mapreduce.map.cpu.vcores</td>
+        <td>map task的虚拟CPU数</td> 
+    </tr>
+    <tr>
+        <td>mapreduce.map.memory.mb</td>
+        <td>map task的内存大小</td> 
+    </tr>
+    <tr>
+        <td>mapreduce.reduce.cpu.vcores</td>
+        <td>reduce task的虚拟cpu数</td> 
+    </tr>
+    <tr>
+        <td>mapreduce.reduce.memory.mb</td>
+        <td>reduce task的内存大小</td> 
+    </tr>
+    <tr>
+        <td>mapreduce.task.io.sort.mb</td>
+        <td>I/O排序内存大小</td> 
+    </tr>
+</table>
 
 <p>note：在CDH5.5或者更高版本中，参数<strong>mapreduce.map.java.opts</strong>, <strong>mapreduce.reduce.java.opts</strong>, <strong>yarn.app.mapreduce.am.command-opts</strong>会基于container堆内存的比例进行自动配置 </p>
-</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2019/11/08/历史拉链表实战/" target="_blank">历史拉链表实战</a></li><li><a href="https://jiamaoxiang.top/2019/10/29/记一道Hive-SQL面试题/" target="_blank">记一道Hive SQL面试题</a></li><li><a href="https://jiamaoxiang.top/2019/10/23/Flink运行架构剖析/" target="_blank">Flink运行架构剖析</a></li><li><a href="https://jiamaoxiang.top/2019/10/15/经典Hive-SQL面试题/" target="_blank">经典Hive-SQL面试题</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2019/12/03/CDH集群之YARN性能调优/">https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/" data-id="ck3phf5x4001sdk7qm7oa3qes" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACvUlEQVR42u3ay2ojQQwFUP//T2dgVoFx7HulqiQDp1eN6UedDkgVSY9HfHz8PT6ff/7l9V1fXf8RHO0bhwceHh7eaOn5C14vN1nQv1fmK8zXjIeHh3ebN0sGyb2vF5qD22vw8PDwfgMvSRLJ1nlPwsPDw/u/eMl2PC9qbAoieHh4eD/La8N9XizIE0abVA7XWvDw8PBi3iYo/9T59f4eHh4e3qir3m6UZ9vuvEBcrxYPDw/vAi8vsybFixZ/9o3Ffwx4eHh4C15eMkhemaeTttjRNt6e5D08PDy8Q7x9SSIvwuaBvh2NzTf3eHh4eKd4eZB9zdvXkmef401iwMPDw7vAS25Iwndbcs3HDmYrxMPDw/seXt4Amy3iVNrIx7Pw8PDwzvLa8dC8nJq3uzbb9zepAg8PD+8Cr00Jr8sE7ba4HbTaPAcPDw/vFG8WmmftsVniWfXu8PDw8C7w8iCbJ4nZJrstfMwGxfDw8PD2vLb5tA/07SxYMkzw5frx8PDwLvBuNMBmIX62Hc9TBR4eHt4pXhJ2Zw2wNiW0Hze6Hg8PD+8aLw/Qs1fmA1hJmTgvauDh4eHd4yUl2uhxi5Jum5ZW8614eHh4C96mUDt7QjsoMJwgw8PDw/sWXh7u2xGofXMr39B/CcbDw8M7yju7wW0/U/ucOs3g4eHhHeXNihF5qsi3xZuPe7iMi4eHh7fmfZRHsYsffZQi8eDh4eFd4G1aYu0Y1uzJm94WHh4e3g3eLOjP0kn7mdpnPrkLDw8P7wKvDbvt+alf2ncNh7Hw8PDwYl6bDPKQnW/ZT41/FTMReHh4eGtemwza9v+mdPvYHHh4eHg/ystLrvsr25bYgcSAh4eHd42XlGXzRe+f9ubPgIeHh3eNt2//b9pp+aLr4QM8PDy8C7xZA2w2TJCXOTbp6kB/Dw8PD+/59X8AAa5zqL1wTe4AAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/CDH-YARN/">CDH,YARN</a></div><div class="post-nav"><a class="next" href="/2019/11/08/历史拉链表实战/">历史拉链表实战</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#集群配置"><span class="toc-number">1.</span> <span class="toc-text">集群配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#工作主机的配置"><span class="toc-number">1.1.</span> <span class="toc-text">工作主机的配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工作主机安装组件配置"><span class="toc-number">1.2.</span> <span class="toc-text">工作主机安装组件配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集群大小"><span class="toc-number">1.3.</span> <span class="toc-text">集群大小</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#YARN配置"><span class="toc-number">2.</span> <span class="toc-text">YARN配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#YARN-NodeManager配置属性"><span class="toc-number">2.1.</span> <span class="toc-text">YARN NodeManager配置属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证YARN的配置"><span class="toc-number">2.2.</span> <span class="toc-text">验证YARN的配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#YARN的container配置"><span class="toc-number">2.3.</span> <span class="toc-text">YARN的container配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集群资源分配估计"><span class="toc-number">2.4.</span> <span class="toc-text">集群资源分配估计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#container合理配置检查"><span class="toc-number">2.5.</span> <span class="toc-text">container合理配置检查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce配置"><span class="toc-number">3.</span> <span class="toc-text">MapReduce配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationMaster配置"><span class="toc-number">3.1.</span> <span class="toc-text">ApplicationMaster配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#堆与容器大小之比"><span class="toc-number">3.2.</span> <span class="toc-text">堆与容器大小之比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map-task配置"><span class="toc-number">3.3.</span> <span class="toc-text">map task配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reduce-task配置"><span class="toc-number">3.4.</span> <span class="toc-text">reduce task配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MapReduce配置合理性检查"><span class="toc-number">3.5.</span> <span class="toc-text">MapReduce配置合理性检查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#YARN和MapReduce配置参数总结"><span class="toc-number">4.</span> <span class="toc-text">YARN和MapReduce配置参数总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2019 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2019/11/08/历史拉链表实战/" target="_blank">历史拉链表实战</a></li><li><a href="https://jiamaoxiang.top/2019/10/29/记一道Hive-SQL面试题/" target="_blank">记一道Hive SQL面试题</a></li><li><a href="https://jiamaoxiang.top/2019/10/23/Flink运行架构剖析/" target="_blank">Flink运行架构剖析</a></li><li><a href="https://jiamaoxiang.top/2019/10/15/经典Hive-SQL面试题/" target="_blank">经典Hive-SQL面试题</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2019/12/03/CDH集群之YARN性能调优/">https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/" data-id="ck3pho7j0001stc7qgpueaeal" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACvUlEQVR42u3ay2ojQQwFUP//T2dgVoFx7HulqiQDp1eN6UedDkgVSY9HfHz8PT6ff/7l9V1fXf8RHO0bhwceHh7eaOn5C14vN1nQv1fmK8zXjIeHh3ebN0sGyb2vF5qD22vw8PDwfgMvSRLJ1nlPwsPDw/u/eMl2PC9qbAoieHh4eD/La8N9XizIE0abVA7XWvDw8PBi3iYo/9T59f4eHh4e3qir3m6UZ9vuvEBcrxYPDw/vAi8vsybFixZ/9o3Ffwx4eHh4C15eMkhemaeTttjRNt6e5D08PDy8Q7x9SSIvwuaBvh2NzTf3eHh4eKd4eZB9zdvXkmef401iwMPDw7vAS25Iwndbcs3HDmYrxMPDw/seXt4Amy3iVNrIx7Pw8PDwzvLa8dC8nJq3uzbb9zepAg8PD+8Cr00Jr8sE7ba4HbTaPAcPDw/vFG8WmmftsVniWfXu8PDw8C7w8iCbJ4nZJrstfMwGxfDw8PD2vLb5tA/07SxYMkzw5frx8PDwLvBuNMBmIX62Hc9TBR4eHt4pXhJ2Zw2wNiW0Hze6Hg8PD+8aLw/Qs1fmA1hJmTgvauDh4eHd4yUl2uhxi5Jum5ZW8614eHh4C96mUDt7QjsoMJwgw8PDw/sWXh7u2xGofXMr39B/CcbDw8M7yju7wW0/U/ucOs3g4eHhHeXNihF5qsi3xZuPe7iMi4eHh7fmfZRHsYsffZQi8eDh4eFd4G1aYu0Y1uzJm94WHh4e3g3eLOjP0kn7mdpnPrkLDw8P7wKvDbvt+alf2ncNh7Hw8PDwYl6bDPKQnW/ZT41/FTMReHh4eGtemwza9v+mdPvYHHh4eHg/ystLrvsr25bYgcSAh4eHd42XlGXzRe+f9ubPgIeHh3eNt2//b9pp+aLr4QM8PDy8C7xZA2w2TJCXOTbp6kB/Dw8PD+/59X8AAa5zqL1wTe4AAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/CDH-YARN/">CDH,YARN</a></div><div class="post-nav"><a class="next" href="/2019/11/08/历史拉链表实战/">历史拉链表实战</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#集群配置"><span class="toc-number">1.</span> <span class="toc-text">集群配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#工作主机的配置"><span class="toc-number">1.1.</span> <span class="toc-text">工作主机的配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工作主机安装组件配置"><span class="toc-number">1.2.</span> <span class="toc-text">工作主机安装组件配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集群大小"><span class="toc-number">1.3.</span> <span class="toc-text">集群大小</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#YARN配置"><span class="toc-number">2.</span> <span class="toc-text">YARN配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#YARN-NodeManager配置属性"><span class="toc-number">2.1.</span> <span class="toc-text">YARN NodeManager配置属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证YARN的配置"><span class="toc-number">2.2.</span> <span class="toc-text">验证YARN的配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#YARN的container配置"><span class="toc-number">2.3.</span> <span class="toc-text">YARN的container配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集群资源分配估计"><span class="toc-number">2.4.</span> <span class="toc-text">集群资源分配估计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#container合理配置检查"><span class="toc-number">2.5.</span> <span class="toc-text">container合理配置检查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce配置"><span class="toc-number">3.</span> <span class="toc-text">MapReduce配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationMaster配置"><span class="toc-number">3.1.</span> <span class="toc-text">ApplicationMaster配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#堆与容器大小之比"><span class="toc-number">3.2.</span> <span class="toc-text">堆与容器大小之比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map-task配置"><span class="toc-number">3.3.</span> <span class="toc-text">map task配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reduce-task配置"><span class="toc-number">3.4.</span> <span class="toc-text">reduce task配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MapReduce配置合理性检查"><span class="toc-number">3.5.</span> <span class="toc-text">MapReduce配置合理性检查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#YARN和MapReduce配置参数总结"><span class="toc-number">4.</span> <span class="toc-text">YARN和MapReduce配置参数总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2019 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
 if (search_path.length == 0) {
    search_path = 'search.xml';
 }
