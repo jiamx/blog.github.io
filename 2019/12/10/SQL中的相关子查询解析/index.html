@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>SQL中的相关子查询解析 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">SQL中的相关子查询解析</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">SQL中的相关子查询解析</h1><div class="post-meta">Dec 10, 2019<span> | </span><span class="category"><a href="/categories/SQL/">SQL</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 551</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 2</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><a id="more"></a>
+
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>在SQL语言中，一个SELECT-FROM-WHERE语句称为一个查询块。讲一个查询块嵌套在另一个查询块的WHERE子句或者HAVing短语的条件中的查询称为嵌套查询。其中上层查询块称为外层查询或者父查询，下层查询称为内查询或者子查询。</p>
+<p>根据子查询是否依赖于父查询，可以分为不相关子查询和相关子查询。其中子查询的查询条件不依赖于父查询，称为不相关子查询，如果子查询的查询条件依赖于父查询，则这类子查询称之为相关子查询。</p>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h3><table>
+<thead>
+<tr>
+<th align="center">学号</th>
+<th align="center">课程号</th>
+<th align="center">成绩</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">201215121</td>
+<td align="center">1</td>
+<td align="center">92</td>
+</tr>
+<tr>
+<td align="center">201215121</td>
+<td align="center">2</td>
+<td align="center">85</td>
+</tr>
+<tr>
+<td align="center">201215121</td>
+<td align="center">3</td>
+<td align="center">88</td>
+</tr>
+<tr>
+<td align="center">201215122</td>
+<td align="center">2</td>
+<td align="center">90</td>
+</tr>
+<tr>
+<td align="center">201215122</td>
+<td align="center">3</td>
+<td align="center">80</td>
+</tr>
+</tbody></table>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Create</span> <span class="keyword">table</span> <span class="keyword">If</span> <span class="keyword">Not</span> <span class="keyword">Exists</span> SC (Sno <span class="built_in">char</span>(<span class="number">9</span>), Cno <span class="built_in">char</span>(<span class="number">4</span>),Grade <span class="built_in">SMALLINT</span>);</span><br><span class="line"><span class="keyword">Truncate</span> <span class="keyword">table</span> SC;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span> (<span class="string">'201215121'</span>,<span class="string">'1'</span>, <span class="number">92</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span> (<span class="string">'201215121'</span>,<span class="string">'2'</span>, <span class="number">85</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span> (<span class="string">'201215121'</span>,<span class="string">'3'</span>, <span class="number">88</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span> (<span class="string">'201215122'</span>,<span class="string">'2'</span>,<span class="number">90</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span> (<span class="string">'201215122'</span>,<span class="string">'3'</span>,<span class="number">80</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><ul>
+<li>找出每个学生超过他自己选修课程平均分的课程号</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Sno,Cno </span><br><span class="line"><span class="keyword">FROM</span> SC x </span><br><span class="line"><span class="keyword">WHERE</span> Grade &gt;= ( <span class="keyword">SELECT</span> <span class="keyword">avg</span>( Grade )</span><br><span class="line">                 <span class="keyword">FROM</span> SC y </span><br><span class="line">				<span class="keyword">WHERE</span> y.Sno = x.Sno )</span><br></pre></td></tr></table></figure>
+
+<p>x是SC的别名，又称为元祖变量，可以用来表示SC的一个元祖。内层查询时求一个学生所有选修课程的平均成绩的，至于是哪一个学生的平均成绩要看参数<code>x.Sno</code>的值，而该值是与父查询相关的，因此这类查询称之为相关子查询。</p>
+<p>这个语句的一种可能执行过程采用以下三个步骤。</p>
+<p>1.从外层查询中取出SC的一个元祖x，将元祖x的Sno值(201215121)传送给内层查询。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">AVG</span>(Grade)</span><br><span class="line"><span class="keyword">FROM</span>  SC y</span><br><span class="line"><span class="keyword">WHERE</span> y.Sno=<span class="string">'201215121'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>2.执行内层查询，得到值88(近似值)，用该值代替内层查询，得到外层查询：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Sno,Cno</span><br><span class="line"><span class="keyword">FROM</span>  SC x</span><br><span class="line"><span class="keyword">WHERE</span> Grade &gt; <span class="number">88</span>;</span><br></pre></td></tr></table></figure>
+
+<p>3.执行这个查询，得到 (201215121,1)</p>
+<p>然后外层查询取出下一个元祖重复上述1至2步骤的处理，直到外层的SC元祖全部处理完毕。</p>
+<hr>
+<ul>
+<li><p><strong>reference</strong></p>
+<p>[1]王珊, 萨师煊. 数据库系统概论(第5版)</p>
+</li>
+</ul>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2019/12/09/LeeCode数据库部分题目汇总/" target="_blank">LeeCode数据库部分题目汇总</a></li><li><a href="https://jiamaoxiang.top/2019/12/05/电商业务常用指标分析之SQL实现/" target="_blank">电商业务常用指标分析之SQL实现</a></li><li><a href="https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/" target="_blank">CDH集群之YARN性能调优</a></li><li><a href="https://jiamaoxiang.top/2019/11/08/历史拉链表实战/" target="_blank">历史拉链表实战</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2019/12/10/SQL中的相关子查询解析/">https://jiamaoxiang.top/2019/12/10/SQL中的相关子查询解析/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2019/12/10/SQL中的相关子查询解析/" data-id="ck3zghjj9000peo7q436fhvgv" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrElEQVR42u3aQY4iMQwFUO5/6e7tSC1S33aMGOllhaCoygtSYmy/XvH4+TOSa87jfOfzty4PPDw8vPHUzw/79513r3tXJuB8znh4eHjbvHc76vma8z7cw+dLc54zHh4e3vfwkiPk3Z1zTH5I4OHh4f1fvN5xcj5meguHh4eH93ledbs/pxL2Ug+LuRY8PDy8mJenGL7n9Up9Dw8PD29cVe8V9fP2gnn642G2eHh4eAu8fMOt4pPvThITefkNDw8Pb4M32ZSrZar8SOgdVFGuGg8PD2/Ayyda3og/Ei4/PB0PDw9vgTcPeXvFrbwN68LBg4eHh3eVl19aTTHkTQZJMqK3KHh4eHgbvGTbPW/HvcfnsPw+DwUwPDw8vEu86mY9aSaovk4W7uEYw8PDw/sIbxIuJ3e7G3A/3AcPDw9vjVdN4OYHQK88Nm/zwsPDw9vjVTfcqJ62sIi9mePh4eHt8XrNAZNAuZr+SJ44+inx8PDwYl41IM5LVnmSt9wKkFPx8PDwFni9AlX1YKiOPFURLQ0eHh7eAm9SyM/xvQRxtUFhFF7j4eHhDXi9gLsaWFdLZb2AHg8PD+/zvEki9e77kxYxPDw8vLu8XgNT3hBQvbKXFinnWvDw8PDGvGRC1YB4gpkkfPHw8PA+yUuC3Wrgm6c5qs+N7oOHh4e3xqs2SPW2+DxMr6ZuC/8Y8PDw8C7xJmmI6qSrydlXPN7mp/Hw8PAu8X6KoxevztsL8k+jTDMeHh7egFfdcKvNBL007q0UMB4eHt4eLy90TdK4veOnemyUA2s8PDy8AW9SfOpt7vPUQxRM4+Hh4X0Zr1esmiQsymU2PDw8vC/g3WLkxbPeAuHh4eFt85KpTBoFqp/2yl3lKh8eHh5ei9f7w5+Huck7yfKttw7g4eHhPc/nFwGX+T7nxAQcAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/SQL/">SQL</a></div><div class="post-nav"><a class="next" href="/2019/12/09/LeeCode数据库部分题目汇总/">LeeCode数据库部分题目汇总</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义"><span class="toc-number">1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#案例"><span class="toc-number">2.</span> <span class="toc-text">案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备"><span class="toc-number">2.1.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分析"><span class="toc-number">2.2.</span> <span class="toc-text">分析</span></a></li></ol></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2019 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
