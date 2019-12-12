@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2019-12-12T05:20:17.929Z</updated>
+  <updated>2019-12-12T05:24:39.067Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -21,17 +21,11 @@
     <link href="https://jiamaoxiang.top/2019/12/10/SQL%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%85%B3%E5%AD%90%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90/"/>
     <id>https://jiamaoxiang.top/2019/12/10/SQL中的相关子查询解析/</id>
     <published>2019-12-10T05:18:59.000Z</published>
-    <updated>2019-12-12T05:20:17.929Z</updated>
+    <updated>2019-12-12T05:24:39.067Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          
-        
-      
+      &lt;p&gt;分步骤解析SQL的相关子查询&lt;/p&gt;
     
     </summary>
     
@@ -119,20 +113,6 @@
     
     
       <category term="数据仓库" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>记一道Hive SQL面试题</title>
-    <link href="https://jiamaoxiang.top/2019/10/29/%E8%AE%B0%E4%B8%80%E9%81%93Hive-SQL%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
-    <id>https://jiamaoxiang.top/2019/10/29/记一道Hive-SQL面试题/</id>
-    <published>2019-10-29T13:39:04.000Z</published>
-    <updated>2019-10-29T13:39:04.784Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
     
   </entry>
   
@@ -426,6 +406,32 @@
     <id>https://jiamaoxiang.top/2019/08/19/DataStream-API简介/</id>
     <published>2019-08-19T05:09:27.000Z</published>
     <updated>2019-08-26T02:04:36.802Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Flink自学系列教程之--Flink的几个重要概念(一)</title>
+    <link href="https://jiamaoxiang.top/2019/08/19/Flink%E7%9A%84%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5/"/>
+    <id>https://jiamaoxiang.top/2019/08/19/Flink的几个重要概念/</id>
+    <published>2019-08-19T05:09:03.000Z</published>
+    <updated>2019-08-26T02:04:41.175Z</updated>
     
     <summary type="html">
     

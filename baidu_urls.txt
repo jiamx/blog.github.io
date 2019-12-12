@@ -3,7 +3,6 @@ https://jiamaoxiang.top/2019/12/09/LeeCode数据库部分题目汇总/
 https://jiamaoxiang.top/2019/12/05/电商业务常用指标分析之SQL实现/
 https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/
 https://jiamaoxiang.top/2019/11/08/历史拉链表实战/
-https://jiamaoxiang.top/2019/10/29/记一道Hive-SQL面试题/
 https://jiamaoxiang.top/2019/10/23/Flink运行架构剖析/
 https://jiamaoxiang.top/2019/10/15/经典Hive-SQL面试题/
 https://jiamaoxiang.top/2019/09/26/Flink的Window-Function介绍/
