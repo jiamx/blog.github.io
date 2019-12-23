@@ -4,7 +4,7 @@
   hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
   var s = document.getElementsByTagName("script")[0];
   s.parentNode.insertBefore(hm, s);
-  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">LeeCode数据库部分题目汇总</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">LeeCode数据库部分题目汇总</h1><div class="post-meta">Dec 9, 2019<span> | </span><span class="category"><a href="/categories/LeeCode/">LeeCode</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 2.1k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 10</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>LeeCode数据库部分SQL题目总结</p>
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">LeeCode数据库部分题目汇总</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">LeeCode数据库部分题目汇总</h1><div class="post-meta">Dec 9, 2019<span> | </span><span class="category"><a href="/categories/LeeCode/">LeeCode</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 3.3k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 17</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>LeeCode数据库部分SQL题目总结</p>
 <a id="more"></a>
 
 <h2 id="176-第二高的薪水"><a href="#176-第二高的薪水" class="headerlink" title="176. 第二高的薪水"></a>176. 第二高的薪水</h2><h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>编写一个 SQL 查询，获取 Employee 表中第二高的薪水（Salary）</p>
@@ -547,7 +547,294 @@
 
 <h3 id="SQL语句-8"><a href="#SQL语句-8" class="headerlink" title="SQL语句"></a>SQL语句</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> p1.* </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	Person p1,</span><br><span class="line">	Person p2 </span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">	p1.Email = p2.Email </span><br><span class="line">	<span class="keyword">AND</span> p1.Id &gt; p2.Id</span><br></pre></td></tr></table></figure>
 
-</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2019/12/10/SQL中的相关子查询解析/" target="_blank">SQL中的相关子查询解析</a></li><li><a href="https://jiamaoxiang.top/2019/12/05/电商业务常用指标分析之SQL实现/" target="_blank">电商业务常用指标分析之SQL实现</a></li><li><a href="https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/" target="_blank">CDH集群之YARN性能调优</a></li><li><a href="https://jiamaoxiang.top/2019/11/08/历史拉链表实战/" target="_blank">历史拉链表实战</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2019/12/09/LeeCode数据库部分题目汇总/">https://jiamaoxiang.top/2019/12/09/LeeCode数据库部分题目汇总/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2019/12/09/LeeCode数据库部分题目汇总/" data-id="ck47zvqot001qhg7qh5a5lqzh" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACw0lEQVR42u3aQXLCMAwFUO5/aTrTVTs05kuyUxYvKwaoyfMiVr/0eMTX8/v6+Xr9zuv7r5/mv/X6evOFh4eH17r1q2t9o2vAes31xlW/ebmJeHh4eMd4vQd0chPJY/1q45KV31jw8PDw/pW3Lo57nyYFd4LHw8PD+2Resui6BO9tCh4eHt6n8ZIwohox5PFENcg4krXg4eHhxbxdTak7Xx/v7+Hh4eG1uurV9tWuIntyb7/Wx8PDwzvA6zXve5HuvKG1LqyjrAUPDw9vzKve6CRiGEWx8RESZcB4eHh4A16+RLUlNj9IqqV5FFjg4eHhjXnzACJvTU1I+eY2sxY8PDy8mJfHB9Vyee8h0dtoPDw8vBO8SYurF2dUH/1Jef0mn8bDw8PbyusFtdXH9yh4LbboCpEEHh4eXos3HxToPeLzUKPXHsPDw8O7h7e+rSSMOFGCV4+oyxMPDw8PbxNvErbmMUGyft5Ia85E4OHh4W3i9W4rP0KqEW1vcOFNAwwPDw/vAG8yGpW3qXYdA/mIAx4eHt4J3qQxn4cC843oHWN4eHh453i9gYA8up1EvfkAweX6eHh4eFt5k+ghL3bnray8oMfDw8O7h1f95z/fiHzEqnpIRN/Ew8PDO8yrFsF5CDspoyfDB3h4eHj38JLmfX489EYBekX2ZcqCh4eHt5WXRK7Vx3q5qV+MaJPRKzw8PLxzvPnQVRVcbfz3DhI8PDy8c7z8moSzeXk9ucX8HwA8PDy8Ce9ZvHrVer7CZLAADw8P7x7e5GDIh66qBXd1K3vRMx4eHt6EVx292tXQmg8NNBMXPDw8vE28XtDQixLyoLYaQ/zxt3h4eHgfxstL7V7Z3RtB2HYw4OHh4Y15+fM2L7Xz8r33u3h4eHjnePlPTors6pjXvG2Gh4eHd4JXbYDljahevNsbz9o2OoCHh4e3WvML+i/aT+oIFRgAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/LeeCode/">LeeCode</a></div><div class="post-nav"><a class="pre" href="/2019/12/10/SQL中的相关子查询解析/">SQL中的相关子查询解析</a><a class="next" href="/2019/12/05/电商业务常用指标分析之SQL实现/">电商业务常用指标分析之SQL实现</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#176-第二高的薪水"><span class="toc-number">1.</span> <span class="toc-text">176. 第二高的薪水</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述"><span class="toc-number">1.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备"><span class="toc-number">1.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句"><span class="toc-number">1.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#178-分数排名"><span class="toc-number">2.</span> <span class="toc-text">178.分数排名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-1"><span class="toc-number">2.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-1"><span class="toc-number">2.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-1"><span class="toc-number">2.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#180-连续出现的数字"><span class="toc-number">3.</span> <span class="toc-text">180. 连续出现的数字</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-2"><span class="toc-number">3.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-2"><span class="toc-number">3.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-2"><span class="toc-number">3.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#181-超过经理收入的员工"><span class="toc-number">4.</span> <span class="toc-text">181. 超过经理收入的员工</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-3"><span class="toc-number">4.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-3"><span class="toc-number">4.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-3"><span class="toc-number">4.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#182-查找重复的电子邮箱"><span class="toc-number">5.</span> <span class="toc-text">182. 查找重复的电子邮箱</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-4"><span class="toc-number">5.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-4"><span class="toc-number">5.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-4"><span class="toc-number">5.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#183-从不订购的客户"><span class="toc-number">6.</span> <span class="toc-text">183. 从不订购的客户</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-5"><span class="toc-number">6.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-5"><span class="toc-number">6.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-5"><span class="toc-number">6.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#184-部门工资最高的员工"><span class="toc-number">7.</span> <span class="toc-text">184. 部门工资最高的员工</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-6"><span class="toc-number">7.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-6"><span class="toc-number">7.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-6"><span class="toc-number">7.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#185-部门工资前三高的所有员工"><span class="toc-number">8.</span> <span class="toc-text">185.部门工资前三高的所有员工</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-7"><span class="toc-number">8.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-7"><span class="toc-number">8.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-7"><span class="toc-number">8.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#196-删除重复的邮箱"><span class="toc-number">9.</span> <span class="toc-text">196.删除重复的邮箱</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-8"><span class="toc-number">9.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-8"><span class="toc-number">9.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-8"><span class="toc-number">9.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2019 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+<h2 id="197-上升的温度"><a href="#197-上升的温度" class="headerlink" title="197.上升的温度"></a>197.上升的温度</h2><h3 id="描述-9"><a href="#描述-9" class="headerlink" title="描述"></a>描述</h3><p>给定一个 Weather 表，编写一个 SQL 查询，来查找与之前（昨天的）日期相比温度更高的所有日期的 Id。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Id(INT)</th>
+<th align="center">RecordDate(DATE)</th>
+<th align="center">Temperature(INT)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">2015-01-01</td>
+<td align="center">10</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">2015-01-02</td>
+<td align="center">25</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">2015-01-03</td>
+<td align="center">20</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">2015-01-04</td>
+<td align="center">30</td>
+</tr>
+</tbody></table>
+<p>例如，根据上述给定的 Weather 表格，返回如下 Id:</p>
+<table>
+<thead>
+<tr>
+<th align="center">id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">4</td>
+</tr>
+</tbody></table>
+<h3 id="数据准备-9"><a href="#数据准备-9" class="headerlink" title="数据准备"></a>数据准备</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Create</span> <span class="keyword">table</span> <span class="keyword">If</span> <span class="keyword">Not</span> <span class="keyword">Exists</span> Weather (<span class="keyword">Id</span> <span class="built_in">int</span>, <span class="built_in">Date</span> <span class="built_in">date</span>, Temperature <span class="built_in">int</span>);</span><br><span class="line"><span class="keyword">Truncate</span> <span class="keyword">table</span> Weather;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Weather (<span class="keyword">Id</span>, <span class="built_in">Date</span>, Temperature) <span class="keyword">values</span> (<span class="string">'1'</span>, <span class="string">'2015-01-01'</span>, <span class="string">'10'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Weather (<span class="keyword">Id</span>, <span class="built_in">Date</span>, Temperature) <span class="keyword">values</span> (<span class="string">'2'</span>, <span class="string">'2015-01-02'</span>, <span class="string">'25'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Weather (<span class="keyword">Id</span>, <span class="built_in">Date</span>, Temperature) <span class="keyword">values</span> (<span class="string">'3'</span>, <span class="string">'2015-01-03'</span>, <span class="string">'20'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Weather (<span class="keyword">Id</span>, <span class="built_in">Date</span>, Temperature) <span class="keyword">values</span> (<span class="string">'4'</span>, <span class="string">'2015-01-04'</span>, <span class="string">'30'</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="SQL语句-9"><a href="#SQL语句-9" class="headerlink" title="SQL语句"></a>SQL语句</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">	a.Id </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	Weather a</span><br><span class="line">	<span class="keyword">JOIN</span> Weather b <span class="keyword">ON</span> <span class="keyword">DATEDIFF</span>(a.RecordDate,b.RecordDate) = <span class="number">1</span></span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">	a.Temperature &gt; b.Temperature</span><br></pre></td></tr></table></figure>
+
+<h2 id="262-行程与用户"><a href="#262-行程与用户" class="headerlink" title="262.行程与用户"></a>262.行程与用户</h2><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>Trips 表中存所有出租车的行程信息。每段行程有唯一键 Id，Client_Id 和 Driver_Id 是 Users 表中 Users_Id 的外键。Status 是枚举类型，枚举成员为 (‘completed’, ‘cancelled_by_driver’, ‘cancelled_by_client’)。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Id</th>
+<th align="center">Client_Id</th>
+<th align="center">Driver_Id</th>
+<th align="center">City_Id</th>
+<th align="center">Status</th>
+<th align="center">Request_at</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">10</td>
+<td align="center">1</td>
+<td align="center">completed</td>
+<td align="center">2013-10-01</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">11</td>
+<td align="center">1</td>
+<td align="center">cancelled_by_driver</td>
+<td align="center">2013-10-01</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">12</td>
+<td align="center">6</td>
+<td align="center">cancelled</td>
+<td align="center">2013-10-01</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">4</td>
+<td align="center">13</td>
+<td align="center">6</td>
+<td align="center">cancelled_by_client</td>
+<td align="center">2013-10-01</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">1</td>
+<td align="center">10</td>
+<td align="center">1</td>
+<td align="center">completed</td>
+<td align="center">2013-10-02</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">2</td>
+<td align="center">11</td>
+<td align="center">6</td>
+<td align="center">completed</td>
+<td align="center">2013-10-02</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">3</td>
+<td align="center">12</td>
+<td align="center">6</td>
+<td align="center">completed</td>
+<td align="center">2013-10-02</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="center">2</td>
+<td align="center">12</td>
+<td align="center">12</td>
+<td align="center">completed</td>
+<td align="center">2013-10-03</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center">3</td>
+<td align="center">10</td>
+<td align="center">12</td>
+<td align="center">completed</td>
+<td align="center">2013-10-03</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">4</td>
+<td align="center">13</td>
+<td align="center">12</td>
+<td align="center">cancelled_by_driver</td>
+<td align="center">2013-10-03</td>
+</tr>
+</tbody></table>
+<p>Users 表存所有用户。每个用户有唯一键 Users_Id。Banned 表示这个用户是否被禁止，Role 则是一个表示（‘client’, ‘driver’, ‘partner’）的枚举类型。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Users_Id</th>
+<th align="center">Banned</th>
+<th align="center">Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">No</td>
+<td align="center">client</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">Yes</td>
+<td align="center">client</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">No</td>
+<td align="center">client</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">No</td>
+<td align="center">client</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">No</td>
+<td align="center">driver</td>
+</tr>
+<tr>
+<td align="center">11</td>
+<td align="center">No</td>
+<td align="center">driver</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="center">No</td>
+<td align="center">driver</td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td align="center">No</td>
+<td align="center">driver</td>
+</tr>
+</tbody></table>
+<p>写一段 SQL 语句查出 2013年10月1日 至 2013年10月3日 期间非禁止用户的取消率。基于上表，你的 SQL 语句应返回如下结果，取消率（Cancellation Rate）保留两位小数。</p>
+<p>取消率的计算方式如下：(被司机或乘客取消的非禁止用户生成的订单数量) / (非禁止用户生成的订单总数)</p>
+<table>
+<thead>
+<tr>
+<th align="center">Day</th>
+<th align="center">Cancellation Rate</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">2013-10-01</td>
+<td align="center">0.33</td>
+</tr>
+<tr>
+<td align="center">2013-10-02</td>
+<td align="center">0.00</td>
+</tr>
+<tr>
+<td align="center">2013-10-03</td>
+<td align="center">0.50</td>
+</tr>
+</tbody></table>
+<h3 id="数据准备-10"><a href="#数据准备-10" class="headerlink" title="数据准备"></a>数据准备</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Create</span> <span class="keyword">table</span> <span class="keyword">If</span> <span class="keyword">Not</span> <span class="keyword">Exists</span> Trips (<span class="keyword">Id</span> <span class="built_in">int</span>, Client_Id <span class="built_in">int</span>, Driver_Id <span class="built_in">int</span>,</span><br><span class="line">City_Id <span class="built_in">int</span>, <span class="keyword">Status</span> ENUM(<span class="string">'completed'</span>, <span class="string">'cancelled_by_driver'</span>, <span class="string">'cancelled_by_client'</span>),</span><br><span class="line">Request_at <span class="built_in">varchar</span>(<span class="number">50</span>));</span><br><span class="line"><span class="keyword">Create</span> <span class="keyword">table</span> <span class="keyword">If</span> <span class="keyword">Not</span> <span class="keyword">Exists</span> <span class="keyword">Users</span> (Users_Id <span class="built_in">int</span>,</span><br><span class="line">Banned <span class="built_in">varchar</span>(<span class="number">50</span>), <span class="keyword">Role</span> ENUM(<span class="string">'client'</span>, <span class="string">'driver'</span>, <span class="string">'partner'</span>));</span><br><span class="line"><span class="keyword">Truncate</span> <span class="keyword">table</span> Trips;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'1'</span>, <span class="string">'1'</span>, <span class="string">'10'</span>, <span class="string">'1'</span>, <span class="string">'completed'</span>, <span class="string">'2013-10-01'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'2'</span>, <span class="string">'2'</span>, <span class="string">'11'</span>, <span class="string">'1'</span>, <span class="string">'cancelled_by_driver'</span>, <span class="string">'2013-10-01'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'3'</span>, <span class="string">'3'</span>, <span class="string">'12'</span>, <span class="string">'6'</span>, <span class="string">'completed'</span>, <span class="string">'2013-10-01'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'4'</span>, <span class="string">'4'</span>, <span class="string">'13'</span>, <span class="string">'6'</span>, <span class="string">'cancelled_by_client'</span>, <span class="string">'2013-10-01'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'5'</span>, <span class="string">'1'</span>, <span class="string">'10'</span>, <span class="string">'1'</span>, <span class="string">'completed'</span>, <span class="string">'2013-10-02'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'6'</span>, <span class="string">'2'</span>, <span class="string">'11'</span>, <span class="string">'6'</span>, <span class="string">'completed'</span>, <span class="string">'2013-10-02'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'7'</span>, <span class="string">'3'</span>, <span class="string">'12'</span>, <span class="string">'6'</span>, <span class="string">'completed'</span>, <span class="string">'2013-10-02'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'8'</span>, <span class="string">'2'</span>, <span class="string">'12'</span>, <span class="string">'12'</span>, <span class="string">'completed'</span>, <span class="string">'2013-10-03'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'9'</span>, <span class="string">'3'</span>, <span class="string">'10'</span>, <span class="string">'12'</span>, <span class="string">'completed'</span>, <span class="string">'2013-10-03'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Trips (<span class="keyword">Id</span>, Client_Id, Driver_Id, City_Id, <span class="keyword">Status</span>,</span><br><span class="line">Request_at) <span class="keyword">values</span> (<span class="string">'10'</span>, <span class="string">'4'</span>, <span class="string">'13'</span>, <span class="string">'12'</span>, <span class="string">'cancelled_by_driver'</span>, <span class="string">'2013-10-03'</span>);</span><br><span class="line"><span class="keyword">Truncate</span> <span class="keyword">table</span> <span class="keyword">Users</span>;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">Users</span> (Users_Id, Banned, <span class="keyword">Role</span>) <span class="keyword">values</span> (<span class="string">'1'</span>, <span class="string">'No'</span>, <span class="string">'client'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">Users</span> (Users_Id, Banned, <span class="keyword">Role</span>) <span class="keyword">values</span> (<span class="string">'2'</span>, <span class="string">'Yes'</span>, <span class="string">'client'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">Users</span> (Users_Id, Banned, <span class="keyword">Role</span>) <span class="keyword">values</span> (<span class="string">'3'</span>, <span class="string">'No'</span>, <span class="string">'client'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">Users</span> (Users_Id, Banned, <span class="keyword">Role</span>) <span class="keyword">values</span> (<span class="string">'4'</span>, <span class="string">'No'</span>, <span class="string">'client'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">Users</span> (Users_Id, Banned, <span class="keyword">Role</span>) <span class="keyword">values</span> (<span class="string">'10'</span>, <span class="string">'No'</span>, <span class="string">'driver'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">Users</span> (Users_Id, Banned, <span class="keyword">Role</span>) <span class="keyword">values</span> (<span class="string">'11'</span>, <span class="string">'No'</span>, <span class="string">'driver'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">Users</span> (Users_Id, Banned, <span class="keyword">Role</span>) <span class="keyword">values</span> (<span class="string">'12'</span>, <span class="string">'No'</span>, <span class="string">'driver'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">Users</span> (Users_Id, Banned, <span class="keyword">Role</span>) <span class="keyword">values</span> (<span class="string">'13'</span>, <span class="string">'No'</span>, <span class="string">'driver'</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="SQL语句-10"><a href="#SQL语句-10" class="headerlink" title="SQL语句"></a>SQL语句</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 方法1：</span></span><br><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">	temp1.Request_at <span class="keyword">AS</span> <span class="keyword">DAY</span>,</span><br><span class="line"><span class="keyword">IF</span></span><br><span class="line">	(</span><br><span class="line">	<span class="keyword">cast</span>( ( temp2.cancelled_order / temp1.total_order ) <span class="keyword">AS</span> <span class="built_in">DECIMAL</span> ( <span class="number">3</span>, <span class="number">2</span> ) ) <span class="keyword">IS</span> <span class="literal">NULL</span>,</span><br><span class="line">	<span class="number">0.00</span>,</span><br><span class="line">	<span class="keyword">cast</span>( ( temp2.cancelled_order / temp1.total_order ) <span class="keyword">AS</span> <span class="built_in">DECIMAL</span> ( <span class="number">3</span>, <span class="number">2</span> ) ) </span><br><span class="line">	) <span class="keyword">AS</span> <span class="string">'Cancellation Rate'</span> </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	(</span><br><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">	t1.Request_at,</span><br><span class="line">	<span class="keyword">count</span>( * ) <span class="keyword">AS</span> total_order </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	( <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Trips <span class="keyword">WHERE</span> Request_at &gt;= <span class="string">'2013-10-01'</span> <span class="keyword">AND</span> Request_at &lt;= <span class="string">'2013-10-03'</span> ) t1</span><br><span class="line">	<span class="keyword">JOIN</span> ( <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">Users</span> <span class="keyword">WHERE</span> Banned = <span class="string">'NO'</span> ) t2 <span class="keyword">ON</span> t1.Client_Id = t2.Users_Id </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span></span><br><span class="line">	t1.Request_at </span><br><span class="line">	) temp1</span><br><span class="line">	<span class="keyword">LEFT</span> <span class="keyword">JOIN</span> (</span><br><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">	t1.Request_at,</span><br><span class="line">	<span class="keyword">count</span>( * ) <span class="keyword">AS</span> cancelled_order </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	( <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Trips <span class="keyword">WHERE</span> Request_at &gt;= <span class="string">'2013-10-01'</span> <span class="keyword">AND</span> Request_at &lt;= <span class="string">'2013-10-03'</span> <span class="keyword">AND</span> ( <span class="keyword">STATUS</span> = <span class="string">'cancelled_by_driver'</span> <span class="keyword">OR</span> <span class="keyword">STATUS</span> = <span class="string">'cancelled_by_client'</span> ) ) t1</span><br><span class="line">	<span class="keyword">JOIN</span> ( <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">Users</span> <span class="keyword">WHERE</span> Banned = <span class="string">'NO'</span> ) t2 <span class="keyword">ON</span> t1.Client_Id = t2.Users_Id </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span></span><br><span class="line">	t1.Request_at </span><br><span class="line">	) temp2 <span class="keyword">ON</span> temp1.Request_at = temp2.Request_at</span><br><span class="line">	<span class="comment">-- ---------------------------------------------------------</span></span><br><span class="line">	<span class="comment"># 方法2：</span></span><br><span class="line">	<span class="keyword">SELECT</span></span><br><span class="line">	temp.request_at <span class="keyword">DAY</span>,</span><br><span class="line">	<span class="keyword">round</span>( <span class="keyword">sum</span>( <span class="keyword">CASE</span> temp.STATUS <span class="keyword">WHEN</span> <span class="string">'completed'</span> <span class="keyword">THEN</span> <span class="number">0</span> <span class="keyword">ELSE</span> <span class="number">1</span> <span class="keyword">END</span> ) / <span class="keyword">count</span>( temp.STATUS ), <span class="number">2</span> ) <span class="string">'Cancellation Rate'</span> </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	( <span class="keyword">SELECT</span> <span class="keyword">STATUS</span>, request_at <span class="keyword">FROM</span> trips t <span class="keyword">LEFT</span> <span class="keyword">JOIN</span> <span class="keyword">users</span> u <span class="keyword">ON</span> t.client_id = u.users_id <span class="keyword">WHERE</span> u.banned = <span class="string">'no'</span> ) temp </span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">	request_at <span class="keyword">BETWEEN</span> <span class="string">'2013-10-01'</span> </span><br><span class="line">	<span class="keyword">AND</span> <span class="string">'2013-10-03'</span> </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span></span><br><span class="line">	temp.request_at</span><br></pre></td></tr></table></figure>
+
+<h2 id="511-游戏玩家分析I"><a href="#511-游戏玩家分析I" class="headerlink" title="511.游戏玩家分析I"></a>511.游戏玩家分析I</h2><h3 id="描述-10"><a href="#描述-10" class="headerlink" title="描述"></a>描述</h3><p>找出每个玩家第一次登录的日期。Activity表如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">player_id</th>
+<th align="center">device_id</th>
+<th align="center">event_date</th>
+<th align="center">games_played</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">2016<strong>-</strong>03<strong>-</strong>01</td>
+<td align="center">5</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">2016-05-02</td>
+<td align="center">6</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">3</td>
+<td align="center"><strong>2017</strong>-<strong>06</strong>-25</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">1</td>
+<td align="center">2016-03-02</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">4</td>
+<td align="center">2018<strong>-</strong>07<strong>-</strong>03</td>
+<td align="center">5</td>
+</tr>
+</tbody></table>
+<p>结果Result表如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">player_id</th>
+<th align="center">first_login</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">2016-03-01</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">2017<strong>-</strong>06<strong>-</strong>25</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">2016-03-02</td>
+</tr>
+</tbody></table>
+<h3 id="数据准备-11"><a href="#数据准备-11" class="headerlink" title="数据准备"></a>数据准备</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Create</span> <span class="keyword">table</span> <span class="keyword">If</span> <span class="keyword">Not</span> <span class="keyword">Exists</span> activity(player_id <span class="built_in">int</span>,device_id <span class="built_in">int</span>,event_date <span class="built_in">date</span>,games_played <span class="built_in">int</span>);</span><br><span class="line"><span class="keyword">Truncate</span> <span class="keyword">table</span> activity;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> activity <span class="keyword">values</span> (<span class="number">1</span>,<span class="number">2</span>,<span class="string">'2016-03-01'</span>,<span class="number">5</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> activity <span class="keyword">values</span> (<span class="number">1</span>,<span class="number">2</span>,<span class="string">'2016-05-02'</span>,<span class="number">6</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> activity <span class="keyword">values</span> (<span class="number">2</span>,<span class="number">3</span>,<span class="string">'2017-06-25'</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> activity <span class="keyword">values</span> (<span class="number">3</span>,<span class="number">1</span>,<span class="string">'2016-03-02'</span>,<span class="number">0</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> activity <span class="keyword">values</span> (<span class="number">3</span>,<span class="number">4</span>,<span class="string">'2018-07-03'</span>,<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="SQL语句-11"><a href="#SQL语句-11" class="headerlink" title="SQL语句"></a>SQL语句</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> player_id,<span class="keyword">min</span>(event_date) first_login <span class="keyword">from</span> activity <span class="keyword">group</span> <span class="keyword">by</span> player_id ;</span><br></pre></td></tr></table></figure>
+
+<h2 id="512-游戏玩家分析II"><a href="#512-游戏玩家分析II" class="headerlink" title="512.  游戏玩家分析II"></a>512.  游戏玩家分析II</h2><h3 id="描述-11"><a href="#描述-11" class="headerlink" title="描述"></a>描述</h3><p>显示每个玩家首次登录的设备号(同时显示玩家ID)。</p>
+<h3 id="数据准备-12"><a href="#数据准备-12" class="headerlink" title="数据准备"></a>数据准备</h3><p>见511题</p>
+<h3 id="SQL语句-12"><a href="#SQL语句-12" class="headerlink" title="SQL语句"></a>SQL语句</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">	player_id,</span><br><span class="line">	device_id </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	activity </span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">	( player_id, event_date ) <span class="keyword">IN</span> ( <span class="keyword">SELECT</span> player_id, <span class="keyword">min</span>( event_date ) first_login <span class="keyword">FROM</span> activity <span class="keyword">GROUP</span> <span class="keyword">BY</span> player_id )</span><br></pre></td></tr></table></figure>
+
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2019/12/10/SQL中的相关子查询解析/" target="_blank">SQL中的相关子查询解析</a></li><li><a href="https://jiamaoxiang.top/2019/12/05/电商业务常用指标分析之SQL实现/" target="_blank">电商业务常用指标分析之SQL实现</a></li><li><a href="https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/" target="_blank">CDH集群之YARN性能调优</a></li><li><a href="https://jiamaoxiang.top/2019/11/08/历史拉链表实战/" target="_blank">历史拉链表实战</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2019/12/09/LeeCode数据库部分题目汇总/">https://jiamaoxiang.top/2019/12/09/LeeCode数据库部分题目汇总/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2019/12/09/LeeCode数据库部分题目汇总/" data-id="ck4htfw4b00267c7qp029l5yu" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACw0lEQVR42u3aQXLCMAwFUO5/aTrTVTs05kuyUxYvKwaoyfMiVr/0eMTX8/v6+Xr9zuv7r5/mv/X6evOFh4eH17r1q2t9o2vAes31xlW/ebmJeHh4eMd4vQd0chPJY/1q45KV31jw8PDw/pW3Lo57nyYFd4LHw8PD+2Resui6BO9tCh4eHt6n8ZIwohox5PFENcg4krXg4eHhxbxdTak7Xx/v7+Hh4eG1uurV9tWuIntyb7/Wx8PDwzvA6zXve5HuvKG1LqyjrAUPDw9vzKve6CRiGEWx8RESZcB4eHh4A16+RLUlNj9IqqV5FFjg4eHhjXnzACJvTU1I+eY2sxY8PDy8mJfHB9Vyee8h0dtoPDw8vBO8SYurF2dUH/1Jef0mn8bDw8PbyusFtdXH9yh4LbboCpEEHh4eXos3HxToPeLzUKPXHsPDw8O7h7e+rSSMOFGCV4+oyxMPDw8PbxNvErbmMUGyft5Ia85E4OHh4W3i9W4rP0KqEW1vcOFNAwwPDw/vAG8yGpW3qXYdA/mIAx4eHt4J3qQxn4cC843oHWN4eHh453i9gYA8up1EvfkAweX6eHh4eFt5k+ghL3bnray8oMfDw8O7h1f95z/fiHzEqnpIRN/Ew8PDO8yrFsF5CDspoyfDB3h4eHj38JLmfX489EYBekX2ZcqCh4eHt5WXRK7Vx3q5qV+MaJPRKzw8PLxzvPnQVRVcbfz3DhI8PDy8c7z8moSzeXk9ucX8HwA8PDy8Ce9ZvHrVer7CZLAADw8P7x7e5GDIh66qBXd1K3vRMx4eHt6EVx292tXQmg8NNBMXPDw8vE28XtDQixLyoLYaQ/zxt3h4eHgfxstL7V7Z3RtB2HYw4OHh4Y15+fM2L7Xz8r33u3h4eHjnePlPTors6pjXvG2Gh4eHd4JXbYDljahevNsbz9o2OoCHh4e3WvML+i/aT+oIFRgAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/LeeCode/">LeeCode</a></div><div class="post-nav"><a class="pre" href="/2019/12/10/SQL中的相关子查询解析/">SQL中的相关子查询解析</a><a class="next" href="/2019/12/05/电商业务常用指标分析之SQL实现/">电商业务常用指标分析之SQL实现</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#176-第二高的薪水"><span class="toc-number">1.</span> <span class="toc-text">176. 第二高的薪水</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述"><span class="toc-number">1.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备"><span class="toc-number">1.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句"><span class="toc-number">1.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#178-分数排名"><span class="toc-number">2.</span> <span class="toc-text">178.分数排名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-1"><span class="toc-number">2.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-1"><span class="toc-number">2.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-1"><span class="toc-number">2.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#180-连续出现的数字"><span class="toc-number">3.</span> <span class="toc-text">180. 连续出现的数字</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-2"><span class="toc-number">3.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-2"><span class="toc-number">3.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-2"><span class="toc-number">3.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#181-超过经理收入的员工"><span class="toc-number">4.</span> <span class="toc-text">181. 超过经理收入的员工</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-3"><span class="toc-number">4.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-3"><span class="toc-number">4.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-3"><span class="toc-number">4.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#182-查找重复的电子邮箱"><span class="toc-number">5.</span> <span class="toc-text">182. 查找重复的电子邮箱</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-4"><span class="toc-number">5.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-4"><span class="toc-number">5.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-4"><span class="toc-number">5.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#183-从不订购的客户"><span class="toc-number">6.</span> <span class="toc-text">183. 从不订购的客户</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-5"><span class="toc-number">6.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-5"><span class="toc-number">6.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-5"><span class="toc-number">6.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#184-部门工资最高的员工"><span class="toc-number">7.</span> <span class="toc-text">184. 部门工资最高的员工</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-6"><span class="toc-number">7.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-6"><span class="toc-number">7.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-6"><span class="toc-number">7.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#185-部门工资前三高的所有员工"><span class="toc-number">8.</span> <span class="toc-text">185.部门工资前三高的所有员工</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-7"><span class="toc-number">8.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-7"><span class="toc-number">8.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-7"><span class="toc-number">8.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#196-删除重复的邮箱"><span class="toc-number">9.</span> <span class="toc-text">196.删除重复的邮箱</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-8"><span class="toc-number">9.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-8"><span class="toc-number">9.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-8"><span class="toc-number">9.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#197-上升的温度"><span class="toc-number">10.</span> <span class="toc-text">197.上升的温度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-9"><span class="toc-number">10.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-9"><span class="toc-number">10.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-9"><span class="toc-number">10.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#262-行程与用户"><span class="toc-number">11.</span> <span class="toc-text">262.行程与用户</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目描述"><span class="toc-number">11.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-10"><span class="toc-number">11.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-10"><span class="toc-number">11.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#511-游戏玩家分析I"><span class="toc-number">12.</span> <span class="toc-text">511.游戏玩家分析I</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-10"><span class="toc-number">12.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-11"><span class="toc-number">12.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-11"><span class="toc-number">12.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#512-游戏玩家分析II"><span class="toc-number">13.</span> <span class="toc-text">512.  游戏玩家分析II</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#描述-11"><span class="toc-number">13.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据准备-12"><span class="toc-number">13.2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL语句-12"><span class="toc-number">13.3.</span> <span class="toc-text">SQL语句</span></a></li></ol></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2019 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
 if (search_path.length == 0) {
    search_path = 'search.xml';
 }
