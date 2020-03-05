@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-03-05T08:12:38.066Z</updated>
+  <updated>2020-03-05T08:17:13.155Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -21,17 +21,11 @@
     <link href="https://jiamaoxiang.top/2020/03/05/Canal-Kafka-QuickStart/"/>
     <id>https://jiamaoxiang.top/2020/03/05/Canal-Kafka-QuickStart/</id>
     <published>2020-03-05T06:46:45.000Z</published>
-    <updated>2020-03-05T08:12:38.066Z</updated>
+    <updated>2020-03-05T08:17:13.155Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          
-        
-      
+      &lt;p&gt;canal是阿里巴巴旗下的一款开源项目，纯Java开发。基于数据库增量日志解析，提供增量数据订阅&amp;amp;消费，目前主要支持了MySQL（也支持mariaDB）。&lt;/p&gt;
     
     </summary>
     
