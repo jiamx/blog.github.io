@@ -1,5 +1,6 @@
+https://jiamaoxiang.top/2020/03/24/基于Canal与Flink实现数据实时增量同步-二/
 https://jiamaoxiang.top/2020/03/22/分布式数据集成框架gobblin快速入门/
-https://jiamaoxiang.top/2020/03/05/Canal-Kafka-QuickStart/
+https://jiamaoxiang.top/2020/03/05/基于Canal与Flink实现数据实时增量同步-一/
 https://jiamaoxiang.top/2019/12/10/SQL中的相关子查询解析/
 https://jiamaoxiang.top/2019/12/09/LeeCode数据库部分题目汇总/
 https://jiamaoxiang.top/2019/12/05/电商业务常用指标分析之SQL实现/

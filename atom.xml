@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-03-22T12:50:45.632Z</updated>
+  <updated>2020-03-24T05:56:57.401Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,20 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于Canal与Flink实现数据实时增量同步(二)</title>
+    <link href="https://jiamaoxiang.top/2020/03/24/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%BA%8C/"/>
+    <id>https://jiamaoxiang.top/2020/03/24/基于Canal与Flink实现数据实时增量同步-二/</id>
+    <published>2020-03-24T05:56:57.000Z</published>
+    <updated>2020-03-24T05:56:57.401Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>分布式数据集成框架gobblin快速入门</title>
@@ -44,10 +58,10 @@
   
   <entry>
     <title>基于Canal与Flink实现数据实时增量同步(一)</title>
-    <link href="https://jiamaoxiang.top/2020/03/05/Canal-Kafka-QuickStart/"/>
-    <id>https://jiamaoxiang.top/2020/03/05/Canal-Kafka-QuickStart/</id>
+    <link href="https://jiamaoxiang.top/2020/03/05/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%B8%80/"/>
+    <id>https://jiamaoxiang.top/2020/03/05/基于Canal与Flink实现数据实时增量同步-一/</id>
     <published>2020-03-05T06:46:45.000Z</published>
-    <updated>2020-03-24T05:39:51.106Z</updated>
+    <updated>2020-03-24T05:56:07.115Z</updated>
     
     <summary type="html">
     
@@ -400,32 +414,6 @@
     <id>https://jiamaoxiang.top/2019/08/19/状态与容错/</id>
     <published>2019-08-19T05:09:53.000Z</published>
     <updated>2019-08-26T02:04:32.281Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flink自学系列教程之--基于时间的算子(三)</title>
-    <link href="https://jiamaoxiang.top/2019/08/19/%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E7%9A%84%E7%AE%97%E5%AD%90/"/>
-    <id>https://jiamaoxiang.top/2019/08/19/基于时间的算子/</id>
-    <published>2019-08-19T05:09:41.000Z</published>
-    <updated>2019-08-26T02:04:12.564Z</updated>
     
     <summary type="html">
     
