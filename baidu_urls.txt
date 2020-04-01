@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/03/31/Flink1-10集成Hive快速入门/
 https://jiamaoxiang.top/2020/03/30/Flink的八种分区策略源码解读/
 https://jiamaoxiang.top/2020/03/24/基于Canal与Flink实现数据实时增量同步-二/
 https://jiamaoxiang.top/2020/03/22/分布式数据集成框架gobblin快速入门/
