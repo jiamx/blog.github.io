@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://jiamaoxiang.top/2019/11/08/%E5%8E%86%E5%8F%B2%E6%8B%89%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/</loc>
+    
+    <lastmod>2020-04-08T05:12:33.547Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jiamaoxiang.top/2020/04/02/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BA%86%E8%A7%A3Flink-Kafka-connector%E5%90%97%EF%BC%9F/</loc>
+    
+    <lastmod>2020-04-06T08:29:24.546Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jiamaoxiang.top/2019/08/29/Impala%E4%BD%BF%E7%94%A8%E7%9A%84%E7%AB%AF%E5%8F%A3/</loc>
+    
+    <lastmod>2020-04-03T13:06:40.271Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jiamaoxiang.top/about/index.html</loc>
     
     <lastmod>2020-04-01T07:02:04.609Z</lastmod>
@@ -72,13 +93,6 @@
   </url>
   
   <url>
-    <loc>https://jiamaoxiang.top/2019/11/08/%E5%8E%86%E5%8F%B2%E6%8B%89%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/</loc>
-    
-    <lastmod>2019-11-08T11:26:07.696Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jiamaoxiang.top/2019/10/23/Flink%E8%BF%90%E8%A1%8C%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/</loc>
     
     <lastmod>2019-10-23T05:30:32.793Z</lastmod>
@@ -110,13 +124,6 @@
     <loc>https://jiamaoxiang.top/2019/08/28/Azkaban%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/</loc>
     
     <lastmod>2019-08-30T05:35:30.658Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jiamaoxiang.top/2019/08/29/Impala%E4%BD%BF%E7%94%A8%E7%9A%84%E7%AB%AF%E5%8F%A3/</loc>
-    
-    <lastmod>2019-08-29T06:40:41.025Z</lastmod>
     
   </url>
   

@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/04/02/你真的了解Flink-Kafka-connector吗？/
 https://jiamaoxiang.top/2020/03/31/Flink1-10集成Hive快速入门/
 https://jiamaoxiang.top/2020/03/30/Flink的八种分区策略源码解读/
 https://jiamaoxiang.top/2020/03/24/基于Canal与Flink实现数据实时增量同步-二/

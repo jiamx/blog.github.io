@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-04-01T05:56:05.333Z</updated>
+  <updated>2020-04-06T08:29:24.546Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>你真的了解Flink Kafka source吗？</title>
+    <link href="https://jiamaoxiang.top/2020/04/02/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BA%86%E8%A7%A3Flink-Kafka-connector%E5%90%97%EF%BC%9F/"/>
+    <id>https://jiamaoxiang.top/2020/04/02/你真的了解Flink-Kafka-connector吗？/</id>
+    <published>2020-04-02T06:29:12.000Z</published>
+    <updated>2020-04-06T08:29:24.546Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Flink 提供了专门的 Kafka 连接器，向 Kafka topic 中读取或者写入数据。Flink Kafka Consumer 集成了 Flink 的 Checkpoint 机制，可提供 exactly-once 的处理语义。为此，Flink 并不完全依赖于跟踪 Kafka 消费组的偏移量，而是在内部跟踪和检查偏移量。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/categories/flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
+    
+  </entry>
   
   <entry>
     <title>Flink1.10集成Hive快速入门</title>
@@ -219,7 +239,7 @@
     <link href="https://jiamaoxiang.top/2019/11/08/%E5%8E%86%E5%8F%B2%E6%8B%89%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/"/>
     <id>https://jiamaoxiang.top/2019/11/08/历史拉链表实战/</id>
     <published>2019-11-08T03:12:41.000Z</published>
-    <updated>2019-11-08T11:26:07.696Z</updated>
+    <updated>2020-04-08T05:12:33.547Z</updated>
     
     <summary type="html">
     
@@ -293,7 +313,7 @@
     <link href="https://jiamaoxiang.top/2019/08/29/Impala%E4%BD%BF%E7%94%A8%E7%9A%84%E7%AB%AF%E5%8F%A3/"/>
     <id>https://jiamaoxiang.top/2019/08/29/Impala使用的端口/</id>
     <published>2019-08-29T05:49:15.000Z</published>
-    <updated>2019-08-29T06:40:41.025Z</updated>
+    <updated>2020-04-03T13:06:40.271Z</updated>
     
     <summary type="html">
     
@@ -394,32 +414,6 @@
     <id>https://jiamaoxiang.top/2019/08/19/运维与监控/</id>
     <published>2019-08-19T05:10:32.000Z</published>
     <updated>2019-08-26T02:04:27.573Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flink自学系列教程之--集群与部署(六)</title>
-    <link href="https://jiamaoxiang.top/2019/08/19/%E9%9B%86%E7%BE%A4%E4%B8%8E%E9%83%A8%E7%BD%B2/"/>
-    <id>https://jiamaoxiang.top/2019/08/19/集群与部署/</id>
-    <published>2019-08-19T05:10:19.000Z</published>
-    <updated>2019-08-26T02:04:17.525Z</updated>
     
     <summary type="html">
     
