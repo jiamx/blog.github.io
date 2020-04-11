@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jiamaoxiang.top/2020/03/31/Flink1-10%E9%9B%86%E6%88%90Hive%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</loc>
-    <lastmod>2020-04-10</lastmod>
+    <loc>https://jiamaoxiang.top/2020/03/05/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%B8%80/</loc>
+    <lastmod>2020-04-11</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/03/30/Flink%E7%9A%84%E5%85%AB%E7%A7%8D%E5%88%86%E5%8C%BA%E7%AD%96%E7%95%A5%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/</loc>
-    <lastmod>2020-04-10</lastmod>
+    <lastmod>2020-04-11</lastmod>
+  </url>  <url>
+    <loc>https://jiamaoxiang.top/2020/03/31/Flink1-10%E9%9B%86%E6%88%90Hive%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</loc>
+    <lastmod>2020-04-11</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/04/02/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BA%86%E8%A7%A3Flink-Kafka-connector%E5%90%97%EF%BC%9F/</loc>
-    <lastmod>2020-04-10</lastmod>
+    <lastmod>2020-04-11</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/04/09/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Hive%E8%BF%9B%E8%A1%8COLAP%E5%88%86%E6%9E%90/</loc>
-    <lastmod>2020-04-10</lastmod>
+    <lastmod>2020-04-11</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2019/11/08/%E5%8E%86%E5%8F%B2%E6%8B%89%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/</loc>
     <lastmod>2020-04-08</lastmod>
@@ -24,9 +27,6 @@
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/03/24/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%BA%8C/</loc>
     <lastmod>2020-03-27</lastmod>
-  </url>  <url>
-    <loc>https://jiamaoxiang.top/2020/03/05/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%B8%80/</loc>
-    <lastmod>2020-03-24</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/03/22/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E9%9B%86%E6%88%90%E6%A1%86%E6%9E%B6gobblin%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</loc>
     <lastmod>2020-03-22</lastmod>
