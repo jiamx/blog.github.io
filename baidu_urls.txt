@@ -1,4 +1,4 @@
-https://jiamaoxiang.top/2020/04/12/Flink基于时间与窗口的算子/
+https://jiamaoxiang.top/2020/04/17/Flink基于时间与窗口的算子/
 https://jiamaoxiang.top/2020/04/12/Flink-DataStream-API编程指南/
 https://jiamaoxiang.top/2020/04/09/如何使用Hive进行OLAP分析/
 https://jiamaoxiang.top/2020/04/02/你真的了解Flink-Kafka-connector吗？/
@@ -14,7 +14,6 @@ https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/
 https://jiamaoxiang.top/2019/11/08/历史拉链表实战/
 https://jiamaoxiang.top/2019/10/23/Flink运行架构剖析/
 https://jiamaoxiang.top/2019/10/15/经典Hive-SQL面试题/
-https://jiamaoxiang.top/2019/09/26/Flink的Window-Function介绍/
 https://jiamaoxiang.top/2019/08/29/Impala使用的端口/
 https://jiamaoxiang.top/2019/08/28/Azkaban安装部署/
 https://jiamaoxiang.top/2019/08/27/Flink的数据类型/
@@ -25,7 +24,6 @@ https://jiamaoxiang.top/2019/08/19/集群与部署/
 https://jiamaoxiang.top/2019/08/19/source-sink-Connectors/
 https://jiamaoxiang.top/2019/08/19/状态与容错/
 https://jiamaoxiang.top/2019/08/19/基于时间的算子/
-https://jiamaoxiang.top/2019/08/19/DataStream-API简介/
 https://jiamaoxiang.top/2019/08/19/Flink的几个重要概念/
 https://jiamaoxiang.top/2019/08/14/浅析数据库缓冲池与SQL查询成本/
 https://jiamaoxiang.top/2019/08/13/Flink自学系列教程/

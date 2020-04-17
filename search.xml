@@ -5,8 +5,8 @@
     
     <entry>
       <title>Flink基于时间与窗口的算子</title>
-      <link href="/2020/04/12/Flink%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E4%B8%8E%E7%AA%97%E5%8F%A3%E7%9A%84%E7%AE%97%E5%AD%90/"/>
-      <url>/2020/04/12/Flink%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E4%B8%8E%E7%AA%97%E5%8F%A3%E7%9A%84%E7%AE%97%E5%AD%90/</url>
+      <link href="/2020/04/17/Flink%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E4%B8%8E%E7%AA%97%E5%8F%A3%E7%9A%84%E7%AE%97%E5%AD%90/"/>
+      <url>/2020/04/17/Flink%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E4%B8%8E%E7%AA%97%E5%8F%A3%E7%9A%84%E7%AE%97%E5%AD%90/</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -392,19 +392,6 @@
     
     
     <entry>
-      <title>Flink的Window Function介绍</title>
-      <link href="/2019/09/26/Flink%E7%9A%84Window-Function%E4%BB%8B%E7%BB%8D/"/>
-      <url>/2019/09/26/Flink%E7%9A%84Window-Function%E4%BB%8B%E7%BB%8D/</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Impala使用的端口</title>
       <link href="/2019/08/29/Impala%E4%BD%BF%E7%94%A8%E7%9A%84%E7%AB%AF%E5%8F%A3/"/>
       <url>/2019/08/29/Impala%E4%BD%BF%E7%94%A8%E7%9A%84%E7%AB%AF%E5%8F%A3/</url>
@@ -635,31 +622,6 @@
       <url>/2019/08/19/%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E7%9A%84%E7%AE%97%E5%AD%90/</url>
       
         <content type="html"><![CDATA[<p>Apache Flink 是一个分布式大数据处理引擎，可对有限数据流和无限数据流进行有状态计算。可部署在各种集群环境，对各种大小的数据规模进行快速计算。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> Flink </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> flink </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Flink自学系列教程之--DataStream-API简介(二)</title>
-      <link href="/2019/08/19/DataStream-API%E7%AE%80%E4%BB%8B/"/>
-      <url>/2019/08/19/DataStream-API%E7%AE%80%E4%BB%8B/</url>
-      
-        <content type="html"><![CDATA[<p>Apache Flink 是一个分布式大数据处理引擎，可对有限数据流和无限数据流进行有状态计算。可部署在各种集群环境，对各种大小的数据规模进行快速计算。</p><p>关于RichParallelSourceFunction与RichSourceFunction的区别，前者支持用户设置多并行度，后者不支持通过setParallelism()方法设置并行度，默认的并行度为1，否则会报如下错误：</p><p>Exception in thread “main” java.lang.IllegalArgumentException: The maximum parallelism of non parallel operator must be 1.</p>]]></content>
       
       
       <categories>
