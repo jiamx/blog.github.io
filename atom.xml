@@ -35,12 +35,18 @@
     <link href="https://jiamaoxiang.top/2020/04/12/Flink-DataStream-API%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
     <id>https://jiamaoxiang.top/2020/04/12/Flink-DataStream-API编程指南/</id>
     <published>2020-04-12T13:39:43.000Z</published>
-    <updated>2020-04-12T13:39:43.722Z</updated>
+    <updated>2020-04-16T15:39:33.802Z</updated>
     
     <summary type="html">
     
+      &lt;p&gt;Flink DataStream API主要分为三个部分，分别为Source、Transformation以及Sink，其中Source是数据源，Flink内置了很多数据源，比如最常用的Kafka。Transformation是具体的转换操作，主要是用户定义的处理数据的逻辑，比如Map，FlatMap等。Sink(数据汇)是数据的输出，可以把处理之后的数据输出到存储设备上，Flink内置了许多的Sink，比如Kafka，HDFS等。另外除了Flink内置的Source和Sink外，用户可以实现自定义的Source与Sink。考虑到内置的Source与Sink使用起来比较简单且方便，所以，关于内置的Source与Sink的使用方式不在本文的讨论范围之内，本文会先从自定义Source开始说起，然后详细描述一些常见算子的使用方式，最后会实现一个自定义的Sink。&lt;/p&gt;
+    
     </summary>
     
+      <category term="flink" scheme="https://jiamaoxiang.top/categories/flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
     
   </entry>
   
