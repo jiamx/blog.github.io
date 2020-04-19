@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-04-17T10:31:57.954Z</updated>
+  <updated>2020-04-19T14:00:21.298Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -17,21 +17,15 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Flink基于时间与窗口的算子</title>
+    <title>Flink的时间与watermarks详解</title>
     <link href="https://jiamaoxiang.top/2020/04/17/Flink%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E4%B8%8E%E7%AA%97%E5%8F%A3%E7%9A%84%E7%AE%97%E5%AD%90/"/>
     <id>https://jiamaoxiang.top/2020/04/17/Flink基于时间与窗口的算子/</id>
     <published>2020-04-17T10:12:57.000Z</published>
-    <updated>2020-04-17T10:31:57.954Z</updated>
+    <updated>2020-04-19T14:00:21.298Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          
-        
-      
+      &lt;p&gt;当我们在使用Flink的时候，避免不了要和时间(time)、水位线(watermarks)打交道，理解这些概念是开发分布式流处理应用的基础。那么Flink支持哪些时间语义？Flink是如何处理乱序事件的？什么是水位线？水位线是如何生成的？水位线的传播方式是什么？让我们带着这些问题来开始本文的内容。&lt;/p&gt;
     
     </summary>
     
