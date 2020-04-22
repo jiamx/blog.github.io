@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/04/22/Flink内部Exactly-Once三板斧-state、StateBackend、CheckPoint/
 https://jiamaoxiang.top/2020/04/17/Flink基于时间与窗口的算子/
 https://jiamaoxiang.top/2020/04/12/Flink-DataStream-API编程指南/
 https://jiamaoxiang.top/2020/04/09/如何使用Hive进行OLAP分析/

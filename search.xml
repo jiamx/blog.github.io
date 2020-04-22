@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>Flink内部Exactly Once三板斧:state、StateBackend、CheckPoint</title>
+      <link href="/2020/04/22/Flink%E5%86%85%E9%83%A8Exactly-Once%E4%B8%89%E6%9D%BF%E6%96%A7-state%E3%80%81StateBackend%E3%80%81CheckPoint/"/>
+      <url>/2020/04/22/Flink%E5%86%85%E9%83%A8Exactly-Once%E4%B8%89%E6%9D%BF%E6%96%A7-state%E3%80%81StateBackend%E3%80%81CheckPoint/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Flink的时间与watermarks详解</title>
       <link href="/2020/04/17/Flink%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E4%B8%8E%E7%AA%97%E5%8F%A3%E7%9A%84%E7%AE%97%E5%AD%90/"/>
       <url>/2020/04/17/Flink%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E4%B8%8E%E7%AA%97%E5%8F%A3%E7%9A%84%E7%AE%97%E5%AD%90/</url>

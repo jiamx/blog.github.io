@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-04-19T14:00:21.298Z</updated>
+  <updated>2020-04-22T01:40:23.880Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,20 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Flink内部Exactly Once三板斧:state、StateBackend、CheckPoint</title>
+    <link href="https://jiamaoxiang.top/2020/04/22/Flink%E5%86%85%E9%83%A8Exactly-Once%E4%B8%89%E6%9D%BF%E6%96%A7-state%E3%80%81StateBackend%E3%80%81CheckPoint/"/>
+    <id>https://jiamaoxiang.top/2020/04/22/Flink内部Exactly-Once三板斧-state、StateBackend、CheckPoint/</id>
+    <published>2020-04-22T01:40:23.000Z</published>
+    <updated>2020-04-22T01:40:23.880Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Flink的时间与watermarks详解</title>
@@ -399,26 +413,6 @@
     
     
       <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>基于SparkStreaming的日志分析项目</title>
-    <link href="https://jiamaoxiang.top/2019/08/26/%E5%9F%BA%E4%BA%8ESparkStreaming%E7%9A%84%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E9%A1%B9%E7%9B%AE/"/>
-    <id>https://jiamaoxiang.top/2019/08/26/基于SparkStreaming的日志分析项目/</id>
-    <published>2019-08-26T02:06:04.000Z</published>
-    <updated>2019-08-26T06:18:49.821Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&amp;emsp;&amp;emsp;基于SparkStreaming实现实时的日志分析，首先基于discuz搭建一个论坛平台，然后将该论坛的日志写入到指定文件，最后通过SparkStreaming实时对日志进行分析。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
-    
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
     
   </entry>
   
