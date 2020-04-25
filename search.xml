@@ -4,9 +4,9 @@
   
     
     <entry>
-      <title>Flink内部Exactly Once三板斧:state、StateBackend、CheckPoint</title>
-      <link href="/2020/04/22/Flink%E5%86%85%E9%83%A8Exactly-Once%E4%B8%89%E6%9D%BF%E6%96%A7-state%E3%80%81StateBackend%E3%80%81CheckPoint/"/>
-      <url>/2020/04/22/Flink%E5%86%85%E9%83%A8Exactly-Once%E4%B8%89%E6%9D%BF%E6%96%A7-state%E3%80%81StateBackend%E3%80%81CheckPoint/</url>
+      <title>Flink内部Exactly Once三板斧:状态、状态后端与检查点</title>
+      <link href="/2020/04/25/Flink%E5%86%85%E9%83%A8Exactly-Once%E4%B8%89%E6%9D%BF%E6%96%A7-%E7%8A%B6%E6%80%81%E3%80%81%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF%E4%B8%8E%E6%A3%80%E6%9F%A5%E7%82%B9/"/>
+      <url>/2020/04/25/Flink%E5%86%85%E9%83%A8Exactly-Once%E4%B8%89%E6%9D%BF%E6%96%A7-%E7%8A%B6%E6%80%81%E3%80%81%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF%E4%B8%8E%E6%A3%80%E6%9F%A5%E7%82%B9/</url>
       
         <content type="html"><![CDATA[]]></content>
       
