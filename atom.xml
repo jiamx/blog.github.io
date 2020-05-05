@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-05-04T15:24:47.762Z</updated>
+  <updated>2020-05-05T12:49:07.296Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,20 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>透过窗口看无限数据流——Flink的Window全面解析</title>
+    <link href="https://jiamaoxiang.top/2020/05/05/%E9%80%8F%E8%BF%87%E7%AA%97%E5%8F%A3%E7%9C%8B%E6%97%A0%E9%99%90%E6%95%B0%E6%8D%AE%E6%B5%81%E2%80%94%E2%80%94Flink%E7%9A%84Window%E5%85%A8%E9%9D%A2%E8%A7%A3%E6%9E%90/"/>
+    <id>https://jiamaoxiang.top/2020/05/05/透过窗口看无限数据流——Flink的Window全面解析/</id>
+    <published>2020-05-05T12:49:07.000Z</published>
+    <updated>2020-05-05T12:49:07.296Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Flink DataStream API 中的多面手——Process Function详解</title>
@@ -399,26 +413,6 @@
     
     
       <category term="Impala" scheme="https://jiamaoxiang.top/tags/Impala/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Azkaban安装部署</title>
-    <link href="https://jiamaoxiang.top/2019/08/28/Azkaban%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"/>
-    <id>https://jiamaoxiang.top/2019/08/28/Azkaban安装部署/</id>
-    <published>2019-08-28T02:22:04.000Z</published>
-    <updated>2019-08-30T05:35:30.658Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Azkaban是由Linkedin开源的一个批量工作流任务调度器。用于在一个工作流内以一个特定的顺序运行一组工作和流程。Azkaban定义了一种KV文件格式来建立任务之间的依赖关系，并提供一个易于使用的web用户界面维护和跟踪你的工作流。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Azkaban" scheme="https://jiamaoxiang.top/categories/Azkaban/"/>
-    
-    
-      <category term="Azkaban" scheme="https://jiamaoxiang.top/tags/Azkaban/"/>
     
   </entry>
   
