@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://jiamaoxiang.top/2020/05/05/%E9%80%8F%E8%BF%87%E7%AA%97%E5%8F%A3%E7%9C%8B%E6%97%A0%E9%99%90%E6%95%B0%E6%8D%AE%E6%B5%81%E2%80%94%E2%80%94Flink%E7%9A%84Window%E5%85%A8%E9%9D%A2%E8%A7%A3%E6%9E%90/</loc>
+    <lastmod>2020-05-06</lastmod>
+  </url>  <url>
     <loc>https://jiamaoxiang.top/2020/03/24/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%BA%8C/</loc>
     <lastmod>2020-05-06</lastmod>
   </url>  <url>
@@ -29,9 +32,6 @@
     <lastmod>2020-05-06</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/03/31/Flink1-10%E9%9B%86%E6%88%90Hive%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</loc>
-    <lastmod>2020-05-06</lastmod>
-  </url>  <url>
-    <loc>https://jiamaoxiang.top/2020/05/05/%E9%80%8F%E8%BF%87%E7%AA%97%E5%8F%A3%E7%9C%8B%E6%97%A0%E9%99%90%E6%95%B0%E6%8D%AE%E6%B5%81%E2%80%94%E2%80%94Flink%E7%9A%84Window%E5%85%A8%E9%9D%A2%E8%A7%A3%E6%9E%90/</loc>
     <lastmod>2020-05-06</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/04/02/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BA%86%E8%A7%A3Flink-Kafka-connector%E5%90%97%EF%BC%9F/</loc>
