@@ -22,12 +22,7 @@ https://jiamaoxiang.top/2019/08/28/Azkaban安装部署/
 https://jiamaoxiang.top/2019/08/27/Flink的数据类型/
 https://jiamaoxiang.top/2019/08/26/基于SparkStreaming的日志分析项目/
 https://jiamaoxiang.top/2019/08/23/Flink的状态后端-State-Backends/
-https://jiamaoxiang.top/2019/08/19/运维与监控/
-https://jiamaoxiang.top/2019/08/19/集群与部署/
 https://jiamaoxiang.top/2019/08/19/source-sink-Connectors/
-https://jiamaoxiang.top/2019/08/19/状态与容错/
-https://jiamaoxiang.top/2019/08/19/基于时间的算子/
-https://jiamaoxiang.top/2019/08/19/Flink的几个重要概念/
 https://jiamaoxiang.top/2019/08/14/浅析数据库缓冲池与SQL查询成本/
 https://jiamaoxiang.top/2019/08/13/Flink自学系列教程/
 https://jiamaoxiang.top/2019/08/12/hello-world/
