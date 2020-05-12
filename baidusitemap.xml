@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/</loc>
+    <lastmod>2020-05-12</lastmod>
+  </url>  <url>
     <loc>https://jiamaoxiang.top/2020/05/05/%E9%80%8F%E8%BF%87%E7%AA%97%E5%8F%A3%E7%9C%8B%E6%97%A0%E9%99%90%E6%95%B0%E6%8D%AE%E6%B5%81%E2%80%94%E2%80%94Flink%E7%9A%84Window%E5%85%A8%E9%9D%A2%E8%A7%A3%E6%9E%90/</loc>
     <lastmod>2020-05-08</lastmod>
   </url>  <url>

@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API编程指南/
 https://jiamaoxiang.top/2020/05/05/透过窗口看无限数据流——Flink的Window全面解析/
 https://jiamaoxiang.top/2020/04/30/Flink-DataStream-API-中的多面手——Process-Function详解/
 https://jiamaoxiang.top/2020/04/25/Flink内部Exactly-Once三板斧-状态、状态后端与检查点/
