@@ -1,0 +1,335 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>Greenplum集群Master与Segment节点故障检测与恢复 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Greenplum集群Master与Segment节点故障检测与恢复</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Greenplum集群Master与Segment节点故障检测与恢复</h1><div class="post-meta">May 18, 2020<span> | </span><span class="category"><a href="/categories/greenplum/">greenplum</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 4.5k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 17</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>Greenplum集群主要包括Master节点和Segment节点，Master节点称之为主节点，Segment节点称之为数据节点。Master节点与Segment节点都是有备份的，其中Master节点的备节点为Standby Master(不能够自动故障转移)，Segment是通过Primary Segment与Mirror Segment进行容错的。通过本文你可以了解：</p>
+<ul>
+<li>Greenplum数据库的高可用(HA)原理</li>
+<li>Greenplum生产集群中master节点故障恢复</li>
+<li>greenplum生产集群中segment故障检测与恢复</li>
+<li>Segment节点故障恢复原理与实践</li>
+</ul>
+<h2 id="Greenplum数据库的HA"><a href="#Greenplum数据库的HA" class="headerlink" title="Greenplum数据库的HA"></a>Greenplum数据库的HA</h2><h3 id="master-mirroring概述"><a href="#master-mirroring概述" class="headerlink" title="master mirroring概述"></a>master mirroring概述</h3><p>可以在单独的主机或同一主机上部署master实例的备份或镜像。如果primary master服务器宕机，则standby master服务器将用作热备用服务器。在primary master服务器在线时，可以从primary master服务器创建备用master服务器。</p>
+<p>Primary master服务器持续为用户提供服务，同时获取Primary master实例的事务快照。在standby master服务器上部署事务快照时，还会记录对primary master服务器的更改。在standby master服务器上部署快照后，更新也会被部署，用于使standby master服务器与primary master服务器同步。</p>
+<p>Primary master服务器和备用master服务器同步后，standbymaster服务器将通过walsender 和 walreceiver 的复制进程保持最新状态。该walreceiver是standby master上的进程， walsender流程是primary master上的流程。这两个进程使用基于预读日志（WAL）的流复制来保持primary master和standby master服务器同步。在WAL日志记录中，所有修改都会在应用生效之前写入日志，以确保任何进程内操作的数据完整性。</p>
+<p>由于primary master不包含任何用户数据，因此只需要在主master和备份master之间同步系统目录表(catalog tables)。当这些表发生更新时，更改的结果会自动复制到备用master上，以确保与主master同步。</p>
+<p>如果primary master发生故障，管理员需要使用gpactivatestandby工具激活standby master。可以为primary master和standby master配置一个虚拟IP地址，这样，在primary master出现故障时，客户端程序就不用切换到其他的网络地址，因为在master出现故障时，虚拟IP地址可以交换到充当primary master的主机上。</p>
+<h3 id="mirror-segment概述"><a href="#mirror-segment概述" class="headerlink" title="mirror segment概述"></a>mirror segment概述</h3><p>当启用Greenplum数据库高可用性时，有两种类型的segment：primary和mirror。每个主segment具有一个对应的mirror segment。主segment接收来自master的请求以更改主segment的数据库，然后将这些更改复制到相应的mirror segment上。如果主segment不可用，则数据库查询将故障转移到mirror segment上。</p>
+<p>Mirror segment采用物理文件复制的方案—primary segment中数据文件I / O被复制到mirror segment上，因此mirror segment的文件与primary segment上的文件相同。Greenplum数据库中的数据用元组(tuple)表示，元组被打包成块（block）。数据库的表存储在由一个或多个块组成的磁盘文件中。对元组进行更改操作，同时会更改保存的块，然后将其写入primary segment上的磁盘并通过网络复制到mirror segment。Mirror segment只更新其文件副本中的相应块。</p>
+<p>对于堆表(heap)而言，块被保存在内存缓存区中，直到为新更改的块腾出空间时，才会将它们清除，这允许系统可以多次读取或更新内存中的块，而无需执行昂贵的磁盘I / O。 当块从缓存中清除时，它将被写入磁盘并复制到mirror segment主机的磁盘。当块保存在缓存中时，primary segment和mirror segment具有不同的块镜像，但是，数据库仍然是一致的，因为事务日志已经被复制了。</p>
+<p>AO表(Append-optimized)不使用内存缓存机制。对AO表的块所做的更改会立即复制到mirror segment上。通常，文件写入操作是异步的，但是打开、创建和同步文件是“同步复制”的，这意味着primary segment的块需要从mirror segment上接收确认。</p>
+<p>如果primary segment失败，则文件复制进程将会停止，mirror segment会自动作为活动segment实例，活动mirror segment的系统状态会变为“ 更改跟踪”(<em>Change Tracking</em>)，这意味着在primary segment不可用时，mirror segment维护着一个系统表和记录所有块的更改日志。当故障的primary segment被修复好，并准备重新上线时，管理员启动恢复过程，系统进入重新同步状态。恢复过程将记录的更改日志应用于已修复的primary segment上。恢复过程完成后，mirror segment的系统状态将更改为“已同步 ”。</p>
+<p>如果mirror segment在primary segment处于活动状态时失败或无法访问，则primary segment的系统状态将更改为“ 更改跟踪”，并且它会记录更改的状态，用于mirror segment的恢复。</p>
+<ul>
+<li><strong>group mirroring方式</strong></li>
+</ul>
+<p>只要primary segment实例和mirror segment实例位于不同的主机上，mirror segment就可以以不同的配置方式放置在群集中的主机上。每个主机必须具有相同数量的mirror segment和primary segment。默认mirror segment配置方式是group mirroring，其中每个主机的primary segment的mirror segment位于另一个主机上。如果单个主机发生故障，则部署该主机的mirror segment主机上的活动primary segment数量会翻倍，从而会加大该主机的负载。下图说明了group mirroring配置。</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/grouping.png" alt></p>
+<ul>
+<li><strong>Spread mirroring方式</strong></li>
+</ul>
+<p><em>Spread mirroring</em>方式是指将每个主机的mirror segment分布在多个主机上，这样，如果任何单个主机发生故障，该主机的mirror segment会分散到其他多个主机上运行，从而达到负载均衡的效果。仅当主机数量多于每个主机的segment数时，才可以使用<em>Spread</em>方式。下图说明了<em>Spread mirroring</em>方式。</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/spread.png" alt></p>
+<h2 id="Master节点故障恢复"><a href="#Master节点故障恢复" class="headerlink" title="Master节点故障恢复"></a>Master节点故障恢复</h2><p>如果primary master节点失败，日志复制进程就会停止。可以使用<code>gpstate -f</code>命令查看standby master的状态，使用<code>gpactivatestandby</code>命令激活standby master。</p>
+<h3 id="激活Standby-master"><a href="#激活Standby-master" class="headerlink" title="激活Standby master"></a>激活Standby master</h3><ul>
+<li><p>(1)确保原来的集群中配置了standby master</p>
+</li>
+<li><p>(2)在standby master主机上运行gpactivatestandby命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpactivatestandby -d /data/master/gpseg-1</span><br></pre></td></tr></table></figure>
+
+<p><code>-d</code>参数是指standby master的数据目录，一旦激活成功，原来的standby master就成为了primary master。</p>
+</li>
+<li><p>(3)执行激活命令后，运行gpstate命令检查状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -f</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<p>  新激活的master的状态是active，如果已经为集群配置一个新的standby master节点，则其状态会是passive。如果还没有为集群配置一个新的standby master，则会看到下面的信息：No entries found，该信息表明尚未配置standby master。</p>
+<ul>
+<li><p>(4)在成功切换到了standbymaster之后，运行ANALYZE命令，收集该数据库的统计信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ psql postgres -c <span class="string">'ANALYZE;'</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(5)可选：如果在成功激活standby master之后，尚未指定新的standby master，可以在active master上运行gpinitstandby命令，配置一个新的standby master</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpinitstandby -s new_standby_master_hostname</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="恢复到原来的设置-可选的"><a href="#恢复到原来的设置-可选的" class="headerlink" title="恢复到原来的设置(可选的)"></a>恢复到原来的设置(可选的)</h3><ul>
+<li><p>(1)确保之前的master节点能够正常使用</p>
+</li>
+<li><p>(2)在原来的master主机上，移除(备份)原来的数据目录gpseg-1,比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ mv /data/master/gpseg-1  /data/master/backup_gpseg-1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>(3)在原来的master节点上，初始化standby master，在active master上运行如下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpinitstandby -s mdw</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(4)初始化完成之后，检查standby master的状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -f</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<p>   显示的状态应该是–Sync state: sync</p>
+<ul>
+<li><p>(5)在active master节点上运行下面的命令，用于停止master</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstop -m</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(6)在原来的master节点(mdw)上运行gpactivatestandby命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpactivatestandby -d /data/master/gpseg-1</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(7)在上述命名运行结束之后，再运行gpstate命令查看状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -f</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<p>  确认原始的primary master状态是active。</p>
+<ul>
+<li><p>(8)在原来的standby master节点(smdw)上，移除(备份)数据目录gpseg-1</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ mv /data/master/gpseg-1  /data/master/backup_gpseg-1</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(9)原来的master节点正常运行之后，在该节点上执行如下命令，用于激活standby master</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpinitstandby -s smdw</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="检查standby-master的状态"><a href="#检查standby-master的状态" class="headerlink" title="检查standby master的状态"></a>检查standby master的状态</h3><p>可以通过查看视图pg_stat_replication，来获取更多的信息。该视图可以列出walsender进程的信息，下面的命令是查看walsender进程的进程id和状态信息。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ psql postgres -c <span class="string">'SELECT procpid, state FROM pg_stat_replication;'</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="segment节点故障检测与恢复"><a href="#segment节点故障检测与恢复" class="headerlink" title="segment节点故障检测与恢复"></a>segment节点故障检测与恢复</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Greenplum数据库服务器（Postgres）有一个子进程，该子进程为ftsprobe，主要作用是处理故障检测。 ftsprobe 监视Greenplum数据库阵列，它以可以配置的间隔连接并扫描所有segment和数据库进程。<br>如果 ftsprobe无法连接到segment，它会在Greenplum数据库系统目录中将segment标记为”down”。在管理员启动恢复进程之前，该segment是不可以被操作的。</p>
+<p>启用mirror备份后，如果primary segment不可用，Greenplum数据库会自动故障转移到mirror segment。如果segment实例或主机发生故障，系统仍可以运行，前提是所有在剩余的活动segment上数据都可用。</p>
+<p>要恢复失败的segment，管理员需要执行 gprecoverseg 恢复工具。此工具可以找到失败的segment，验证它们是否有效，并将事务状态与当前活动的segment进行比较，以确定在segment脱机时所做的更改。gprecoverseg将更改的数据库文件与活动segment同步，并使该segment重新上线。管理员需要在在Greenplum数据库启动并运行时执行恢复操作。</p>
+<p>禁用mirror备份时，如果segment实例失败，系统将会自动关闭。管理员需要手动恢复所有失败的segment。</p>
+<h3 id="检测和管理失败的segment"><a href="#检测和管理失败的segment" class="headerlink" title="检测和管理失败的segment"></a>检测和管理失败的segment</h3><h4 id="使用工具命令查看"><a href="#使用工具命令查看" class="headerlink" title="使用工具命令查看"></a>使用工具命令查看</h4><p>启用mirror备份后，当primary segment发生故障时，Greenplum会自动故障转移到mirror segment。如果每个数据部分所在的segment实例都是在线的，则用户可能无法意识到segment已经出现故障。如果在发生故障时正在进行事务，则正在进行的事务将回滚并在重新配置的segment集上自动重新启动。</p>
+<p>如果整个Greenplum数据库系统由于segment故障而变得不可访问（例如，如果未启用mirror备份或没有足够的segment在线），则用户在尝试连接数据库时将看到错误。返回到客户端程序的错误可能表示失败。例如：<br><code>ERROR: All segment databases are unavailable</code></p>
+<ul>
+<li><p>(1)在master节点上，运行gpstate命令，使用-e参数显示错误的segment</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -e</span><br></pre></td></tr></table></figure>
+
+<p>   标记为<code>Change Tracking</code>的segment节点表明对应的mirror segment已经宕机。</p>
+</li>
+<li><p>(2)要获取有关故障segment的详细信息，可以查看 gp_segment_configuration目录表</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ psql -c <span class="string">"SELECT * FROM gp_segment_configuration WHERE status='d';"</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(3) 对于失败的segment实例，记下主机，端口，初始化时的角色和数据目录。此信息将帮助确定要进行故障排除的主机和segment实例。</p>
+</li>
+<li><p>(4) 显示mirror segment详细信息，运行下面命名：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -m</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<h4 id="检查日志文件"><a href="#检查日志文件" class="headerlink" title="检查日志文件"></a>检查日志文件</h4><p>  日志文件可以提供信息以帮助确定错误的原因。Master实例和segment实例都有自己的日志文件，这些日志文件位于pg_log的目录下。Master的日志文件包含最多信息，应该首先检查它。</p>
+<p>  使用 gplogfilter工具检查Greenplum数据库日志文件，可以获取额外信息。要检查segment日志文件，可以在master主机上使用gpssh命令运行 gplogfilter。</p>
+<ul>
+<li><p>(1)使用 gplogfilter 检查master日志文件的WARNING, ERROR, FATAL 或者 PANIC日志级别消息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gplogfilter -t</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(2)使用 gpssh 检查每个segment实例上的日志级别为WARNING, ERROR, FATAL 或者 PANIC的消息。例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpssh -f seg_hosts_file -e <span class="string">'source</span></span><br><span class="line"><span class="string">/usr/local/greenplum-db/greenplum_path.sh ; gplogfilter -t</span></span><br><span class="line"><span class="string">/data1/primary/*/pg_log/gpdb*.log'</span> &gt; seglog.out</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<h3 id="恢复失败的segment"><a href="#恢复失败的segment" class="headerlink" title="恢复失败的segment"></a>恢复失败的segment</h3><p>  如果master服务器无法连接到segment实例，则会在Greenplum数据库系统目录中将该segment标记为“down”状态。在管理员采取措施使segment实例重新上线之前，segment实例将保持脱机离线状态。segment实例可能由于多种原因而不可用：</p>
+<ul>
+<li><p>(1)segment主机不可用; 例如，由于网络或硬件故障。</p>
+</li>
+<li><p>(2)segment实例未运行; 例如，没Postgres的数据库监听进程。</p>
+</li>
+<li><p>(3)segment实例的数据目录损坏或丢失; 例如，无法访问数据，文件系统已损坏或磁盘发生故障。</p>
+<h4 id="在启用mirror-segment的情况下进行恢复"><a href="#在启用mirror-segment的情况下进行恢复" class="headerlink" title="在启用mirror segment的情况下进行恢复"></a>在启用mirror segment的情况下进行恢复</h4></li>
+<li><p>(1)确保master主机能够ping通失败的segment主机</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ping failed_seg_host_address</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(2)如果是阻止master主机连接segment主机，则可以重启该segment主机。</p>
+</li>
+<li><p>(3)如果该segment主机上线之后，可以通过master连接，则在master主机上运行下面命令，重新激活失败的segment</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gprecoverseg</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(4)恢复进程会显示故障segment并标识需要同步的已更改文件。这个过程可能需要一些时间， 等待该过程完成。在此过程中，数据库不允许写入操作。</p>
+</li>
+<li><p>(5)在 gprecoverseg完成后，系统进入重新同步模式并开始复制已更改的文件。当系统处于联机状态并接受数据库请求时，此进程在后台运行。</p>
+</li>
+<li><p>(6)重新同步过程完成后，系统状态为“已同步”（ Synchronized）。运行gpstate 命令用于验证重新同步过程状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -m</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="将所有的segment恢复到原来的角色设置"><a href="#将所有的segment恢复到原来的角色设置" class="headerlink" title="将所有的segment恢复到原来的角色设置"></a>将所有的segment恢复到原来的角色设置</h4><p>  当primary segment发生故障时，mirror segment会被激活为primary segment。运行gprecoverseg命令之后，当前活动的segment是primary segment，失败的primary segment成为了mirror segment。segment实例不会返回到在系统初始化时配置的首选角色。这意味着某些segment主机上可能运行多个primary segment实例，而某些segment主机上运行较少的segment，即系统可能处于潜在的不平衡状态。要检查不平衡的segment并重新平衡系统，可以使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -e</span><br></pre></td></tr></table></figure>
+
+<p>  所有segment必须在线并完全同步以重新平衡系统，数据库会话在重新平衡期间保持连接，但正在进行的查询将被取消并回滚。</p>
+<ul>
+<li><p>(1)运行下面命令，查看mirror segment的角色和同步状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -m</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(2)如果有mirror segment处于非同步状态，等待他们同步完成</p>
+</li>
+<li><p>(3)运行gprecoverseg命令，使用-r参数将segment恢复到原来初始化时的角色设置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gprecoverseg -r</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(4)运行gpstate -e命令，确认所有的segment是否恢复到初始化时的角色设置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -e</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="从双重故障中恢复"><a href="#从双重故障中恢复" class="headerlink" title="从双重故障中恢复"></a>从双重故障中恢复</h4><p>  在双重故障情况下，即primary segment和mirror segment都处于失败状态。如果不同segment的主机同时发生硬件故障，则会导致primary segment和mirror segment都处于失败状态，如果发生双重故障，Greenplum数据库将不可用。要从双重故障中恢复，执行如下步骤：</p>
+<ul>
+<li><p>(1)重启greenplum数据库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstop -r</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(2)再重启系统之后，运行gprecoverseg命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gprecoverseg</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(3)在gprecoverseg执行结束后，运行gpstate命令查看mirror状态信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$gpstate</span> -m</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>(4)如果segment仍是“Change Tracking”状态，则运行下面命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gprecoverseg -F</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="从segment主机故障中恢复"><a href="#从segment主机故障中恢复" class="headerlink" title="从segment主机故障中恢复"></a>从segment主机故障中恢复</h4><p>  如果主机处于不可操作状态（例如，由于硬件故障），可以将segment恢复到备用主机上。如果启用了mirror segment，则可以使用gprecoverseg命令将mirror segment恢复到备用主机。例如：</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gprecoverseg -i recover_config_file</span><br></pre></td></tr></table></figure>
+
+<p>生成的recover_config_file文件的格式为：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">filespaceOrder=[filespace1_name[:filespace2_name:...]failed_host_address:</span><br><span class="line">port:fselocation [recovery_host_address:port:replication_port:fselocation</span><br><span class="line">[:fselocation:...]]</span><br></pre></td></tr></table></figure>
+
+<p>​     例如，要在没有配置其他文件空间的情况下恢复到与故障主机不同的另一台主机（除了默认的pg_system文件空间）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">filespaceOrder=sdw5-2:50002:/gpdata/gpseg2 sdw9-2:50002:53002:/gpdata/gpseg2</span><br></pre></td></tr></table></figure>
+
+<p> 该gp_segment_configuration和pg_filespace_entry系统目录表可以帮助确定当前的段配置，这样可以计划mirror的恢复配置。例如，运行以下查询：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">=<span class="comment"># SELECT dbid, content, hostname, address, port,</span></span><br><span class="line">replication_port, fselocation as datadir</span><br><span class="line">FROM gp_segment_configuration, pg_filespace_entry</span><br><span class="line">WHERE dbid=fsedbid</span><br><span class="line">ORDER BY dbid;</span><br></pre></td></tr></table></figure>
+
+<p>上述命令会输出:</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E7%BB%93%E6%9E%9C%E8%BE%93%E5%87%BA.png" alt></p>
+<p>新恢复的segment主机必须预先安装Greenplum数据库软件，并且其配置要与现有的segment主机一致。</p>
+<h2 id="Segment故障恢复原理与实践"><a href="#Segment故障恢复原理与实践" class="headerlink" title="Segment故障恢复原理与实践"></a>Segment故障恢复原理与实践</h2><h3 id="greenplum集群环境介绍"><a href="#greenplum集群环境介绍" class="headerlink" title="greenplum集群环境介绍"></a>greenplum集群环境介绍</h3><p>该生产环境集群由四台服务器构成，其中一台为primary master节点，一台为standby master节点，两外两台为segment节点，每个segment节点有四个segment(两个primary segment，两个mirror segment)，segment采用group方式进行备份(sdw1的备份都在sdw2上，sdw2的备份都在sdw1上)，其角色分配如下图所示：</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83.png" alt></p>
+<h3 id="segment故障检查"><a href="#segment故障检查" class="headerlink" title="segment故障检查"></a>segment故障检查</h3><ul>
+<li>gpstate -m日志信息</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstatem.png" alt></p>
+<ul>
+<li>gpstate -c 日志信息</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstatec.png" alt></p>
+<ul>
+<li>gpstate -e 日志信息</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstatee.png" alt></p>
+<ul>
+<li><p>gpstate -s 日志信息</p>
+<p>(1)sdw1节点的日志信息</p>
+</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstates1.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstates2.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstates3.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstates4.png" alt></p>
+<p>  (1)sdw2节点的日志信息</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstates5.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstates6.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstates7.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstates8.png" alt></p>
+<h3 id="故障说明"><a href="#故障说明" class="headerlink" title="故障说明"></a>故障说明</h3><p>Sdw1节点primary segment正常，mirror segment被激活，其mirror segment为sdw2节点上的primary segment备份。Sdw2节点primary segment失败，mirror segment失败。此时集群环境能够正常提供服务，全部负载到sdw1节点上。</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E6%95%85%E9%9A%9C%E8%AF%B4%E6%98%8E1.png" alt></p>
+<p>使用<code>select * from gp_segment_configuration</code>查看segment角色信息，如下图所示：</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E6%95%85%E9%9A%9C%E8%AF%B4%E6%98%8E2.png" alt></p>
+<h3 id="segment故障恢复"><a href="#segment故障恢复" class="headerlink" title="segment故障恢复"></a>segment故障恢复</h3><ul>
+<li>在master主机上运行下面命令，重新激活失败的segment</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gprecoverseg</span><br></pre></td></tr></table></figure>
+
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E6%81%A2%E5%A4%8D1.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E6%81%A2%E5%A4%8D2.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E6%81%A2%E5%A4%8D3.png" alt></p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E6%81%A2%E5%A4%8D4.png" alt></p>
+<ul>
+<li>运行gpstate 命令用于验证重新同步过程状态</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gpstate -m</span><br></pre></td></tr></table></figure>
+
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpstatem%E6%81%A2%E5%A4%8D.png" alt></p>
+<p>当primary segment发生故障时，mirror segment会被激活为primary segment。运行gprecoverseg命令之后，失败的primary segment成为了mirror segment，而被激活的mirror segment成为了primary segment，segment实例不会返回到在系统初始化时配置的首选角色。这意味着某些segment主机上可能运行多个primary segment实例，而某些segment主机上运行较少的segment，即系统可能处于潜在的不平衡状态。如下图所示，sdw1上的mirror segment变为了primary segment，sdw2上的primary segment变为了mirror segment。即sdw2的primary segment运行在sdw1节点上，系统处于不平衡状态。</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/%E4%B8%8D%E5%B9%B3%E8%A1%A1.png" alt></p>
+<p>此时GPCC的状态为：</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpcc1.png" alt></p>
+<ul>
+<li><p>运行gprecoverseg命令，使用-r参数将segment恢复到原来初始化时的角色设置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ gprecoverseg -r</span><br></pre></td></tr></table></figure>
+
+<p>查看gpcc状态:</p>
+<p><img src="//jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/gpcc2.png" alt></p>
+</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要介绍了GP的高可用原理及实践。首先介绍了Master与Segment的容错策略，然后介绍了Master节点与Segment节点故障恢复的步骤，最后给出了一个完整的实践过程。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/05/18/是时候换掉你的调度系统了/" target="_blank">是时候换掉你的调度系统了</a></li><li><a href="https://jiamaoxiang.top/2020/05/13/Flink-SQL编程指南/" target="_blank">Flink SQL编程指南</a></li><li><a href="https://jiamaoxiang.top/2020/05/13/Flink-TableAPI-编程指南/" target="_blank">Flink TableAPI 编程指南</a></li><li><a href="https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API编程指南/" target="_blank">Flink DataSet API编程指南</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/">https://jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/" data-id="ckacns1r7002hv07qmg3xj025" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADMElEQVR42u3ay44iQQwEQP7/p2evK+0CmXaPRBfRpxGvriikMXbW4xFfP39dz57995X59exz2rtffGFjY2PfhJ0v6Krlvn789dryOz57LzY2Nvap7KQsvV5csoh2Ezd3f2PExsbGxh4VnuSObwpPXNiwsbGxsffUfVuy/0qwsbGxv4e9aQ/y0rIpbLPm54JZGjY2NvbHs/NU9PP//pV8GxsbG/uD2bODNZvx0Ka1mN3rP3fHxsbGPoidF4Dk0EzewORNQn7fdv3Y2NjY57H3B2vyLcgjhLzlqAdJ2NjY2Mex93FsPqafRcKvtyZ/HBsbG/s8dgLbYPIB0waQF05sbGzsk9j53uQNQz5Omh2dzIdWTz8HGxsb+zj2fki0OV55VZNThAfY2NjYB7GTwzf5a9rFzYrirJhF3zw2Njb2zdl5HDsrPHlpnJW69rgPNjY29hnsdon5s7PFtTFwO/bCxsbGPo89G7jvy1Le9rThQX4mBxsbG/sMdnukpg0Pfu+7akdLb1oRbGxs7JuzZ0dt2mM9swKWRxFFC4SNjY19EDv5Zb5pWvKAti1C+bDp6RZgY2NjH8HOW4Vk/5LBfdtgXNuoZE9jY2Nj34+9iWmLYLUsdbMyVufb2NjY2EewZ4B83N8Gw/mmtBv3yCsqNjY29k3YvwF4xFf++mQgdUE2go2NjX0Q+3WpaCPYWbjbDqeS1f4nFcHGxsY+mp20Dfnjs1K06SOGfRg2Njb2DdlX8fLPaTdr0wgVeGxsbOzbsvMf9LMDNEmZzBedv+vN49jY2NiHstvR0uxQZv7s7206NjY29vew28H9BZ3QaPRf3x0bGxv7OPZr0mwLZmOmJNa9IGbGxsbGPo49O1KziQSSbcoHRvV7sbGxsY9g/5RXzssHPbM4uT0wVOQh2NjY2Ldit//6N0FCHv22gHy8VeOxsbGxb8JuB/Gz4DYfV7XfWF6osLGxsc9m5yOkNuhti1neCLXjJ2xsbGzs/GDNZjzUrmE2csLGxsb+Znb+oz+fXbVFqw2nsbGxsb+BvRkVtUP8FtzGxhfHA9jY2Ngfz84LzKaQ5M3JbOTUxs/Y2NjYR7D/AIkLupaiqgA3AAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/greenplum/">greenplum</a></div><div class="post-nav"><a class="next" href="/2020/05/18/是时候换掉你的调度系统了/">是时候换掉你的调度系统了</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Greenplum数据库的HA"><span class="toc-number">1.</span> <span class="toc-text">Greenplum数据库的HA</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#master-mirroring概述"><span class="toc-number">1.1.</span> <span class="toc-text">master mirroring概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mirror-segment概述"><span class="toc-number">1.2.</span> <span class="toc-text">mirror segment概述</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Master节点故障恢复"><span class="toc-number">2.</span> <span class="toc-text">Master节点故障恢复</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#激活Standby-master"><span class="toc-number">2.1.</span> <span class="toc-text">激活Standby master</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#恢复到原来的设置-可选的"><span class="toc-number">2.2.</span> <span class="toc-text">恢复到原来的设置(可选的)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检查standby-master的状态"><span class="toc-number">2.3.</span> <span class="toc-text">检查standby master的状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#segment节点故障检测与恢复"><span class="toc-number">3.</span> <span class="toc-text">segment节点故障检测与恢复</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">3.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检测和管理失败的segment"><span class="toc-number">3.2.</span> <span class="toc-text">检测和管理失败的segment</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用工具命令查看"><span class="toc-number">3.2.1.</span> <span class="toc-text">使用工具命令查看</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#检查日志文件"><span class="toc-number">3.2.2.</span> <span class="toc-text">检查日志文件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#恢复失败的segment"><span class="toc-number">3.3.</span> <span class="toc-text">恢复失败的segment</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#在启用mirror-segment的情况下进行恢复"><span class="toc-number">3.3.1.</span> <span class="toc-text">在启用mirror segment的情况下进行恢复</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#将所有的segment恢复到原来的角色设置"><span class="toc-number">3.3.2.</span> <span class="toc-text">将所有的segment恢复到原来的角色设置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#从双重故障中恢复"><span class="toc-number">3.3.3.</span> <span class="toc-text">从双重故障中恢复</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#从segment主机故障中恢复"><span class="toc-number">3.3.4.</span> <span class="toc-text">从segment主机故障中恢复</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Segment故障恢复原理与实践"><span class="toc-number">4.</span> <span class="toc-text">Segment故障恢复原理与实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#greenplum集群环境介绍"><span class="toc-number">4.1.</span> <span class="toc-text">greenplum集群环境介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#segment故障检查"><span class="toc-number">4.2.</span> <span class="toc-text">segment故障检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#故障说明"><span class="toc-number">4.3.</span> <span class="toc-text">故障说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#segment故障恢复"><span class="toc-number">4.4.</span> <span class="toc-text">segment故障恢复</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">5.</span> <span class="toc-text">小结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-05-12T07:41:58.337Z</updated>
+  <updated>2020-05-18T15:43:34.972Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -17,11 +17,103 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Greenplum集群Master与Segment节点故障检测与恢复</title>
+    <link href="https://jiamaoxiang.top/2020/05/18/Greenplum%E9%9B%86%E7%BE%A4Master%E4%B8%8ESegment%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C%E6%A3%80%E6%B5%8B%E4%B8%8E%E6%81%A2%E5%A4%8D/"/>
+    <id>https://jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/</id>
+    <published>2020-05-18T13:07:17.000Z</published>
+    <updated>2020-05-18T15:43:34.972Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="greenplum" scheme="https://jiamaoxiang.top/categories/greenplum/"/>
+    
+    
+      <category term="greenplum" scheme="https://jiamaoxiang.top/tags/greenplum/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>是时候换掉你的调度系统了</title>
+    <link href="https://jiamaoxiang.top/2020/05/18/%E6%98%AF%E6%97%B6%E5%80%99%E6%8D%A2%E6%8E%89%E4%BD%A0%E7%9A%84%E8%B0%83%E5%BA%A6%E7%B3%BB%E7%BB%9F%E4%BA%86/"/>
+    <id>https://jiamaoxiang.top/2020/05/18/是时候换掉你的调度系统了/</id>
+    <published>2020-05-18T05:45:15.000Z</published>
+    <updated>2020-05-18T10:32:40.557Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="hera" scheme="https://jiamaoxiang.top/categories/hera/"/>
+    
+    
+      <category term="hera" scheme="https://jiamaoxiang.top/tags/hera/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Flink SQL编程指南</title>
+    <link href="https://jiamaoxiang.top/2020/05/13/Flink-SQL%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
+    <id>https://jiamaoxiang.top/2020/05/13/Flink-SQL编程指南/</id>
+    <published>2020-05-13T06:52:40.000Z</published>
+    <updated>2020-05-13T06:52:40.638Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Flink TableAPI 编程指南</title>
+    <link href="https://jiamaoxiang.top/2020/05/13/Flink-TableAPI-%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
+    <id>https://jiamaoxiang.top/2020/05/13/Flink-TableAPI-编程指南/</id>
+    <published>2020-05-13T06:49:12.000Z</published>
+    <updated>2020-05-13T10:30:32.636Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Flink DataSet API编程指南</title>
     <link href="https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
     <id>https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API编程指南/</id>
     <published>2020-05-09T02:12:40.000Z</published>
-    <updated>2020-05-12T07:41:58.337Z</updated>
+    <updated>2020-05-12T07:47:19.337Z</updated>
     
     <summary type="html">
     
@@ -344,86 +436,6 @@
     <summary type="html">
     
       &lt;p&gt;当构建好电商业务数仓之后，需要对业务需要的指标进行计算，从而进一步进行报表的展示，那么，电商的业务知识大概涉及哪些？关于电商业务的常用指标计算都有哪些？这些常用的指标该如何通过Hive数仓进行分析？本文将进行一一梳理.&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Hive" scheme="https://jiamaoxiang.top/categories/Hive/"/>
-    
-    
-      <category term="Hive" scheme="https://jiamaoxiang.top/tags/Hive/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>CDH集群之YARN性能调优</title>
-    <link href="https://jiamaoxiang.top/2019/12/03/CDH%E9%9B%86%E7%BE%A4%E4%B9%8BYARN%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/"/>
-    <id>https://jiamaoxiang.top/2019/12/03/CDH集群之YARN性能调优/</id>
-    <published>2019-12-03T03:19:09.000Z</published>
-    <updated>2019-12-03T06:35:20.835Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文主要讨论CDH集群的YARN调优配置，关于YARN的调优配置，主要关注CPU和内存的调优，其中CPU是指物理CPU个数乘以CPU核数，即Vcores = CPU数量*CPU核数。YARN是以container容器的形式封装资源的，task在container内部执行。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="CDH,YARN" scheme="https://jiamaoxiang.top/categories/CDH-YARN/"/>
-    
-    
-      <category term="CDH,YARN" scheme="https://jiamaoxiang.top/tags/CDH-YARN/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>历史拉链表实战</title>
-    <link href="https://jiamaoxiang.top/2019/11/08/%E5%8E%86%E5%8F%B2%E6%8B%89%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/"/>
-    <id>https://jiamaoxiang.top/2019/11/08/历史拉链表实战/</id>
-    <published>2019-11-08T03:12:41.000Z</published>
-    <updated>2020-04-08T05:12:33.547Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;历史拉链表是一种数据模型，主要是针对数据仓库设计中表存储数据的方式而定义的。所谓历史拉链表，就是指记录一个事物从开始一直到当前状态的所有变化信息。拉所有记录链表可以避免按每一天存储造成的海量存储问题，同时也是处理缓慢变化数据的一种常见方式。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="数据仓库" scheme="https://jiamaoxiang.top/categories/%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93/"/>
-    
-    
-      <category term="数据仓库" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flink运行架构剖析</title>
-    <link href="https://jiamaoxiang.top/2019/10/23/Flink%E8%BF%90%E8%A1%8C%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/"/>
-    <id>https://jiamaoxiang.top/2019/10/23/Flink运行架构剖析/</id>
-    <published>2019-10-23T03:18:10.000Z</published>
-    <updated>2020-05-06T01:44:04.314Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文主要介绍 Flink Runtime 的作业执行的核心机制。首先介绍 Flink Runtime 的整体架构以及 Job 的基本执行流程，然后介绍Flink 的Standalone运行架构，最后对Flink on YARN的两种模式进行了详细剖析。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>经典Hive-SQL面试题</title>
-    <link href="https://jiamaoxiang.top/2019/10/15/%E7%BB%8F%E5%85%B8Hive-SQL%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
-    <id>https://jiamaoxiang.top/2019/10/15/经典Hive-SQL面试题/</id>
-    <published>2019-10-15T03:04:40.000Z</published>
-    <updated>2019-10-23T05:22:36.282Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;HQL练习&lt;/p&gt;
     
     </summary>
     
