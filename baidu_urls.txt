@@ -1,8 +1,6 @@
 https://jiamaoxiang.top/2020/05/20/Hive的条件函数与日期函数全面汇总解析/
 https://jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/
 https://jiamaoxiang.top/2020/05/18/是时候换掉你的调度系统了/
-https://jiamaoxiang.top/2020/05/13/Flink-SQL编程指南/
-https://jiamaoxiang.top/2020/05/13/Flink-TableAPI-编程指南/
 https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API编程指南/
 https://jiamaoxiang.top/2020/05/05/透过窗口看无限数据流——Flink的Window全面解析/
 https://jiamaoxiang.top/2020/04/30/Flink-DataStream-API-中的多面手——Process-Function详解/
