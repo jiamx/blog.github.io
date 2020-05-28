@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://jiamaoxiang.top/2020/05/25/Flink-Table-API-SQL%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/</loc>
+    <lastmod>2020-05-28</lastmod>
+  </url>  <url>
+    <loc>https://jiamaoxiang.top/2020/05/21/%E4%B8%80%E7%BB%9F%E6%B1%9F%E6%B9%96%E7%9A%84%E6%95%B0%E4%BB%93%E5%BC%80%E5%8F%91%E8%BE%85%E5%8A%A9%E7%A5%9E%E5%99%A8-DBeaver/</loc>
+    <lastmod>2020-05-23</lastmod>
+  </url>  <url>
     <loc>https://jiamaoxiang.top/2020/05/18/%E6%98%AF%E6%97%B6%E5%80%99%E6%8D%A2%E6%8E%89%E4%BD%A0%E7%9A%84%E8%B0%83%E5%BA%A6%E7%B3%BB%E7%BB%9F%E4%BA%86/</loc>
     <lastmod>2020-05-20</lastmod>
   </url>  <url>
@@ -12,9 +18,6 @@
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2020-05-12</lastmod>
-  </url>  <url>
-    <loc>https://jiamaoxiang.top/2020/05/05/%E9%80%8F%E8%BF%87%E7%AA%97%E5%8F%A3%E7%9C%8B%E6%97%A0%E9%99%90%E6%95%B0%E6%8D%AE%E6%B5%81%E2%80%94%E2%80%94Flink%E7%9A%84Window%E5%85%A8%E9%9D%A2%E8%A7%A3%E6%9E%90/</loc>
-    <lastmod>2020-05-08</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/03/24/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%BA%8C/</loc>
     <lastmod>2020-05-06</lastmod>

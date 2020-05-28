@@ -1,0 +1,154 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>一统江湖的数仓开发辅助神器--DBeaver | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">一统江湖的数仓开发辅助神器--DBeaver</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">一统江湖的数仓开发辅助神器--DBeaver</h1><div class="post-meta">May 21, 2020<span> | </span><span class="category"><a href="/categories/数仓/">数仓</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.4k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 5</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p><strong>DBeaver</strong>是一个SQL客户端和数据库管理工具。对于关系数据库，它使用JDBC API通过JDBC驱动程序与数据库交互。对于其他数据库NoSQL，它使用专有数据库驱动程序。<strong>DBeaver</strong>支持非常丰富的数据库，可以说只有你想不到的，没有它做不到的，开箱即用的<strong>DBeaver</strong>支持80多种数据库产品，主要包括：</p>
+<table>
+<thead>
+<tr>
+<th>种类</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>关系型</td>
+<td><a href="https://mysql.com/" target="_blank" rel="noopener">MySQL</a>、<a href="https://mariadb.org/" target="_blank" rel="noopener">MariaDB</a>、<a href="https://postgresql.org/" target="_blank" rel="noopener">PostgreSQL</a>、<a href="https://www.microsoft.com/en-us/sql-server/sql-server-2017" target="_blank" rel="noopener">Microsoft SQL Server</a>、<a href="https://dbeaver.com/databases/#" target="_blank" rel="noopener">Oracle</a>、<a href="https://www.ibm.com/analytics/us/en/db2/" target="_blank" rel="noopener">DB2</a>、<a href="https://www.ibm.com/analytics/informix" target="_blank" rel="noopener">Informix</a>等等</td>
+</tr>
+<tr>
+<td>分析型</td>
+<td><a href="https://greenplum.org/" target="_blank" rel="noopener">Greenplum</a>、<a href="http://www.teradata.com/products-and-services/teradata-database" target="_blank" rel="noopener">Teradata</a>、<a href="https://prestosql.io/" target="_blank" rel="noopener">PrestoDB</a>、<a href="https://clickhouse.yandex/" target="_blank" rel="noopener">ClickHouse</a>、<a href="https://www.vertica.com/" target="_blank" rel="noopener">Vertica</a>等等</td>
+</tr>
+<tr>
+<td>文档型</td>
+<td><a href="https://dbeaver.com/databases/mongo/" target="_blank" rel="noopener">MongoDB</a>、<a href="https://dbeaver.com/databases/#" target="_blank" rel="noopener">Couchbase</a></td>
+</tr>
+<tr>
+<td>云数据库</td>
+<td>AWS Athena、AWS Redshift、<a href="https://aws.amazon.com/dynamodb/" target="_blank" rel="noopener">Amazon DynamoDB</a>、<a href="https://azure.microsoft.com/services/sql-database/" target="_blank" rel="noopener">SQL Azure</a>、<a href="https://dbeaver.com/databases/#" target="_blank" rel="noopener">Snowflake</a>、<a href="https://cloud.google.com/bigtable/" target="_blank" rel="noopener">Google Bigtable</a>等等</td>
+</tr>
+<tr>
+<td>大数据</td>
+<td><a href="https://hive.apache.org/" target="_blank" rel="noopener">Apache Hive</a>、<a href="https://jaceklaskowski.gitbooks.io/mastering-apache-spark/spark-sql-thrift-server.html" target="_blank" rel="noopener">Spark Hive</a>、<a href="https://drill.apache.org/" target="_blank" rel="noopener">Apache Drill</a>、<a href="http://phoenix.apache.org/" target="_blank" rel="noopener">Apache Phoenix</a>、<a href="http://impala.apache.org/" target="_blank" rel="noopener">Apache Impala</a>、<a href="https://content.pivotal.io/pivotal-gemfire" target="_blank" rel="noopener">Gemfire XD</a>、<a href="https://snappydatainc.github.io/snappydata/" target="_blank" rel="noopener">SnappyData</a></td>
+</tr>
+<tr>
+<td>键值型</td>
+<td><a href="https://dbeaver.com/databases/cassandra/" target="_blank" rel="noopener">Apache Cassandra</a>、<a href="https://dbeaver.com/databases/redis/" target="_blank" rel="noopener">Redis</a></td>
+</tr>
+<tr>
+<td>时间序列</td>
+<td><a href="https://dbeaver.com/databases/#" target="_blank" rel="noopener">TimescaleDB</a>、<a href="https://dbeaver.com/databases/influxdb/" target="_blank" rel="noopener">InfluxDB</a></td>
+</tr>
+<tr>
+<td>图数据库</td>
+<td><a href="https://neo4j.com/" target="_blank" rel="noopener">Neo4j</a>、<a href="http://orientdb.com/orientdb/" target="_blank" rel="noopener">OrientDB</a></td>
+</tr>
+<tr>
+<td>搜索引擎</td>
+<td><a href="https://dbeaver.com/databases/#" target="_blank" rel="noopener">Elasticsearch</a>、<a href="http://lucene.apache.org/solr/" target="_blank" rel="noopener">Solr</a></td>
+</tr>
+<tr>
+<td>内嵌型</td>
+<td>SQLite、<a href="http://ucanaccess.sourceforge.net/site.html" target="_blank" rel="noopener">Microsoft Access</a>、<a href="https://db.apache.org/derby/" target="_blank" rel="noopener">Apache Derby</a>等等</td>
+</tr>
+</tbody></table>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>DBeaver支持在Window、MacOS和Linux上安装，本文主要演示在Window上安装，其他的操作系统可以参考官网。DBeaver有企业版和社区版两种，其中企业版支持所有的功能(两周的试用时间)，开源版仅支持部分功能，具体差异请参考[<a href="https://dbeaver.com/edition/]。" target="_blank" rel="noopener">https://dbeaver.com/edition/]。</a></p>
+<p>商用版的收费是按时长计费的，具体可以参考官网，列举如下：</p>
+<table>
+<thead>
+<tr>
+<th>时长</th>
+<th>服务</th>
+<th>收费标准</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一个月</td>
+<td>无</td>
+<td>19美元</td>
+</tr>
+<tr>
+<td>一年</td>
+<td>升级和客户支持</td>
+<td>199美元</td>
+</tr>
+<tr>
+<td>两年</td>
+<td>升级和客户支持</td>
+<td>333美元</td>
+</tr>
+</tbody></table>
+<p>在Window、MacOS上安装DBeaver的方式有两种，官方推荐的安装方式是使用installer安装(也可以使用 ZIP archive)，<a href="https://dbeaver.io/download/" target="_blank" rel="noopener">下载地址</a>。安装非常方便，下载dbeaver-ce-7.0.5-x86_64-setup.exe，直接双击安装即可。下面将会演示如何连接MySQL、Hive、Impala和 Phoenix。</p>
+<h2 id="连接MySQL"><a href="#连接MySQL" class="headerlink" title="连接MySQL"></a>连接MySQL</h2><ul>
+<li>第一步，新建连接，选择MySQL</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/mysql.png" alt></p>
+<ul>
+<li>第二步，下载驱动。点击之后，需要下载MySQL的驱动，可以点击驱动属性进行下载，填好服务器地址、用户名和密码之后测试连接：</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/%E6%B5%8B%E8%AF%95%E8%BF%9E%E6%8E%A5.png" alt></p>
+<p>完成上面的步骤之后，就可以使用了，可以非常方便的查看表的元数据信息、数据以及ER图。连接之后的信息如下：</p>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF.png" alt></p>
+<h2 id="连接Hive"><a href="#连接Hive" class="headerlink" title="连接Hive"></a>连接Hive</h2><ul>
+<li>第一步，新建连接，选择Apache Hive</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/Hive.png" alt></p>
+<ul>
+<li>第二步，点击驱动属性、下载对应的驱动，驱动下载完成后，填写连接的url信息。必须开启HiveServer2服务，HiveServer2的默认端口是10000</li>
+</ul>
+<p><strong>尖叫提示</strong>：如果选择自动下载驱动，会出现版本不兼容或者下载失败的情况，所以不建议使用这种方式。最简单的方式是将hive JDBC的jar包直接加载进去即可，本文使用的Hive是CDH5.16的hive1.1.0版本，在<code>/opt/cloudera/parcels/CDH/lib/hive/lib</code>目录下找到<code>hive-jdbc-1.1.0-cdh5.16.1-standalone.jar</code>文件，将其放在本地的一个文件夹下(可以放置在DBeaver的安装目录下)，然后选择编辑驱动设置：如下图</p>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/hive%E9%A9%B1%E5%8A%A8%E9%85%8D%E7%BD%AE.png" alt></p>
+<p>在点击编辑驱动设置之后，会弹出一个窗口，让你选择驱动的位置，点击添加文件，选择相应的hive驱动即可。然后点击确定。</p>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/%E9%80%89%E6%8B%A9hive%E9%A9%B1%E5%8A%A8.png" alt></p>
+<p>然后填写好url，点击测试链接进行测试，如下图：</p>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/hive%E6%B5%8B%E8%AF%95%E8%BF%9E%E6%8E%A5.png" alt></p>
+<p>成功链接之后，就可以像Hue一样操作Hive了，如下:</p>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/hive%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" alt></p>
+<h2 id="连接Impala"><a href="#连接Impala" class="headerlink" title="连接Impala"></a>连接Impala</h2><ul>
+<li>第一步，点击工具栏的数据库，新建连接</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/impala%E6%96%B0%E5%BB%BA%E8%BF%9E%E6%8E%A51.png" alt></p>
+<ul>
+<li>第二步，选择Hadoop/Bigdata,选择Cloudera Impala，然后点击下一步，如下：</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/impala%E6%96%B0%E5%BB%BA%E8%BF%9E%E6%8E%A52.png" alt></p>
+<ul>
+<li>第三步，填写好url，端口号默认是21050，该端口被使用 JDBC 或 Cloudera ODBC 2.0 及以上驱动的诸如 BI 工具之类的应用用来传递命令和接收结果，关于Impala的各端口的解释说明，可以参考我的另一篇文章：<a href="https://mp.weixin.qq.com/s/7cIlpcXnm_j8LPYUtPgYiw" target="_blank" rel="noopener">Impala使用端口号汇总</a>。如下图：</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/impala%E6%96%B0%E5%BB%BA%E8%BF%9E%E6%8E%A53.png" alt></p>
+<ul>
+<li>第四步，编辑驱动配置，与Hive的配置一样，选择相对应的驱动jar包，并添加。关于jar包的下载，可以在Cloudera官网进行下载[<a href="https://www.cloudera.com/downloads/connectors/impala/jdbc/2-5-41.html],本文使用的是`ImpalaJDBC41.jar`,后台回复:impala驱动，即可获取。" target="_blank" rel="noopener">https://www.cloudera.com/downloads/connectors/impala/jdbc/2-5-41.html],本文使用的是`ImpalaJDBC41.jar`,后台回复:impala驱动，即可获取。</a></li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/impala%E6%96%B0%E5%BB%BA%E8%BF%9E%E6%8E%A54.png" alt></p>
+<ul>
+<li>第五步，测试连接成功，接下来就可以访问Hive中的表了</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/%E6%B5%8B%E8%AF%95%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" alt></p>
+<h2 id="连接Phoenix"><a href="#连接Phoenix" class="headerlink" title="连接Phoenix"></a>连接Phoenix</h2><ul>
+<li>第一步，选择Apache Phoenix连接</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/phoenix%E8%BF%9E%E6%8E%A5.png" alt></p>
+<ul>
+<li>第二步，填写连接的url，主机名为zookeeper的地址，端口号为zookeeper的端口号2181,填写完成之后，点击编辑驱动设置</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/Phoenix%E8%BF%9E%E6%8E%A5url.png" alt></p>
+<ul>
+<li>第三步，编辑驱动设置，把Phoenix安装目录下的<code>phoenix-4.14.3-HBase-1.3-client.jar</code>文件复制到本地的一个文件下，并且把hbase-site.xml文件添加到该jar包中，然后选择添加文件，选择该jar包。</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/phoenix%E6%B7%BB%E5%8A%A0%E9%A9%B1%E5%8A%A8.png" alt></p>
+<ul>
+<li>第四步，phoenix测试连接</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/phoenix%E6%B5%8B%E8%AF%95%E9%93%BE%E6%8E%A5.png" alt></p>
+<p><strong>尖叫提示:</strong>我使用的版本是DBeaverEE6.0，需要在快捷方式的属性中配置重新配置java路径，否则会报错。具体配置为:在属性后面添加java的目录，<code>-vm C:\mysoftwares\Java\jdk1.8.0_151\bin\javaw</code></p>
+<p><img src="//jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/java%E9%85%8D%E7%BD%AE.png" alt></p>
+<p>连接完成之后就可以通过SQL的语法访问HBase了。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要介绍了<strong>DBeaver</strong>数据库管理工具，该工具提供了非常丰富的数据库支持，在工作中只需要一个工具就可以花式连接各种各样的数据库。另外本文主要演示了如何连接MySQL、Hive、Impala以及Phoenix，对于其他的数据库而言，用户可以自行测试连接。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/05/25/Flink-Table-API-SQL编程指南/" target="_blank">Flink Table API &amp; SQL编程指南(1)</a></li><li><a href="https://jiamaoxiang.top/2020/05/20/Hive的条件函数与日期函数全面汇总解析/" target="_blank">Hive的条件函数与日期函数全面汇总解析</a></li><li><a href="https://jiamaoxiang.top/2020/05/18/Greenplum集群Master与Segment节点故障检测与恢复/" target="_blank">Greenplum集群Master与Segment节点故障检测与恢复</a></li><li><a href="https://jiamaoxiang.top/2020/05/18/是时候换掉你的调度系统了/" target="_blank">是时候换掉你的调度系统了</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/">https://jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/" data-id="ckaq4gjfn001vd87q90y831t0" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtUlEQVR42u3awW7CMBAEUP7/p+m1EkqYsb2USi+nqkDiZyTbzO7jEV/P7ev3fV7vfPXE16c/Ji48PDy8o0O/esDVO68Gd/+snfHc3w0PDw9vjpcszVeDuAfnE7Eznsv/4+Hh4X09Lx96fofknXh4eHj/hZdvCfdT05Lw8PDwvoHXxq/JHe7feTYKOZC14OHh4cW8vIr0PX+P1Pfw8PDwBhoC2m0gDzLWymZvRouHh4c3wMsX3DZyXWsaWCt6vZk4PDw8vI/w8og2aQ5oN4m8MSuaejw8PLyjvDy6bY/FbTEsgdVxLR4eHt4Ar90Mdkr4+XS0xbOkDQIPDw/vLC8vw68NOvlsu9AXIQUeHh7eAC//kb8TFkS7U3kor1uv8PDw8AZ4bSlrJ0TIg4/BnRAPDw+v5K2Vvtr5OxtqFF8GHh4e3hhvrbGpjRh2NpK8UIeHh4f3t7y8/L8W8u5vJ2++ADw8PLwB3kTJKo9921aA/D51voKHh4cX89aC1/xAnE/i2jfzZtvAw8PDG+PVH9tuojrLuLwPHh4e3gAvjwOSB681DezcLQqg8fDw8IZ5a7FCG84mR+22jSDaGPDw8PC2eUnJqm0FaGOLfA2vX8XDw8Mb4OUtAvfH61PT1GKigzUeHh7eAC9pYGrjg/zAnb/aluXw8PDw5nj5sp6Hv2cjhjzUiB6Ah4eHd4iXL/35ltBOXN7CVYQaeHh4eGO8neNyPpRj4Wy+zeDh4eEd5T3La+1TSbiQh8XFVoGHh4c3wJuoE51q2MqD4Db+wMPDw9vnnW2Q2oktkuW+3jbw8PDwxnj5ENsHrwW4W/nKWtaCh4eHN8ZLBtFuDPfTkU8uHh4e3nfydsr8xYK+0aCAh4eH9xneTtFr//i7dkAvOiPw8PDwjvLWhtVGvclGsh8NP9YuPDw8vJT3A4Xuac44J8RoAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/DBeaver/">DBeaver</a></div><div class="post-nav"><a class="pre" href="/2020/05/25/Flink-Table-API-SQL编程指南/">Flink Table API &amp; SQL编程指南(1)</a><a class="next" href="/2020/05/20/Hive的条件函数与日期函数全面汇总解析/">Hive的条件函数与日期函数全面汇总解析</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接MySQL"><span class="toc-number">2.</span> <span class="toc-text">连接MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接Hive"><span class="toc-number">3.</span> <span class="toc-text">连接Hive</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接Impala"><span class="toc-number">4.</span> <span class="toc-text">连接Impala</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接Phoenix"><span class="toc-number">5.</span> <span class="toc-text">连接Phoenix</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">6.</span> <span class="toc-text">小结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
