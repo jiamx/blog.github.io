@@ -1,0 +1,268 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>数仓开发需要了解的BI数据分析方法 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">数仓开发需要了解的BI数据分析方法</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">数仓开发需要了解的BI数据分析方法</h1><div class="post-meta">May 28, 2020<span> | </span><span class="category"><a href="/categories/数仓/">数仓</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 3.6k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 13</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>数仓开发经常需要与数据表打交道，那么数仓表开发完成之后就万事大吉了吗？显然不是，还需要思考一下如何分析数据以及如何呈现数据，因为这是发挥数据价值很重要的一个方面。通过数据的分析与可视化呈现可以更加直观的提供数据背后的秘密，从而辅助业务决策，实现真正的数据赋能业务。通过本文你可以了解到：</p>
+<ul>
+<li><p>帕累托分析方法与数据可视化</p>
+</li>
+<li><p>RFM分析与数据可视化</p>
+</li>
+<li><p>波士顿矩阵与数据可视化</p>
+</li>
+</ul>
+<h2 id="帕累托分析与数据可视化"><a href="#帕累托分析与数据可视化" class="headerlink" title="帕累托分析与数据可视化"></a>帕累托分析与数据可视化</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>帕累托(Pareto)分析法，又称ABC分析法，即我们平时所提到的80／20法则。关于帕累托(Pareto)分析法，在不同的行业都有不同的应用。</p>
+<ul>
+<li><strong>举个栗子</strong></li>
+</ul>
+<p>在企业的库存管理中，可以发现少数品种在总需用量(或是总供给额、库存总量、储备金总额)中，占了很大的比重，但在相应的量值中所占的比重很少。因此可以运用帕累托分析法，将企业所需的各种物品，按其需用量的大小、物品的重要程度、资源短缺和采购的难易程度、单价的高低、占用储备资金的多少等因素分为若干类，实施分类管理。</p>
+<p>商品销售额分析中，某些商品的销售额占了总销售额的很大部分，某些商品的销售额仅占很小的比例，这样就可以将其分为A、B、C几大类，对销售额占比较多的分类进行投入，以获得更多的销售额。</p>
+<p>在质量分析中，对某种原因导致产品质量不合格的产品数量进行分析，使用帕累托(Pareto)分析法，可以很直观的看出哪些原因造成了产品质量不合格以及哪些原因比较严重。这样就可以着重解决重要的问题，明确目标，更易于操作。</p>
+<ul>
+<li><strong>另一种表述方式</strong></li>
+</ul>
+<p>根据事物在技术或经济方面的主要特征，进行分类，分清重点与非重点。对每一种分类进行区别对待管理，把被分析的对象分成 A、B、C 三类，三类物品没有明确的划分数值界限。</p>
+<table>
+<thead>
+<tr>
+<th>分类与重要程度</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A类(非常重要)</td>
+<td>数量占比少，价值占比大</td>
+</tr>
+<tr>
+<td>B类(比较重要)</td>
+<td>没有A类那么重要，介于 A、C 之间</td>
+</tr>
+<tr>
+<td>C类(一般重要)</td>
+<td>数量占比大但价值占比很小</td>
+</tr>
+</tbody></table>
+<p>分类的核心思想：少数贡献了大部分价值。以商品品类和销售额为例：A 品类数量占总体 10% ，却贡献了 80% 的销售额。</p>
+<p><img src="//jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/%E5%B8%95%E7%B4%AF%E6%89%98%E4%B8%BE%E4%BE%8B.png" alt></p>
+<h3 id="数据分析案例"><a href="#数据分析案例" class="headerlink" title="数据分析案例"></a>数据分析案例</h3><ul>
+<li>效果图</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/%E5%B8%95%E7%B4%AF%E6%89%98%E5%9B%BE.png" alt></p>
+<ul>
+<li>实现步骤</li>
+</ul>
+<p>假设有如下数据集格式：</p>
+<table>
+<thead>
+<tr>
+<th>品牌</th>
+<th>销售额</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NEW BALANCE(新百伦)</td>
+<td>8750</td>
+</tr>
+<tr>
+<td>ZIPPO(之宝)</td>
+<td>9760</td>
+</tr>
+<tr>
+<td>OCTMAMI(十月妈咪)</td>
+<td>5800</td>
+</tr>
+</tbody></table>
+<p>需要将数据加工成下面的格式：</p>
+<table>
+<thead>
+<tr>
+<th>品牌</th>
+<th>销售额</th>
+<th>销售总额</th>
+<th>累计销售额</th>
+<th>累计销售额占比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+<td>=∑所有品牌销售额</td>
+<td>=当前品牌销售额 +上一个品牌销售额</td>
+<td>累计销售额/销售总额</td>
+</tr>
+</tbody></table>
+<p>具体的SQL实现如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">     brand, <span class="comment">-- 品牌</span></span><br><span class="line">     total_money, <span class="comment">-- 销售额</span></span><br><span class="line">     <span class="keyword">sum</span>(total_money) <span class="keyword">over</span>() <span class="keyword">AS</span> sum_total_money,<span class="comment">-- 销售总额</span></span><br><span class="line">     <span class="keyword">sum</span>(total_money) <span class="keyword">over</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> total_money <span class="keyword">DESC</span> <span class="keyword">ROWS</span> <span class="keyword">BETWEEN</span> <span class="keyword">UNBOUNDED</span> <span class="keyword">PRECEDING</span> <span class="keyword">AND</span> <span class="keyword">CURRENT</span> <span class="keyword">ROW</span>) <span class="keyword">AS</span> acc_sum_total_money <span class="comment">-- 累计销售额</span></span><br><span class="line"><span class="keyword">FROM</span> sales_money</span><br></pre></td></tr></table></figure>
+
+<p>上面给出了具体的SQL实现，其实BI工具已经内置了许多的处理函数和拖拽式的数据处理，不需要写SQL也可以将一份明细数据加工成上面的形式。</p>
+<ul>
+<li>结论分析</li>
+</ul>
+<p>从上面的帕累托图中可以看出：A类的(绿色部分)占了总销售额的80%左右，B类(黄色部分)占总销售额的10%,C类(红色部分)占总销售额的10%。接下来可以进行长尾分析，制定营销策略等等。</p>
+<h2 id="RFM分析与数据可视化"><a href="#RFM分析与数据可视化" class="headerlink" title="RFM分析与数据可视化"></a>RFM分析与数据可视化</h2><h3 id="基本概念-1"><a href="#基本概念-1" class="headerlink" title="基本概念"></a>基本概念</h3><p>RFM模型是在客户关系管理(CRM)中常用到的一个模型,RFM模型是衡量客户价值和客户创利能力的重要工具和手段。该模型通过一个客户的近期购买行为、购买的总体频率以及花了多少钱三项指标来描述该客户的价值状况。</p>
+<p>RFM模型较为动态地层示了一个客户的全部轮廓，这对个性化的沟通和服务提供了依据，同时，如果与该客户打交道的时间足够长，也能够较为精确地判断该客户的长期价值(甚至是终身价值)，通过改善三项指标的状况，从而为更多的营销决策提供支持。</p>
+<p>　　在RFM模式中，包括三个关键的因素，分别为：</p>
+<ul>
+<li>R(Recency)：表示客户最近一次购买的时间有多远，即最近的一次消费，消费时间越近的客户价值越大</li>
+<li>F(Frequency)：表示客户在最近一段时间内购买的次数，即消费频率，经常购买的用户也就是熟客，价值肯定比偶尔来一次的客户价值大</li>
+<li>M (Monetary)：表示客户在最近一段时间内购买的金额，即客户的消费能力，通常以客户单次的平均消费金额作为衡量指标，消费越多的用户价值越大。</li>
+</ul>
+<p>最近一次消费、消费频率、消费金额是测算消费者价值最重要也是最容易的方法，这充分的表现了这三个指标对营销活动的指导意义。而其中，最近一次消费是最有力的预测指标。</p>
+<p>通过上面分析可以对客户群体进行分类：</p>
+<table>
+<thead>
+<tr>
+<th>客户类型与等级</th>
+<th>R</th>
+<th>F</th>
+<th>M</th>
+<th>客户特征</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>重要价值客户(A级/111)</td>
+<td>高(1)</td>
+<td>高(1)</td>
+<td>高(1)</td>
+<td>最近消费时间近、消费频次和消费金额都很高</td>
+</tr>
+<tr>
+<td>重要发展客户(A级/101)</td>
+<td>高(1)</td>
+<td>低(0)</td>
+<td>高(1)</td>
+<td>最近消费时间较近、消费金额高，但频次不高，忠诚度不高，很有潜力的用户，必须重点发展</td>
+</tr>
+<tr>
+<td>重要保持客户(B级/011)</td>
+<td>低(0)</td>
+<td>高(1)</td>
+<td>高(1)</td>
+<td>最近消费时间交远，消费金额和频次都很高。</td>
+</tr>
+<tr>
+<td>重要挽留客户(B级/001)</td>
+<td>低(0)</td>
+<td>低(0)</td>
+<td>高(1)</td>
+<td>最近消费时间较远、消费频次不高，但消费金额高的用户，可能是将要流失或者已经要流失的用户，应当基于挽留措施。</td>
+</tr>
+<tr>
+<td>一般价值客户(B级/110)</td>
+<td>高(1)</td>
+<td>高(1)</td>
+<td>低(0)</td>
+<td>最近消费时间近，频率高，但消费金额低，需要提高其客单价。</td>
+</tr>
+<tr>
+<td>一般发展客户(B级/100)</td>
+<td>高(1)</td>
+<td>低(0)</td>
+<td>低(0)</td>
+<td>最近消费时间较近、消费金额，频次都不高。</td>
+</tr>
+<tr>
+<td>一般保持客户(C级/010)</td>
+<td>低(0)</td>
+<td>高(1)</td>
+<td>低(0)</td>
+<td>最近消费时间较远、消费频次高，但金额不高。</td>
+</tr>
+<tr>
+<td>一般挽留客户(C级/000)</td>
+<td>低(0)</td>
+<td>低(0)</td>
+<td>低(0)</td>
+<td>都很低</td>
+</tr>
+</tbody></table>
+<h3 id="数据分析案例-1"><a href="#数据分析案例-1" class="headerlink" title="数据分析案例"></a>数据分析案例</h3><ul>
+<li>效果图</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/RFM%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt></p>
+<ul>
+<li>实现步骤</li>
+</ul>
+<p>假设有如下的样例数据：</p>
+<table>
+<thead>
+<tr>
+<th>客户名称</th>
+<th>日期</th>
+<th>消费金额</th>
+<th>消费数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上海****有限公司</td>
+<td>2020-05-20</td>
+<td>76802</td>
+<td>2630</td>
+</tr>
+</tbody></table>
+<p>需要将数据集加工成如下格式：</p>
+<p><img src="//jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/RFM%E8%A1%A8%E7%BB%93%E6%9E%84.png" alt></p>
+<p>具体SQL实现</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> customer_name,<span class="comment">-- 客户名称</span></span><br><span class="line">customer_avg_money,<span class="comment">-- 当前客户的平均消费金额</span></span><br><span class="line">customer_frequency, <span class="comment">-- 当前客户的消费频次</span></span><br><span class="line">total_frequency,<span class="comment">-- 所有客户的总消费频次</span></span><br><span class="line">total_avg_frequency, <span class="comment">-- 所有客户平均消费频次</span></span><br><span class="line">customer_recency_diff, <span class="comment">-- 当前客户最近一次消费日期与当前日期差值</span></span><br><span class="line">total_recency, <span class="comment">-- 所有客户最近一次消费日期与当前日期差值的平均值</span></span><br><span class="line">monetary,<span class="comment">-- 消费金额向量化</span></span><br><span class="line">frequency, <span class="comment">-- 消费频次向量化</span></span><br><span class="line">recency, <span class="comment">-- 最近消费向量化</span></span><br><span class="line">rfm, <span class="comment">-- rfm</span></span><br><span class="line"><span class="keyword">CASE</span></span><br><span class="line">    <span class="keyword">WHEN</span> rfm = <span class="string">"111"</span> <span class="keyword">THEN</span> <span class="string">"重要价值客户"</span></span><br><span class="line">    <span class="keyword">WHEN</span> rfm = <span class="string">"101"</span> <span class="keyword">THEN</span> <span class="string">"重要发展客户"</span></span><br><span class="line">    <span class="keyword">WHEN</span> rfm = <span class="string">"011"</span> <span class="keyword">THEN</span> <span class="string">"重要保持客户"</span></span><br><span class="line">    <span class="keyword">WHEN</span> rfm = <span class="string">"001"</span> <span class="keyword">THEN</span> <span class="string">"重要挽留客户"</span></span><br><span class="line">    <span class="keyword">WHEN</span> rfm = <span class="string">"110"</span> <span class="keyword">THEN</span> <span class="string">"一般价值客户"</span></span><br><span class="line">    <span class="keyword">WHEN</span> rfm = <span class="string">"100"</span> <span class="keyword">THEN</span> <span class="string">"一般发展客户"</span></span><br><span class="line">    <span class="keyword">WHEN</span> rfm = <span class="string">"010"</span> <span class="keyword">THEN</span> <span class="string">"一般保持客户"</span></span><br><span class="line">    <span class="keyword">WHEN</span> rfm = <span class="string">"000"</span> <span class="keyword">THEN</span> <span class="string">"一般挽留客户"</span></span><br><span class="line">           <span class="keyword">END</span> <span class="keyword">AS</span> rfm_text</span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">  (<span class="keyword">SELECT</span> customer_name,<span class="comment">-- 客户名称</span></span><br><span class="line">customer_avg_money,<span class="comment">-- 当前客户的平均消费金额</span></span><br><span class="line">customer_frequency, <span class="comment">-- 当前客户的消费频次</span></span><br><span class="line">total_avg_money ,<span class="comment">-- 所有客户的平均消费总额</span></span><br><span class="line">total_frequency,<span class="comment">-- 所有客户的总消费频次</span></span><br><span class="line">total_frequency / <span class="keyword">count</span>(*) <span class="keyword">over</span>() <span class="keyword">AS</span> total_avg_frequency, <span class="comment">-- 所有客户平均消费频次</span></span><br><span class="line">customer_recency_diff, <span class="comment">-- 当前客户最近一次消费日期与当前日期差值</span></span><br><span class="line"><span class="keyword">avg</span>(customer_recency_diff) <span class="keyword">over</span>() <span class="keyword">AS</span> total_recency, <span class="comment">-- 所有客户最近一次消费日期与当前日期差值的平均值</span></span><br><span class="line"><span class="keyword">if</span>(customer_avg_money &gt; total_avg_money,<span class="number">1</span>,<span class="number">0</span>) <span class="keyword">AS</span> monetary, <span class="comment">-- 消费金额向量化</span></span><br><span class="line"><span class="keyword">if</span>(customer_frequency &gt; total_frequency / <span class="keyword">count</span>(*) <span class="keyword">over</span>(),<span class="number">1</span>,<span class="number">0</span>) <span class="keyword">AS</span> frequency, <span class="comment">-- 消费频次向量化</span></span><br><span class="line"><span class="keyword">if</span>(customer_recency_diff &gt; <span class="keyword">avg</span>(customer_recency_diff) <span class="keyword">over</span>(),<span class="number">0</span>,<span class="number">1</span>) <span class="keyword">AS</span> recency, <span class="comment">-- 最近消费向量化</span></span><br><span class="line"><span class="keyword">concat</span>(<span class="keyword">if</span>(customer_recency_diff &gt; <span class="keyword">avg</span>(customer_recency_diff) <span class="keyword">over</span>(),<span class="number">0</span>,<span class="number">1</span>),<span class="keyword">if</span>(customer_frequency &gt; total_frequency / <span class="keyword">count</span>(*) <span class="keyword">over</span>(),<span class="number">1</span>,<span class="number">0</span>),<span class="keyword">if</span>(customer_avg_money &gt; total_avg_money,<span class="number">1</span>,<span class="number">0</span>)) <span class="keyword">AS</span> rfm</span><br><span class="line">   <span class="keyword">FROM</span></span><br><span class="line">     (<span class="keyword">SELECT</span> customer_name, <span class="comment">-- 客户名称</span></span><br><span class="line"><span class="keyword">max</span>(customer_avg_money) <span class="keyword">AS</span> customer_avg_money , <span class="comment">-- 当前客户的平均消费金额</span></span><br><span class="line"><span class="keyword">max</span>(customer_frequency) <span class="keyword">AS</span> customer_frequency, <span class="comment">-- 当前客户的消费频次</span></span><br><span class="line"><span class="keyword">max</span>(total_avg_money) <span class="keyword">AS</span> total_avg_money ,<span class="comment">-- 所有客户的平均消费总额</span></span><br><span class="line"><span class="keyword">max</span>(total_frequency) <span class="keyword">AS</span> total_frequency,<span class="comment">-- 所有客户的总消费频次</span></span><br><span class="line"><span class="keyword">datediff</span>(<span class="keyword">CURRENT_DATE</span>,<span class="keyword">max</span>(customer_recency)) <span class="keyword">AS</span> customer_recency_diff <span class="comment">-- 当前客户最近一次消费日期与当前日期差值</span></span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">        (<span class="keyword">SELECT</span> customer_name, <span class="comment">-- 客户名称</span></span><br><span class="line"><span class="keyword">avg</span>(money) <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">BY</span> customer_name) <span class="keyword">AS</span> customer_avg_money, <span class="comment">-- 当前客户的平均消费金额</span></span><br><span class="line"><span class="keyword">count</span>(amount) <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">BY</span> customer_name) <span class="keyword">AS</span> customer_frequency, <span class="comment">-- 当前客户的消费频次</span></span><br><span class="line"><span class="keyword">avg</span>(money) <span class="keyword">over</span>() <span class="keyword">AS</span> total_avg_money,<span class="comment">-- 所有客户的平均消费总额</span></span><br><span class="line"><span class="keyword">count</span>(amount) <span class="keyword">over</span>() <span class="keyword">AS</span> total_frequency, <span class="comment">--所有客户的总消费频次</span></span><br><span class="line"><span class="keyword">max</span>(sale_date) <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">BY</span> customer_name) <span class="keyword">AS</span> customer_recency <span class="comment">-- 当前客户最近一次消费日期</span></span><br><span class="line"></span><br><span class="line">         <span class="keyword">FROM</span> customer_sales) t1</span><br><span class="line">      <span class="keyword">GROUP</span> <span class="keyword">BY</span> customer_name)t2) t3</span><br></pre></td></tr></table></figure>
+
+<p>通过上面的分析，可以为相对应的客户打上客户特征标签，这样就可以针对某类客户指定不同的营销策略。</p>
+<h2 id="波士顿矩阵与数据可视化"><a href="#波士顿矩阵与数据可视化" class="headerlink" title="波士顿矩阵与数据可视化"></a>波士顿矩阵与数据可视化</h2><h3 id="基本概念-2"><a href="#基本概念-2" class="headerlink" title="基本概念"></a>基本概念</h3><p>波士顿矩阵<strong>(BCG Matrix)</strong>又称市场增长率-相对市场份额矩阵、波士顿咨询集团法、四象限分析法、产品系列结构管理法等。</p>
+<p>　BCG矩阵区分出4种业务组合:</p>
+<ul>
+<li>1.明星型业务（Stars，指高增长、高市场份额）</li>
+<li>2.问题型业务（Question Marks，指高增长、低市场份额）</li>
+<li>3.现金牛业务（Cash cows，指低增长、高市场份额）</li>
+<li>4.瘦狗型业务（Dogs，指低增长、低市场份额）</li>
+</ul>
+<p>波士顿矩阵通过销售增长率（反映市场引力的指标）和市场占有率（反映企业实力的指标）来分析决定企业的产品结构。</p>
+<p><img src="//jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/%E6%B3%A2%E5%A3%AB%E9%A1%BF%E7%9F%A9%E9%98%B5.png" alt></p>
+<h3 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h3><ul>
+<li>效果图</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/%E6%B3%A2%E5%A3%AB%E9%A1%BF%E7%9F%A9%E9%98%B5%E5%88%86%E6%9E%90.png" alt></p>
+<ul>
+<li>实现步骤</li>
+</ul>
+<p>本案例以分析客户为背景，将客户分类，找到明星客户、现金牛客户、问题客户以及瘦狗客户。</p>
+<p>假设数据集的样式如下：</p>
+<table>
+<thead>
+<tr>
+<th>客户类型</th>
+<th>客户名称</th>
+<th>消费金额</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A类</td>
+<td>上海****公司</td>
+<td>20000</td>
+<td>2020-05-30</td>
+</tr>
+</tbody></table>
+<p>首先需要计算<strong>客单价</strong>：每个客户的平均消费金额，即客单价=某客户总消费金额)/某客户消费次数</p>
+<p>其次需要计算<strong>记录数</strong>：每个客户的消费次数，即某个客户总共消费的次数</p>
+<p>接着需要计算<strong>平均消费金额</strong>：所有客户的平均消费金额，即所有客户的总消费金额/所有客户消费次数</p>
+<p>最后计算<strong>平均消费次数</strong>：所有客户的平均消费次数，即所有客户的总消费次数/总客户数</p>
+<p>具体SQL实现：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    customer_name, <span class="comment">-- 客户名称</span></span><br><span class="line">    customer_avg_money, <span class="comment">-- 客单价</span></span><br><span class="line">    customer_frequency , <span class="comment">-- 当前客户的消费次数</span></span><br><span class="line">    total_avg_money,<span class="comment">-- 所有客户的平均消费金额</span></span><br><span class="line">    total_frequency / <span class="keyword">count</span>(*) <span class="keyword">over</span>() <span class="keyword">AS</span> total_avg_frequency <span class="comment">-- 平均消费次数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">  (<span class="keyword">SELECT</span> </span><br><span class="line">        customer_name, <span class="comment">-- 客户名称</span></span><br><span class="line">        <span class="keyword">max</span>(customer_avg_money) <span class="keyword">AS</span> customer_avg_money, <span class="comment">-- 客单价</span></span><br><span class="line">        <span class="keyword">max</span>(customer_frequency) <span class="keyword">AS</span> customer_frequency , <span class="comment">-- 当前客户的消费次数</span></span><br><span class="line">        <span class="keyword">max</span>(total_avg_money) <span class="keyword">AS</span> total_avg_money,<span class="comment">-- 所有客户的平均消费金额</span></span><br><span class="line">        <span class="keyword">max</span>(total_frequency) <span class="keyword">AS</span> total_frequency <span class="comment">--所有客户的总消费频次</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">FROM</span></span><br><span class="line">     (</span><br><span class="line">        <span class="keyword">SELECT</span></span><br><span class="line">             customer_name, <span class="comment">-- 客户名称</span></span><br><span class="line">             <span class="keyword">avg</span>(money) <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">BY</span> customer_name) <span class="keyword">AS</span> customer_avg_money, <span class="comment">-- 客单价</span></span><br><span class="line">             <span class="keyword">count</span>(*) <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">BY</span> customer_name) <span class="keyword">AS</span> customer_frequency, <span class="comment">-- 当前客户的消费次数</span></span><br><span class="line">            <span class="keyword">avg</span>(money) <span class="keyword">over</span>() <span class="keyword">AS</span> total_avg_money,<span class="comment">-- 所有客户的平均消费金额</span></span><br><span class="line">            <span class="keyword">count</span>(*) <span class="keyword">over</span>() <span class="keyword">AS</span> total_frequency <span class="comment">--所有客户的总消费频次</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">FROM</span> customer_sales ) t1</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> customer_name) t2</span><br></pre></td></tr></table></figure>
+
+<p>经过上面的分析，大致可以看出客户画像：</p>
+<ul>
+<li>某客户的消费次数超过平均值，并且每次消费力度(客单价)也超过平均水平的客户：判定为明星客户，这类客户需要重点关注；</li>
+<li>某客户的消费次数超过平均值，但每次消费力度未达到平均水平的客户：被判定为现金牛客户，这类客户通常消费频次比较频繁，能给企业带来较为稳定的现金流，这类客户是企业利润基石；</li>
+<li>某客户的消费次数未达到平均值，但每次消费力度超过平均水平的客户：是问题客户，这类客户最有希望转化为明星客户，但是因为客户存在一定的潜在问题，导致消费频次不高，这类客户需要进行重点跟进和长期沟通；</li>
+<li>消费次数未达到平均值，消费力度也未达到平均水平的客户：属于瘦狗客户，这类客户通常占企业客户的大多数，只需要一般性维护，如果企业资源有限，则可以不用投入太多的精力。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要介绍了数仓开发应该要了解的常见的数据分析方法，主要有三种：帕累托分析、RFM分析以及波士顿矩阵分析。本文分别介绍了三种分析方法的基本概念、操作步骤以及SQL实现，并给出了相应的可视化分析图表，每个案例都是企业的真实应用场景。希望给数仓开发的同学提供一些观察数据的分析角度，从而在实际的开发过程中能够多思考一下数据的应用价值以及数据如何赋能业务，进一步提升自己的综合能力。</p>
+<p>​    </p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/06/05/实时数仓-Flink-SQL之维表join/" target="_blank">实时数仓|Flink SQL之维表join</a></li><li><a href="https://jiamaoxiang.top/2020/06/02/Flink-Table-API-SQL编程指南之时间属性-3/" target="_blank">Flink Table API&amp;SQL编程指南之时间属性(3)</a></li><li><a href="https://jiamaoxiang.top/2020/05/28/Flink-Table-API-SQL编程指南-2/" target="_blank">Flink Table API &amp; SQL编程指南之动态表(2)</a></li><li><a href="https://jiamaoxiang.top/2020/05/25/Flink-Table-API-SQL编程指南/" target="_blank">Flink Table API &amp; SQL编程指南(1)</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/05/28/数仓开发需要了解的BI数据分析方法/">https://jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/" data-id="ckb4o68ca002ke47qhbjjpwxn" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACs0lEQVR42u3asXLrMAwEwPz/T+c1ad5MrNwBpMfFqtJYMsllQVIAvr7i6/vF9fxm3vKr+6THAxceHh7eoaG/6uz5l+f7Vz0mTxP8L1OAh4eHd42XL9kJ77md/TQlfeHh4eF9Gq9tYXNonk0lHh4e3ufwkqNw8mYePXjrxoCHh4cX85JgRB6ofabODtbXYy14eHh4MW+fpnr//ZX8Hh4eHt46q56nqdruk+1nM86fdvDw8PAu8PJhzdL8CWBTZBCNEw8PD+8yrw1MzMITLWkTyMDDw8M7y0sOzbPk/aaUanN95bsKHh4e3iHeqRKBvFygDXw8b0K/7Hh4eHh4F3ibj/92HW77yn9/uTHg4eHhHeVtBpoPqw1etEGHfNvAw8PDO8XL0//5MXpGulEWhoeHh3eDt/nsn20b+YDa4Mhqx8PDw8OLefngzi73p9Jdf0wTHh4e3lHecD7KYOsszTbbPKKiKzw8PLw1b19GMAsW5Mfuutwq6RIPDw9vxEvS8GcP2ZspTnop6iPw8PDwRrwkMLpPQeXJ/lmJ1ct28PDw8K7x2oRWvlgnyLY0oTj04+Hh4V3jPQ8rB8w2ibzlNmyBh4eHd5vXdjlL8LftD2EtAA8PDy/mtUn6Uym0/dG8DS7j4eHh3ebl+aPkabKs7wMif/SIh4eHd5SXwNrAwSa8mwy6mEQ8PDy8a7xZQHYW2N1MZVtYgIeHh/dOXh6SyN/Ph57AojHg4eHhHeV9l1e+HCch3XyzyZ/+d4+Hh4d3gdcuuHtSO7h98RYeHh7eDV5eMtXi8wKptmyr+ADAw8PDu8bbB3A3ybDNgfiP9/Hw8PA+gJcgZ3HUU5OIh4eH92m8toCgLepqgx11TRkeHh7eIV67TM/CE+1/ZyVceHh4eLd5s3Npsri3h/KEfSynh4eHhzfh/QMvaSIWSGNdpAAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/数仓/">数仓</a></div><div class="post-nav"><a class="pre" href="/2020/06/02/Flink-Table-API-SQL编程指南之时间属性-3/">Flink Table API&amp;SQL编程指南之时间属性(3)</a><a class="next" href="/2020/05/28/Flink-Table-API-SQL编程指南-2/">Flink Table API &amp; SQL编程指南之动态表(2)</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#帕累托分析与数据可视化"><span class="toc-number">1.</span> <span class="toc-text">帕累托分析与数据可视化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本概念"><span class="toc-number">1.1.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据分析案例"><span class="toc-number">1.2.</span> <span class="toc-text">数据分析案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RFM分析与数据可视化"><span class="toc-number">2.</span> <span class="toc-text">RFM分析与数据可视化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本概念-1"><span class="toc-number">2.1.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据分析案例-1"><span class="toc-number">2.2.</span> <span class="toc-text">数据分析案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#波士顿矩阵与数据可视化"><span class="toc-number">3.</span> <span class="toc-text">波士顿矩阵与数据可视化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本概念-2"><span class="toc-number">3.1.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例"><span class="toc-number">3.2.</span> <span class="toc-text">案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

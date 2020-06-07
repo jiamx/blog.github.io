@@ -1,3 +1,9 @@
+https://jiamaoxiang.top/2020/06/06/数仓-Hive性能调优指北/
+https://jiamaoxiang.top/2020/06/05/‘实时数仓-基于Flink-SQL构建实时数仓探索实践/
+https://jiamaoxiang.top/2020/06/05/实时数仓-Flink-SQL之维表join/
+https://jiamaoxiang.top/2020/06/02/Flink-Table-API-SQL编程指南之时间属性-3/
+https://jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/
+https://jiamaoxiang.top/2020/05/28/Flink-Table-API-SQL编程指南-2/
 https://jiamaoxiang.top/2020/05/25/Flink-Table-API-SQL编程指南/
 https://jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/
 https://jiamaoxiang.top/2020/05/20/Hive的条件函数与日期函数全面汇总解析/

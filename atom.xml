@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-05-28T01:50:01.801Z</updated>
+  <updated>2020-06-07T06:11:02.860Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,150 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>数仓|Hive性能调优指北</title>
+    <link href="https://jiamaoxiang.top/2020/06/06/%E6%95%B0%E4%BB%93-Hive%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E6%8C%87%E5%8C%97/"/>
+    <id>https://jiamaoxiang.top/2020/06/06/数仓-Hive性能调优指北/</id>
+    <published>2020-06-06T07:05:52.000Z</published>
+    <updated>2020-06-07T06:11:02.860Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Hive" scheme="https://jiamaoxiang.top/categories/Hive/"/>
+    
+    
+      <category term="Hive" scheme="https://jiamaoxiang.top/tags/Hive/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>‘实时数仓|基于Flink SQL构建实时数仓探索实践</title>
+    <link href="https://jiamaoxiang.top/2020/06/05/%E2%80%98%E5%AE%9E%E6%97%B6%E6%95%B0%E4%BB%93-%E5%9F%BA%E4%BA%8EFlink-SQL%E6%9E%84%E5%BB%BA%E5%AE%9E%E6%97%B6%E6%95%B0%E4%BB%93%E6%8E%A2%E7%B4%A2%E5%AE%9E%E8%B7%B5/"/>
+    <id>https://jiamaoxiang.top/2020/06/05/‘实时数仓-基于Flink-SQL构建实时数仓探索实践/</id>
+    <published>2020-06-05T03:30:09.000Z</published>
+    <updated>2020-06-05T03:30:09.917Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>实时数仓|Flink SQL之维表join</title>
+    <link href="https://jiamaoxiang.top/2020/06/05/%E5%AE%9E%E6%97%B6%E6%95%B0%E4%BB%93-Flink-SQL%E4%B9%8B%E7%BB%B4%E8%A1%A8join/"/>
+    <id>https://jiamaoxiang.top/2020/06/05/实时数仓-Flink-SQL之维表join/</id>
+    <published>2020-06-05T03:27:59.000Z</published>
+    <updated>2020-06-05T06:27:10.043Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Flink Table API&amp;SQL编程指南之时间属性(3)</title>
+    <link href="https://jiamaoxiang.top/2020/06/02/Flink-Table-API-SQL%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97%E4%B9%8B%E6%97%B6%E9%97%B4%E5%B1%9E%E6%80%A7-3/"/>
+    <id>https://jiamaoxiang.top/2020/06/02/Flink-Table-API-SQL编程指南之时间属性-3/</id>
+    <published>2020-06-02T07:12:47.000Z</published>
+    <updated>2020-06-02T09:14:50.214Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>数仓开发需要了解的BI数据分析方法</title>
+    <link href="https://jiamaoxiang.top/2020/05/28/%E6%95%B0%E4%BB%93%E5%BC%80%E5%8F%91%E9%9C%80%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84BI%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95/"/>
+    <id>https://jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/</id>
+    <published>2020-05-28T08:47:47.000Z</published>
+    <updated>2020-05-30T16:03:10.057Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="数仓" scheme="https://jiamaoxiang.top/categories/%E6%95%B0%E4%BB%93/"/>
+    
+    
+      <category term="数仓" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E4%BB%93/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Flink Table API &amp; SQL编程指南之动态表(2)</title>
+    <link href="https://jiamaoxiang.top/2020/05/28/Flink-Table-API-SQL%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-2/"/>
+    <id>https://jiamaoxiang.top/2020/05/28/Flink-Table-API-SQL编程指南-2/</id>
+    <published>2020-05-28T01:56:25.000Z</published>
+    <updated>2020-06-02T14:07:02.619Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
+    
+  </entry>
   
   <entry>
     <title>Flink Table API &amp; SQL编程指南(1)</title>
@@ -317,132 +461,6 @@
     
     
       <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>基于Canal与Flink实现数据实时增量同步(二)</title>
-    <link href="https://jiamaoxiang.top/2020/03/24/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%BA%8C/"/>
-    <id>https://jiamaoxiang.top/2020/03/24/基于Canal与Flink实现数据实时增量同步-二/</id>
-    <published>2020-03-24T05:56:57.000Z</published>
-    <updated>2020-05-06T01:44:17.738Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文主要从Binlog实时采集和离线处理Binlog还原业务数据两个方面，来介绍如何实现DB数据准确、高效地进入Hive数仓。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>分布式数据集成框架gobblin快速入门</title>
-    <link href="https://jiamaoxiang.top/2020/03/22/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E9%9B%86%E6%88%90%E6%A1%86%E6%9E%B6gobblin%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/"/>
-    <id>https://jiamaoxiang.top/2020/03/22/分布式数据集成框架gobblin快速入门/</id>
-    <published>2020-03-22T09:45:28.000Z</published>
-    <updated>2020-03-22T12:50:45.632Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="gobblin" scheme="https://jiamaoxiang.top/categories/gobblin/"/>
-    
-    
-      <category term="gobblin" scheme="https://jiamaoxiang.top/tags/gobblin/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>基于Canal与Flink实现数据实时增量同步(一)</title>
-    <link href="https://jiamaoxiang.top/2020/03/05/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%B8%80/"/>
-    <id>https://jiamaoxiang.top/2020/03/05/基于Canal与Flink实现数据实时增量同步-一/</id>
-    <published>2020-03-05T06:46:45.000Z</published>
-    <updated>2020-05-06T01:41:50.790Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;canal是阿里巴巴旗下的一款开源项目，纯Java开发。基于数据库增量日志解析，提供增量数据订阅&amp;amp;消费，目前主要支持了MySQL（也支持mariaDB）。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SQL中的相关子查询解析</title>
-    <link href="https://jiamaoxiang.top/2019/12/10/SQL%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%85%B3%E5%AD%90%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90/"/>
-    <id>https://jiamaoxiang.top/2019/12/10/SQL中的相关子查询解析/</id>
-    <published>2019-12-10T05:18:59.000Z</published>
-    <updated>2019-12-12T05:24:39.067Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;分步骤解析SQL的相关子查询&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="SQL" scheme="https://jiamaoxiang.top/categories/SQL/"/>
-    
-    
-      <category term="SQL" scheme="https://jiamaoxiang.top/tags/SQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>LeeCode数据库部分题目汇总</title>
-    <link href="https://jiamaoxiang.top/2019/12/09/LeeCode%E6%95%B0%E6%8D%AE%E5%BA%93%E9%83%A8%E5%88%86%E9%A2%98%E7%9B%AE%E6%B1%87%E6%80%BB/"/>
-    <id>https://jiamaoxiang.top/2019/12/09/LeeCode数据库部分题目汇总/</id>
-    <published>2019-12-09T02:53:09.000Z</published>
-    <updated>2020-03-29T09:53:34.823Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;LeeCode数据库部分SQL题目总结&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="LeeCode" scheme="https://jiamaoxiang.top/categories/LeeCode/"/>
-    
-    
-      <category term="LeeCode" scheme="https://jiamaoxiang.top/tags/LeeCode/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>电商业务常用指标分析之SQL实现</title>
-    <link href="https://jiamaoxiang.top/2019/12/05/%E7%94%B5%E5%95%86%E4%B8%9A%E5%8A%A1%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87%E5%88%86%E6%9E%90%E4%B9%8BSQL%E5%AE%9E%E7%8E%B0/"/>
-    <id>https://jiamaoxiang.top/2019/12/05/电商业务常用指标分析之SQL实现/</id>
-    <published>2019-12-05T01:49:31.000Z</published>
-    <updated>2019-12-05T06:50:55.318Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;当构建好电商业务数仓之后，需要对业务需要的指标进行计算，从而进一步进行报表的展示，那么，电商的业务知识大概涉及哪些？关于电商业务的常用指标计算都有哪些？这些常用的指标该如何通过Hive数仓进行分析？本文将进行一一梳理.&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Hive" scheme="https://jiamaoxiang.top/categories/Hive/"/>
-    
-    
-      <category term="Hive" scheme="https://jiamaoxiang.top/tags/Hive/"/>
     
   </entry>
   
