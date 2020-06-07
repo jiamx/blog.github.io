@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-06-07T06:11:02.860Z</updated>
+  <updated>2020-06-07T07:26:55.636Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://jiamaoxiang.top/2020/06/06/%E6%95%B0%E4%BB%93-Hive%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E6%8C%87%E5%8C%97/"/>
     <id>https://jiamaoxiang.top/2020/06/06/数仓-Hive性能调优指北/</id>
     <published>2020-06-06T07:05:52.000Z</published>
-    <updated>2020-06-07T06:11:02.860Z</updated>
+    <updated>2020-06-07T07:26:55.636Z</updated>
     
     <summary type="html">
     
@@ -253,32 +253,6 @@
   </entry>
   
   <entry>
-    <title>是时候换掉你的调度系统了</title>
-    <link href="https://jiamaoxiang.top/2020/05/18/%E6%98%AF%E6%97%B6%E5%80%99%E6%8D%A2%E6%8E%89%E4%BD%A0%E7%9A%84%E8%B0%83%E5%BA%A6%E7%B3%BB%E7%BB%9F%E4%BA%86/"/>
-    <id>https://jiamaoxiang.top/2020/05/18/是时候换掉你的调度系统了/</id>
-    <published>2020-05-18T05:45:15.000Z</published>
-    <updated>2020-05-20T09:44:19.667Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="hera" scheme="https://jiamaoxiang.top/categories/hera/"/>
-    
-    
-      <category term="hera" scheme="https://jiamaoxiang.top/tags/hera/"/>
-    
-  </entry>
-  
-  <entry>
     <title>Flink DataSet API编程指南</title>
     <link href="https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
     <id>https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API编程指南/</id>
@@ -454,6 +428,26 @@
     <summary type="html">
     
       &lt;p&gt;Flink包含8中分区策略，这8中分区策略(分区器)分别如下面所示，本文将从源码的角度一一解读每个分区器的实现方式。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
+    
+    
+      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>基于Canal与Flink实现数据实时增量同步(二)</title>
+    <link href="https://jiamaoxiang.top/2020/03/24/%E5%9F%BA%E4%BA%8ECanal%E4%B8%8EFlink%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5-%E4%BA%8C/"/>
+    <id>https://jiamaoxiang.top/2020/03/24/基于Canal与Flink实现数据实时增量同步-二/</id>
+    <published>2020-03-24T05:56:57.000Z</published>
+    <updated>2020-05-06T01:44:17.738Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文主要从Binlog实时采集和离线处理Binlog还原业务数据两个方面，来介绍如何实现DB数据准确、高效地进入Hive数仓。&lt;/p&gt;
     
     </summary>
     
