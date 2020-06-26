@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>数据分析|使用多元线性回归构建销售额预测模型 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">数据分析|使用多元线性回归构建销售额预测模型</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">数据分析|使用多元线性回归构建销售额预测模型</h1><div class="post-meta">Jun 26, 2020<span> | </span><span class="category"><a href="/categories/回归分析/">回归分析</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.9k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 6</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>回归是确定因变量和一组自变量之间的关系的过程。线性模型形式简单、易于建模，但却蕴含着机器学习中一些重要的基本思想。本文会通过EXCEL构建一个多元线性回归模型，来预测广告投入对销售的影响。本文的主要内容包括：</p>
+<ul>
+<li>线性回归的基本概念</li>
+<li>回归模型的重要参数</li>
+<li>多元线性回归模型案例</li>
+<li>谁发明了最小二乘法</li>
+</ul>
+<h2 id="线性回归的基本概念"><a href="#线性回归的基本概念" class="headerlink" title="线性回归的基本概念"></a>线性回归的基本概念</h2><p>给定由d个属性描述示例x=(x1;x2;…;xd),其中xi是x在第i个属性上的取值，线性模型试图学得一个通过属性的线性组合来进行预测的函数，即</p>
+<blockquote>
+<p> f(x)=w1x1+w2x2+…+wdxd+b</p>
+</blockquote>
+<p>其中，b为常数项，w1，w2..wd为偏回归系数</p>
+<p>上述的公式中<strong>w</strong>与b是未知的，那么该如何求解<strong>w</strong>与b呢？通过均方误差来进行求解，即最小二乘法，在线性模型中最小二乘法就是试图找到一条直线，使所有样本到直线的欧式距离之和最小。</p>
+<h2 id="回归模型的重要参数"><a href="#回归模型的重要参数" class="headerlink" title="回归模型的重要参数"></a>回归模型的重要参数</h2><ul>
+<li>R^2判定系数</li>
+</ul>
+<p>R平方即R的平方，又可以叫判定系数、拟合优度，取值范围是[0,1],R平方值越大，表示模型拟合的越好。一般大于70%表示拟合较好，60%以下的就需要修正模型了</p>
+<ul>
+<li>调整的R^2判定系数</li>
+</ul>
+<p>这个值是用来修正因自变量个数增加而导致模型拟合效果过高的情况，多用于衡量多重线性回归。</p>
+<ul>
+<li>F值</li>
+</ul>
+<p>Significance F是回归方程总体的显著性检验，F检验主要是检验因变量与自变量之间的线性关系是否显著，用线性模型来描述他们之间的关系是否恰当，越小越显著。</p>
+<ul>
+<li>残差</li>
+</ul>
+<p>残差是实际值与预测值之间的差，残差图用于回归诊断，回归模型在理想条件下的残差图是服从正态分布的。</p>
+<ul>
+<li>P值</li>
+</ul>
+<p>用来检验回归方程系数的显著性，一般以此来衡量检验结果是否具有显著性，如果P值&gt;0.05，则结果不具有显著的统计学意义，如果0.01&lt;P值&lt;0.05，则结果具有显著的统计学意义，如果P&lt;=0.01，则结果具有极其显著的统计学意义。</p>
+<h2 id="多元线性回归模型案例"><a href="#多元线性回归模型案例" class="headerlink" title="多元线性回归模型案例"></a>多元线性回归模型案例</h2><h3 id="构建模型"><a href="#构建模型" class="headerlink" title="构建模型"></a>构建模型</h3><p>假设有如下的广告投入与销售收入的数据，[电视渠道,地铁渠道,搜索渠道,  销售额]。该表显示了在不同渠道广告投入与销售额之间的关系。具体如下表：</p>
+<table>
+<thead>
+<tr>
+<th>电视渠道</th>
+<th>地铁渠道</th>
+<th>搜索渠道</th>
+<th>销售额</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>230.1</td>
+<td>37.8</td>
+<td>69.2</td>
+<td>22.1</td>
+</tr>
+<tr>
+<td>44.5</td>
+<td>39.3</td>
+<td>45.1</td>
+<td>10.4</td>
+</tr>
+<tr>
+<td>17.2</td>
+<td>45.9</td>
+<td>69.3</td>
+<td>12</td>
+</tr>
+<tr>
+<td>151.5</td>
+<td>41.3</td>
+<td>58.5</td>
+<td>16.5</td>
+</tr>
+<tr>
+<td>180.8</td>
+<td>10.8</td>
+<td>58.4</td>
+<td>17.9</td>
+</tr>
+<tr>
+<td>8.7</td>
+<td>48.9</td>
+<td>75</td>
+<td>7.2</td>
+</tr>
+<tr>
+<td>57.5</td>
+<td>32.8</td>
+<td>23.5</td>
+<td>11.8</td>
+</tr>
+<tr>
+<td>120.2</td>
+<td>19.6</td>
+<td>11.6</td>
+<td>13.2</td>
+</tr>
+<tr>
+<td>8.6</td>
+<td>2.1</td>
+<td>1</td>
+<td>4.8</td>
+</tr>
+</tbody></table>
+<p>上述的数据有多个变量，我们先简化一下，假设只有两个变量，比如查找电视渠道广告与销售额之间的关系。最直接的办法就是绘制一个散点图，通过散点图观察两个变量之间是否有相关关系。</p>
+<p>假设具有相关关系，那么该如何量化呢，同样很简单，只需要绘制一条最适合散点图中显示的所有点的直线，该直线方程式就是两个变量之间的关系，这就是回归的基本思想，即通过使用函数拟合所有点来量化变量之间的关系。</p>
+<p>上面描述的示例成为<strong>简单线性回归</strong>，它涉及一个自变量和一个因变量。我们可以将相同的回归概念扩展到多个自变量，称之为<strong>多元线性回归</strong>。如上表的数据，存在3个因变量，虽然无法在2维平面上可视化他们之间的关系，但是线性回归的概念仍然可以用于确定这些点的最佳拟合函数</p>
+<p>下面将使用EXCEL进行多元线性回归分析</p>
+<ul>
+<li>首先添加数据分析工具库</li>
+</ul>
+<p>默认情况下，Data Analysis ToolPak不可用，您需要单独激活该加载项。要激活，请转到<em>文件-&gt;选项-&gt;加载项</em>，然后激活<em>分析工具库</em>。激活加载项后，该加载项应显示在工具栏的“ <em>数据”</em>选项卡下。</p>
+<ul>
+<li>执行回归分析</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/%E5%9B%9E%E5%BD%921.png" alt></p>
+<p>选择回归之后，确定之后，再选择数据集，点击确定</p>
+<p><img src="//jiamaoxiang.top/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/%E5%9B%9E%E5%BD%922.png" alt></p>
+<h3 id="模型分析"><a href="#模型分析" class="headerlink" title="模型分析"></a>模型分析</h3><p>上述会构建一个多元线性回归模型，具体分析如下：</p>
+<p><img src="//jiamaoxiang.top/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/%E7%BB%93%E6%9E%9C.png" alt></p>
+<p>上面第三张表，第一列就是系数。此列提供了多元线性回归方程式中每个变量的系数值。</p>
+<blockquote>
+<p>销售额= 0.0544 *（电视渠道）+ 0.1070 *（地铁渠道）+ 0.0003 *（搜索渠道）+ 4.6251</p>
+</blockquote>
+<h3 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h3><p>预测模型是通过为自变量提供值来预测因变量值的过程。上述的多元线性回归方程是预测模型函数，如果我们输入自变量的值，则可以得到销售额的预测值。</p>
+<p>例如，如果要预测以下广告支出组合的销售收入，</p>
+<p>电视渠道= 100</p>
+<p>地铁渠道= 200</p>
+<p>搜索渠道= 500</p>
+<p>将值输入多元线性回归方程式。这将为您带来31.6377的销售收入，这是预期的收入。</p>
+<h2 id="谁发明了最小二乘法"><a href="#谁发明了最小二乘法" class="headerlink" title="谁发明了最小二乘法"></a>谁发明了最小二乘法</h2><p>1801年，意大利天文学家皮亚齐发现了1号小行星“谷神星”，但在跟踪观测了40天后，因谷神星转至太阳背后，皮亚齐失去了谷神星的位置。许多天文学家试图重新找到谷神星，但都徒劳无获。这引起了德国数学家高斯的注意，他发明了一种方法，根据皮亚齐的观测数据计算出了谷神星的轨道，后来德国天文学家奥博斯在高斯语言的时间和星空领域重新找到了谷神星。1809年，高斯在他的著作《天体运动论》中发表了这种方法，即最小二乘法。</p>
+<p>1805年，在椭圆积分、数论和几何方面都有重大贡献的法国数学家勒让德发表了《计算彗星轨道的新方法》，其附录中描述了最小二乘法，勒让德是法国18-19世纪数学界的三驾马车之一，早已是法国科学院院士。但勒让德的数中没有涉及最小二乘法的误差分析，高斯在1809年的著作中包括了这方面的内容，这对最小二乘法用于数理统计、乃至今天的机器学习有着极为重要的意义。由于高斯的这一重大发现，以及他声称自己在1799年就已经开始用这个方法，因此很多人将最小二乘法的发明优先权归之为高斯。当时这两位大数学家发生了著名的优先权之争，此后有许多数学史家专门进行研究，但至今也没弄清楚到底是谁最先发明了最小二乘法。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/06/10/‘Hive-on-MR执行计划解析/" target="_blank">‘Hive on MR执行计划与执行日志解析</a></li><li><a href="https://jiamaoxiang.top/2020/06/06/数仓-Hive性能调优指北/" target="_blank">数仓|Hive性能调优指北</a></li><li><a href="https://jiamaoxiang.top/2020/06/05/‘实时数仓-基于Flink-SQL构建实时数仓探索实践/" target="_blank">‘实时数仓|基于Flink SQL构建实时数仓探索实践</a></li><li><a href="https://jiamaoxiang.top/2020/06/05/实时数仓-Flink-SQL之维表join/" target="_blank">实时数仓|Flink SQL之维表join</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/">https://jiamaoxiang.top/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/" data-id="ckbwe2gfi001eik7q7fzy8aqp" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADJ0lEQVR42u3aQXLbMBAEQP3/08o1Kcf0zAKsEuHmySXRIho6rHYWr1d8vf+6vns3/9/3l+v6Ke392y5sbGzsh7Dfl9f1g7+yr9/Nt3LXhn77FGxsbOzj2NeP3FtmkpKT35N8MjY2NjZ2/nF5q5CUzHyjsbGxsbFb9g8/9IMSOCuHu74ebGxs7PPYbTmZRUizZiO/55YsDRsbG/vj2flU9PP/vmW+jY2Njf3B7Hd5tcVj1lS0B4NqBTY2NvZB7JWR6kohabe1DaSi9WNjY2MfwV6Pk5JApy11s20tgiRsbGzsg9h5cN+G/sngdr34tWUSGxsb+zz2LKbJy8l94+RZFPVPK4KNjY19EPu6qcgXsav9mEVaxRZgY2NjH8Rulz6Mb25oafIQKlobNjY29mPZbQFrX1kJhvKilbQ6/wmVsLGxsY9jtyH7HWFQUsY2HPfBxsbGPoidT4PzslE8Mgie1j+n6L2wsbGxH8hOqG00v6t05RFS3dJgY2NjH8TOke1G5G1GPnjYNTDAxsbGPondtgHrDUwbAOXDhqKIYmNjYx/Ezn+yr4RHK3FV8vXkY4Mf6jY2Njb2A9ntD/3ZMDjfiLYUzZoTbGxs7PPYbXnIg/52ue24d3YnNjY29knslYfNDtnkQ4X1ra87MGxsbOwHsttYPx/NzqKifAAw2wJsbGzs89grJaRd9CycaotfsbnY2NjYR7Dz8tPe2Y4f8uK3oZRiY2Nj/xp2zkuQs1HBdVuSH+IsChg2Njb2o9h56LPrzl11JD+4GW0uNjY29sPZ7bGY9lBme8hmZSSQF0JsbGzs89h5JJQ3AyvHd/JX8nexsbGxfwN7/SBOfnRmpUDmR4Ki+TY2Njb2Eewc2cb9yVLyEe9rdEWhEjY2NvYD2euD3lkgdY1py1v9FGxsbOyD2LMC8DngPAirIydsbGzsR7HXC0ayrNkG5QFTu0HY2NjY57FnA+D1orJ5fBsrsLGxsbGvC9LKOCEZJKx8SdjY2NjY+RJnRaiNrtrPwcbGxj6V3T6mPWrTFqokNlraemxsbOyD2LNopo2NVo7RtNs9WxU2Njb2A9l/AHuJ41+GDHb8AAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/回归分析/">回归分析</a></div><div class="post-nav"><a class="next" href="/2020/06/10/‘Hive-on-MR执行计划解析/">‘Hive on MR执行计划与执行日志解析</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#线性回归的基本概念"><span class="toc-number">1.</span> <span class="toc-text">线性回归的基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回归模型的重要参数"><span class="toc-number">2.</span> <span class="toc-text">回归模型的重要参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多元线性回归模型案例"><span class="toc-number">3.</span> <span class="toc-text">多元线性回归模型案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构建模型"><span class="toc-number">3.1.</span> <span class="toc-text">构建模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#模型分析"><span class="toc-number">3.2.</span> <span class="toc-text">模型分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#预测"><span class="toc-number">3.3.</span> <span class="toc-text">预测</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#谁发明了最小二乘法"><span class="toc-number">4.</span> <span class="toc-text">谁发明了最小二乘法</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

@@ -1,3 +1,5 @@
+https://jiamaoxiang.top/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/
+https://jiamaoxiang.top/2020/06/10/‘Hive-on-MR执行计划解析/
 https://jiamaoxiang.top/2020/06/06/数仓-Hive性能调优指北/
 https://jiamaoxiang.top/2020/06/05/‘实时数仓-基于Flink-SQL构建实时数仓探索实践/
 https://jiamaoxiang.top/2020/06/05/实时数仓-Flink-SQL之维表join/
