@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Hive的架构剖析</title>
+      <link href="/2020/06/27/Hive%E7%9A%84%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/"/>
+      <url>/2020/06/27/Hive%E7%9A%84%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/</url>
+      
+        <content type="html"><![CDATA[<p>本文主要介绍Hive的架构和以及HQL的查询阶段，主要内容包括：</p><ul><li>Hive的架构</li><li>架构中的相关组件介绍</li><li>HQL的查询阶段</li></ul><h2 id="Hive的架构"><a href="#Hive的架构" class="headerlink" title="Hive的架构"></a>Hive的架构</h2><p>hive的基本架构图如下图所示：</p><p><img src="//jiamaoxiang.top/2020/06/27/Hive的架构剖析/hive%E6%9E%B6%E6%9E%84.png" alt></p><h2 id="相关组件介绍"><a href="#相关组件介绍" class="headerlink" title="相关组件介绍"></a>相关组件介绍</h2><ul><li>数据存储</li></ul><p>Hive中的数据可以存储在任意与Hadoop兼容的文件系统，其最常见的存储文件格式主要有ORC和Parquet。除了HDFS之外，也支持一些商用的云对象存储，比如AWS S3等。另外，Hive可以读入并写入数据到其他的独立处理系统，比如Druid、HBase等。</p><ul><li>Data catalog</li></ul><p>Hive使用Hive Metastore(HMS)存储元数据信息，使用关系型数据库来持久化存储这些信息，其依赖于DataNucleus(提供了标准的接口（JDO, JPA）来访问各种类型的数据库资源 ),用于简化操作各种关系型数据库。为了请求低延迟，HMS会直接通过DataNucleus直接查询关系型数据库。HMS的API支持多种编程语言。</p><ul><li>执行引擎</li></ul><p>最初版本的Hive支持MapReduce作为执行引擎，后来又支持</p><p> Tez和Spark作为执行引擎，这些执行引擎都可以运行在YARN上。</p><ul><li>查询服务</li></ul><p>Hiveserver2(HS2)允许用户执行SQL查询，Hiveserver2允许多个客户端提交请求到Hive并返回执行结果，HS2支持本地和远程JDBC和ODBC连接，另外Hive的发布版中包括一个JDBC的客户端，称之为Beeline。</p><ul><li>Hive客户端</li></ul><p>Hive支持多种客户端，比如Python, Java, C++, Ruby等，可以使用JDBC、ODBC和Thrift drivers连接Hive，Hive的客户端主要归为3类：</p><p>（1）<strong>Thrift Clients</strong></p><p>Hive的Server是基于Apache Thrift的，所以支持thrift客户端的查询请求</p><p>（2）<strong>JDBC Client</strong></p><p>允许使用Java通过JDBC driver连接Hive，JDBC driver使用Thrift与Hive进行通信的</p><p>（3）<strong>ODBC Client</strong></p><p>Hive的ODBC driver允许使用基于ODBC协议的应用来连接Hive，与JDBC driver类似，ODBC driver也是通过Thrift与Hive server进行通信的</p><ul><li>Hive Driver</li></ul><p>Hive Driver接收来自客户端提交的HQL语句，创建session handles，并将查询发送到Compiler(编译器)。</p><ul><li>Hive Compiler</li></ul><p>Hive的Compiler解析查询语句，编译器会借助Hive的metastore存储的元数据信息，对不同的查询块和查询表达式执行语义分析和类型检查，然后生成执行计划。</p><p>编译器生成的执行计划就是DAG，每个Stage可能代表一个MR作业。</p><ul><li>Optimizer(优化器)</li></ul><p>比如列裁剪、谓词下推等优化，提升查询效率</p><h2 id="执行过程"><a href="#执行过程" class="headerlink" title="执行过程"></a>执行过程</h2><ul><li><p><strong>Step1：执行查询</strong></p><p>通过客户端提交查询</p></li><li><p><strong>Step2：获取执行计划</strong></p><p>dirver接收到查询，会创建session handle，并将该查询传递给编译器，生成执行计划</p></li><li><p><strong>Step3：获取元数据</strong></p><p>编译器会向metastore发送获取元数据的请求</p></li><li><p><strong>Step4：发送元数据</strong></p><p>metastore向编译器发送元数据，编译器使用元数据执行类型检查和语义分析。编译器会生成执行计划(DAG),对于MapReduce作业而言，执行计划包括<strong>map operator trees</strong></p><p>和<strong>reduce operator tree</strong></p></li><li><p><strong>Step5：发送执行计划</strong></p><p>编译器向Driver发送生成的执行计划</p></li><li><p><strong>Step6：执行查询计划</strong></p><p>从编译器那里获取执行计划之后，Driver会向执行引擎发送执行计划</p></li><li><p><strong>Step7：提交MR作业</strong></p></li><li><p><strong>Step8：返回查询结果</strong></p></li></ul><p>将查询结果通过Driver返回个查询客户端</p><h2 id="HQL的查询阶段"><a href="#HQL的查询阶段" class="headerlink" title="HQL的查询阶段"></a>HQL的查询阶段</h2><p>Hive的查询阶段如下图所示，具体分析如下：</p><p><img src="//jiamaoxiang.top/2020/06/27/Hive的架构剖析/%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.png" alt></p><p>如上图所示，</p><ul><li>1.用户提交查询到HS2</li><li>2.该查询被Driver处理，由编译器会解析该查询语句并从AST中生成一个Calcite逻辑计划</li><li>3.优化逻辑计划，HS2会访问关于HMS的元数据信息，用来达到验证和优化的目的</li><li>4.优化的逻辑计划被转换为物理执行计划</li><li>5.向量化的执行计划</li><li>6.生成具体的task，可以是mr或者spark、Tez，并通过Driver提交任务到YARN</li><li>7.执行结束后将结果返回给用户</li></ul><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文首先介绍了Hive的架构，并对每个组件进行了描述。然后阐述了Hive的具体执行过程，最后对HQL的执行阶段进行了说明。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Hive </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Hive </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>数据分析|使用多元线性回归构建销售额预测模型</title>
       <link href="/2020/06/26/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-%E4%BD%BF%E7%94%A8%E5%A4%9A%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E6%9E%84%E5%BB%BA%E9%94%80%E5%94%AE%E9%A2%9D%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B/"/>
       <url>/2020/06/26/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-%E4%BD%BF%E7%94%A8%E5%A4%9A%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E6%9E%84%E5%BB%BA%E9%94%80%E5%94%AE%E9%A2%9D%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B/</url>

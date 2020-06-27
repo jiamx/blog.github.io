@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-06-26T15:46:44.936Z</updated>
+  <updated>2020-06-27T15:21:38.683Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Hive的架构剖析</title>
+    <link href="https://jiamaoxiang.top/2020/06/27/Hive%E7%9A%84%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/"/>
+    <id>https://jiamaoxiang.top/2020/06/27/Hive的架构剖析/</id>
+    <published>2020-06-27T12:01:37.000Z</published>
+    <updated>2020-06-27T15:21:38.683Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Hive" scheme="https://jiamaoxiang.top/categories/Hive/"/>
+    
+    
+      <category term="Hive" scheme="https://jiamaoxiang.top/tags/Hive/"/>
+    
+  </entry>
   
   <entry>
     <title>数据分析|使用多元线性回归构建销售额预测模型</title>
@@ -440,26 +466,6 @@
     <summary type="html">
     
       &lt;p&gt;Flink 提供了专门的 Kafka 连接器，向 Kafka topic 中读取或者写入数据。Flink Kafka Consumer 集成了 Flink 的 Checkpoint 机制，可提供 exactly-once 的处理语义。为此，Flink 并不完全依赖于跟踪 Kafka 消费组的偏移量，而是在内部跟踪和检查偏移量。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flink1.10集成Hive快速入门</title>
-    <link href="https://jiamaoxiang.top/2020/03/31/Flink1-10%E9%9B%86%E6%88%90Hive%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/"/>
-    <id>https://jiamaoxiang.top/2020/03/31/Flink1-10集成Hive快速入门/</id>
-    <published>2020-03-31T04:54:09.000Z</published>
-    <updated>2020-05-06T01:42:39.652Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Hive 是大数据领域最早出现的 SQL 引擎，发展至今有着丰富的功能和广泛的用户基础。之后出现的 SQL 引擎，如 Spark SQL、Impala 等，都在一定程度上提供了与 Hive 集成的功能，从而方便用户使用现有的数据仓库、进行作业迁移等。&lt;/p&gt;
     
     </summary>
     

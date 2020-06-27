@@ -1,0 +1,100 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>Hive的架构剖析 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Hive的架构剖析</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Hive的架构剖析</h1><div class="post-meta">Jun 27, 2020<span> | </span><span class="category"><a href="/categories/Hive/">Hive</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.1k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 3</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>本文主要介绍Hive的架构和以及HQL的查询阶段，主要内容包括：</p>
+<ul>
+<li>Hive的架构</li>
+<li>架构中的相关组件介绍</li>
+<li>HQL的查询阶段</li>
+</ul>
+<h2 id="Hive的架构"><a href="#Hive的架构" class="headerlink" title="Hive的架构"></a>Hive的架构</h2><p>hive的基本架构图如下图所示：</p>
+<p><img src="//jiamaoxiang.top/2020/06/27/Hive的架构剖析/hive%E6%9E%B6%E6%9E%84.png" alt></p>
+<h2 id="相关组件介绍"><a href="#相关组件介绍" class="headerlink" title="相关组件介绍"></a>相关组件介绍</h2><ul>
+<li>数据存储</li>
+</ul>
+<p>Hive中的数据可以存储在任意与Hadoop兼容的文件系统，其最常见的存储文件格式主要有ORC和Parquet。除了HDFS之外，也支持一些商用的云对象存储，比如AWS S3等。另外，Hive可以读入并写入数据到其他的独立处理系统，比如Druid、HBase等。</p>
+<ul>
+<li>Data catalog</li>
+</ul>
+<p>Hive使用Hive Metastore(HMS)存储元数据信息，使用关系型数据库来持久化存储这些信息，其依赖于DataNucleus(提供了标准的接口（JDO, JPA）来访问各种类型的数据库资源 ),用于简化操作各种关系型数据库。为了请求低延迟，HMS会直接通过DataNucleus直接查询关系型数据库。HMS的API支持多种编程语言。</p>
+<ul>
+<li>执行引擎</li>
+</ul>
+<p>最初版本的Hive支持MapReduce作为执行引擎，后来又支持</p>
+<p> Tez和Spark作为执行引擎，这些执行引擎都可以运行在YARN上。</p>
+<ul>
+<li>查询服务</li>
+</ul>
+<p>Hiveserver2(HS2)允许用户执行SQL查询，Hiveserver2允许多个客户端提交请求到Hive并返回执行结果，HS2支持本地和远程JDBC和ODBC连接，另外Hive的发布版中包括一个JDBC的客户端，称之为Beeline。</p>
+<ul>
+<li>Hive客户端</li>
+</ul>
+<p>Hive支持多种客户端，比如Python, Java, C++, Ruby等，可以使用JDBC、ODBC和Thrift drivers连接Hive，Hive的客户端主要归为3类：</p>
+<p>（1）<strong>Thrift Clients</strong></p>
+<p>Hive的Server是基于Apache Thrift的，所以支持thrift客户端的查询请求</p>
+<p>（2）<strong>JDBC Client</strong></p>
+<p>允许使用Java通过JDBC driver连接Hive，JDBC driver使用Thrift与Hive进行通信的</p>
+<p>（3）<strong>ODBC Client</strong></p>
+<p>Hive的ODBC driver允许使用基于ODBC协议的应用来连接Hive，与JDBC driver类似，ODBC driver也是通过Thrift与Hive server进行通信的</p>
+<ul>
+<li>Hive Driver</li>
+</ul>
+<p>Hive Driver接收来自客户端提交的HQL语句，创建session handles，并将查询发送到Compiler(编译器)。</p>
+<ul>
+<li>Hive Compiler</li>
+</ul>
+<p>Hive的Compiler解析查询语句，编译器会借助Hive的metastore存储的元数据信息，对不同的查询块和查询表达式执行语义分析和类型检查，然后生成执行计划。</p>
+<p>编译器生成的执行计划就是DAG，每个Stage可能代表一个MR作业。</p>
+<ul>
+<li>Optimizer(优化器)</li>
+</ul>
+<p>比如列裁剪、谓词下推等优化，提升查询效率</p>
+<h2 id="执行过程"><a href="#执行过程" class="headerlink" title="执行过程"></a>执行过程</h2><ul>
+<li><p><strong>Step1：执行查询</strong></p>
+<p>通过客户端提交查询</p>
+</li>
+<li><p><strong>Step2：获取执行计划</strong></p>
+<p>dirver接收到查询，会创建session handle，并将该查询传递给编译器，生成执行计划</p>
+</li>
+<li><p><strong>Step3：获取元数据</strong></p>
+<p>编译器会向metastore发送获取元数据的请求</p>
+</li>
+<li><p><strong>Step4：发送元数据</strong></p>
+<p>metastore向编译器发送元数据，编译器使用元数据执行类型检查和语义分析。编译器会生成执行计划(DAG),对于MapReduce作业而言，执行计划包括<strong>map operator trees</strong></p>
+<p>和<strong>reduce operator tree</strong></p>
+</li>
+<li><p><strong>Step5：发送执行计划</strong></p>
+<p>编译器向Driver发送生成的执行计划</p>
+</li>
+<li><p><strong>Step6：执行查询计划</strong></p>
+<p>从编译器那里获取执行计划之后，Driver会向执行引擎发送执行计划</p>
+</li>
+<li><p><strong>Step7：提交MR作业</strong></p>
+</li>
+<li><p><strong>Step8：返回查询结果</strong></p>
+</li>
+</ul>
+<p>将查询结果通过Driver返回个查询客户端</p>
+<h2 id="HQL的查询阶段"><a href="#HQL的查询阶段" class="headerlink" title="HQL的查询阶段"></a>HQL的查询阶段</h2><p>Hive的查询阶段如下图所示，具体分析如下：</p>
+<p><img src="//jiamaoxiang.top/2020/06/27/Hive的架构剖析/%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.png" alt></p>
+<p>如上图所示，</p>
+<ul>
+<li>1.用户提交查询到HS2</li>
+<li>2.该查询被Driver处理，由编译器会解析该查询语句并从AST中生成一个Calcite逻辑计划</li>
+<li>3.优化逻辑计划，HS2会访问关于HMS的元数据信息，用来达到验证和优化的目的</li>
+<li>4.优化的逻辑计划被转换为物理执行计划</li>
+<li>5.向量化的执行计划</li>
+<li>6.生成具体的task，可以是mr或者spark、Tez，并通过Driver提交任务到YARN</li>
+<li>7.执行结束后将结果返回给用户</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文首先介绍了Hive的架构，并对每个组件进行了描述。然后阐述了Hive的具体执行过程，最后对HQL的执行阶段进行了说明。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/" target="_blank">数据分析|使用多元线性回归构建销售额预测模型</a></li><li><a href="https://jiamaoxiang.top/2020/06/10/‘Hive-on-MR执行计划解析/" target="_blank">‘Hive on MR执行计划与执行日志解析</a></li><li><a href="https://jiamaoxiang.top/2020/06/06/数仓-Hive性能调优指北/" target="_blank">数仓|Hive性能调优指北</a></li><li><a href="https://jiamaoxiang.top/2020/06/05/‘实时数仓-基于Flink-SQL构建实时数仓探索实践/" target="_blank">‘实时数仓|基于Flink SQL构建实时数仓探索实践</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/06/27/Hive的架构剖析/">https://jiamaoxiang.top/2020/06/27/Hive的架构剖析/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/06/27/Hive的架构剖析/" data-id="ckbxsm5ia000tk87qc73kfiim" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACN0lEQVR42u3aQZKDMAwF0dz/0mQ7i+D0l0xqEO3V1IQ4PBZCkvV64XX8Wev/nH263jn9VnHJkCHjtoxjudbXnH3Kf2W9A7k3GTJkPIdBQuE6LJ5dT8Lr+rfW+8iQIUMGuYYs/mhkyJAhY1fA5dQ0yZMhQ4aMThFLWm+1HXj6uKEWlyFDxg0ZvOv++78vOd+QIUPGrRhHuNKCtnacGd+VDBkyRjN4gOPJGccEBSoY/pAhQ8ZURjpmwQNorewkDbgNA2EyZMi4FaNWQPIiszb+RQL0l/eGDBkyBjHSEQp+VMkPAGqlL8ptZciQMYLRL2JrDf3OkcAl7TYZMmT8Y0Zt3OGKoFkby0DvDRkyZAxikKIxjuUn3+2MVnz4rgwZMkYz0mBHksLaEcIajEK5DBkyhjI6N1o7aOQFMCfJkCHjCYwrWmC7RseCmREZMmQMZXR6Vvx2azMgpPT9cpApQ4aMEQySGqbts3Qf1Prn8V6GDBmjGWn7niR2PIzyxPT0XSFDhoyhDD4SsXcgLG3qBbmtDBkyRjN2JZc81NZqbjRsIUOGjKGMtE1P1k8LWhkyZDySwQMrCaO1cBy0+WTIkDGUcYSr34yrHU7ESaEMGTIGMfrFKg+RPPnjw2oxRoYMGbdlpK3/dHir06oLUk8ZMmQ8gNEJfKTUTIcw0nAsQ4YMGWmR2QcEYxYyZMiQ0UjyaiePtcchQ4aMJzDSgQnSAqsNh9XCsQwZMmYzWqVjuGn6mNJkVIYMGeMYbxPx2xk3TLOBAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/Hive/">Hive</a></div><div class="post-nav"><a class="next" href="/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/">数据分析|使用多元线性回归构建销售额预测模型</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hive的架构"><span class="toc-number">1.</span> <span class="toc-text">Hive的架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关组件介绍"><span class="toc-number">2.</span> <span class="toc-text">相关组件介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#执行过程"><span class="toc-number">3.</span> <span class="toc-text">执行过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HQL的查询阶段"><span class="toc-number">4.</span> <span class="toc-text">HQL的查询阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
