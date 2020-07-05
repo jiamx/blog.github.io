@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-06-27T15:21:38.683Z</updated>
+  <updated>2020-07-05T10:29:46.102Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,58 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kafka生产者ack机制剖析</title>
+    <link href="https://jiamaoxiang.top/2020/07/05/Kafka%E7%94%9F%E4%BA%A7%E8%80%85ack%E6%9C%BA%E5%88%B6%E5%89%96%E6%9E%90/"/>
+    <id>https://jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/</id>
+    <published>2020-07-05T05:23:23.000Z</published>
+    <updated>2020-07-05T10:29:46.102Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Kafka" scheme="https://jiamaoxiang.top/categories/Kafka/"/>
+    
+    
+      <category term="Kafka" scheme="https://jiamaoxiang.top/tags/Kafka/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>数仓开发应避免的10个陷阱</title>
+    <link href="https://jiamaoxiang.top/2020/06/30/%E6%95%B0%E4%BB%93%E5%BC%80%E5%8F%91%E5%BA%94%E9%81%BF%E5%85%8D%E7%9A%8410%E4%B8%AA%E9%99%B7%E9%98%B1/"/>
+    <id>https://jiamaoxiang.top/2020/06/30/数仓开发应避免的10个陷阱/</id>
+    <published>2020-06-30T14:23:09.000Z</published>
+    <updated>2020-07-02T03:03:47.064Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="数仓" scheme="https://jiamaoxiang.top/categories/%E6%95%B0%E4%BB%93/"/>
+    
+    
+      <category term="数仓" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E4%BB%93/"/>
+    
+  </entry>
   
   <entry>
     <title>Hive的架构剖析</title>
@@ -426,46 +478,6 @@
     <summary type="html">
     
       &lt;p&gt;Flink DataStream API主要分为三个部分，分别为Source、Transformation以及Sink，其中Source是数据源，Flink内置了很多数据源，比如最常用的Kafka。Transformation是具体的转换操作，主要是用户定义的处理数据的逻辑，比如Map，FlatMap等。Sink(数据汇)是数据的输出，可以把处理之后的数据输出到存储设备上，Flink内置了许多的Sink，比如Kafka，HDFS等。另外除了Flink内置的Source和Sink外，用户可以实现自定义的Source与Sink。考虑到内置的Source与Sink使用起来比较简单且方便，所以，关于内置的Source与Sink的使用方式不在本文的讨论范围之内，本文会先从自定义Source开始说起，然后详细描述一些常见算子的使用方式，最后会实现一个自定义的Sink。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>如何使用Hive进行OLAP分析</title>
-    <link href="https://jiamaoxiang.top/2020/04/09/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Hive%E8%BF%9B%E8%A1%8COLAP%E5%88%86%E6%9E%90/"/>
-    <id>https://jiamaoxiang.top/2020/04/09/如何使用Hive进行OLAP分析/</id>
-    <published>2020-04-09T13:44:13.000Z</published>
-    <updated>2020-04-11T09:48:43.306Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文首先介绍了什么是OLAP，接着介绍Hive中提供的几种OLAP分析的函数，并对每一种函数进行了详细说明，并给出了相关的图示解释，最后以一个案例说明了这几种函数的使用方式，可以进一步加深理解。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Hive" scheme="https://jiamaoxiang.top/categories/Hive/"/>
-    
-    
-      <category term="Hive" scheme="https://jiamaoxiang.top/tags/Hive/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>你真的了解Flink Kafka source吗？</title>
-    <link href="https://jiamaoxiang.top/2020/04/02/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BA%86%E8%A7%A3Flink-Kafka-connector%E5%90%97%EF%BC%9F/"/>
-    <id>https://jiamaoxiang.top/2020/04/02/你真的了解Flink-Kafka-connector吗？/</id>
-    <published>2020-04-02T06:29:12.000Z</published>
-    <updated>2020-05-06T01:42:04.481Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Flink 提供了专门的 Kafka 连接器，向 Kafka topic 中读取或者写入数据。Flink Kafka Consumer 集成了 Flink 的 Checkpoint 机制，可提供 exactly-once 的处理语义。为此，Flink 并不完全依赖于跟踪 Kafka 消费组的偏移量，而是在内部跟踪和检查偏移量。&lt;/p&gt;
     
     </summary>
     

@@ -4,6 +4,56 @@
   
     
     <entry>
+      <title>Kafka生产者ack机制剖析</title>
+      <link href="/2020/07/05/Kafka%E7%94%9F%E4%BA%A7%E8%80%85ack%E6%9C%BA%E5%88%B6%E5%89%96%E6%9E%90/"/>
+      <url>/2020/07/05/Kafka%E7%94%9F%E4%BA%A7%E8%80%85ack%E6%9C%BA%E5%88%B6%E5%89%96%E6%9E%90/</url>
+      
+        <content type="html"><![CDATA[<a id="more"></a><p>Kafka有两个很重要的配置参数，<code>acks</code>与<code>min.insync.replicas</code>.其中<code>acks</code>是producer的配置参数，<code>min.insync.replicas</code>是Broker端的配置参数，这两个参数对于生产者不丢失数据起到了很大的作用.接下来，本文会以图示的方式讲解这两个参数的含义和使用方式。通过本文，你可以了解到：</p><ul><li>Kafka的分区副本</li><li>什么是同步副本(In-sync replicas)</li><li>什么是acks确认机制</li><li>什么是最小同步副本</li><li>ack=all与最小同步副本是如何发挥作用的</li></ul><h2 id="分区副本"><a href="#分区副本" class="headerlink" title="分区副本"></a>分区副本</h2><p>Kafka的topic是可以分区的，并且可以为分区配置多个副本，改配置可以通过<code>replication.factor</code>参数实现. Kafka中的分区副本包括两种类型：领导者副本（Leader Replica）和追随者副本（Follower Replica)，每个分区在创建时都要选举一个副本作为领导者副本，其余的副本自动变为追随者副本. 在 Kafka 中，追随者副本是不对外提供服务的，也就是说，任何一个追随者副本都不能响应消费者和生产者的读写请求. 所有的请求都必须由领导者副本来处理. 换句话说，所有的读写请求都必须发往领导者副本所在的 Broker，由该 Broker 负责处理. 追随者副本不处理客户端请求，它唯一的任务就是从领导者副本<strong>异步拉取</strong>消息，并写入到自己的提交日志中，从而实现与领导者副本的同步.</p><p>Kafka默认的副本因子是3，即每个分区只有1个leader副本和2个follower副本.具体如下图所示：</p><p><img src="//jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/kafka%E5%89%AF%E6%9C%AC.png" alt></p><p>上面提到生产者客户端仅写入Leader broker，跟随者异步复制数据。由于Kafka是一个分布式系统，必然会存在与 Leader 不能实时同步的风险，所以需要一种方法来判断这些追随者是否跟上了领导者的步伐, 即追随者是否同步了最新的数据.换句话说，Kafka 要明确地告诉我们，追随者副本到底在什么条件下才算与 Leader 同步？这就是下面所要说的ISR同步副本机制.</p><h2 id="同步副本-In-sync-replicas"><a href="#同步副本-In-sync-replicas" class="headerlink" title="同步副本(In-sync replicas)"></a>同步副本(In-sync replicas)</h2><p>In-sync replica(ISR)称之为同步副本，ISR中的副本都是与Leader进行同步的副本，所以不在该列表的follower会被认为与Leader是不同步的. 那么，ISR中存在是什么副本呢？首先可以明确的是：Leader副本总是存在于ISR中. 而follower副本是否在ISR中，取决于该follower副本是否与Leader副本保持了“同步”.</p><blockquote><p>尖叫提示：对于”follower副本是否与Leader副本保持了同步”的理解如下：</p><p>(1)上面所说的同步不是指完全的同步，即并不是说一旦follower副本同步滞后与Leader副本，就会被踢出ISR列表.</p><p>(2)Kafka的broker端有一个参数<strong><code>replica.lag.time.max.ms</code></strong>, 该参数表示follower副本滞后与Leader副本的最长时间间隔，默认是10秒.  这就意味着，只要follower副本落后于leader副本的时间间隔不超过10秒，就可以认为该follower副本与leader副本是同步的，所以哪怕当前follower副本落后于Leader副本几条消息，只要在10秒之内赶上Leader副本，就不会被踢出出局.</p><p>（3）如果follower副本被踢出ISR列表，等到该副本追上了Leader副本的进度，该副本会被再次加入到ISR列表中，所以ISR是一个动态列表，并不是静态不变的。</p></blockquote><p><img src="//jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/ISR.png" alt></p><p>如上图所示：Broker3上的partition1副本超过了规定时间，未与Leader副本同步，所以被踢出ISR列表，此时的ISR为[1,3].</p><h2 id="acks确认机制"><a href="#acks确认机制" class="headerlink" title="acks确认机制"></a>acks确认机制</h2><p>acks参数指定了必须要有多少个分区副本收到消息，生产者才认为该消息是写入成功的，这个参数对于消息是否丢失起着重要作用，该参数的配置具体如下：</p><ul><li>acks=0，表示生产者在成功写入消息之前不会等待任何来自服务器的响应.  换句话说，一旦出现了问题导致服务器没有收到消息，那么生产者就无从得知，消息也就丢失了. 改配置由于不需要等到服务器的响应，所以可以以网络支持的最大速度发送消息，从而达到很高的吞吐量。</li></ul><p><img src="//jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/ack0.png" alt></p><ul><li><p>acks=1，表示只要集群的leader分区副本接收到了消息，就会向生产者发送一个成功响应的ack，此时生产者接收到ack之后就可以认为该消息是写入成功的. 一旦消息无法写入leader分区副本(比如网络原因、leader节点崩溃),生产者会收到一个错误响应，当生产者接收到该错误响应之后，为了避免数据丢失，会重新发送数据.这种方式的吞吐量取决于使用的是异步发送还是同步发送.</p><blockquote><p>尖叫提示：如果生产者收到了错误响应，即便是重新发消息，还是会有可能出现丢数据的现象. 比如，如果一个没有收到消息的节点成为了新的Leader，消息就会丢失.</p></blockquote></li></ul><p><img src="//jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/ack1.png" alt></p><ul><li>acks =all,表示只有所有参与复制的节点(ISR列表的副本)全部收到消息时，生产者才会接收到来自服务器的响应. 这种模式是最高级别的，也是最安全的，可以确保不止一个Broker接收到了消息. 该模式的延迟会很高.</li></ul><p><img src="//jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/ackall.png" alt></p><h2 id="最小同步副本"><a href="#最小同步副本" class="headerlink" title="最小同步副本"></a>最小同步副本</h2><p>上面提到，当acks=all时，需要所有的副本都同步了才会发送成功响应到生产者. 其实这里面存在一个问题：如果Leader副本是唯一的同步副本时会发生什么呢？此时相当于acks=1.所以是不安全的.</p><p>Kafka的Broker端提供了一个参数<strong><code>min.insync.replicas</code></strong>,该参数控制的是消息至少被写入到多少个副本才算是”真正写入”,该值默认值为1，生产环境设定为一个大于1的值可以提升消息的持久性. 因为如果同步副本的数量低于该配置值，则生产者会收到错误响应，从而确保消息不丢失.</p><h3 id="Case-1"><a href="#Case-1" class="headerlink" title="Case 1"></a>Case 1</h3><p>如下图，当min.insync.replicas=2且acks=all时，如果此时ISR列表只有[1,2],3被踢出ISR列表，只需要保证两个副本同步了，生产者就会收到成功响应.</p><p><img src="//jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/min2.png" alt></p><h3 id="Case-2"><a href="#Case-2" class="headerlink" title="Case 2"></a>Case 2</h3><p>如下图，当min.insync.replicas=2，如果此时ISR列表只有[1],2和3被踢出ISR列表，那么当acks=all时，则不能成功写入数；当acks=0或者acks=1可以成功写入数据.</p><p><img src="//jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/min1.png" alt></p><h3 id="Case-3"><a href="#Case-3" class="headerlink" title="Case 3"></a>Case 3</h3><p>这种情况是很容易引起误解的，如果acks=all且min.insync.replicas=2，此时ISR列表为[1,2,3],那么还是会等到所有的同步副本都同步了消息，才会向生产者发送成功响应的ack.因为min.insync.replicas=2只是一个最低限制，即同步副本少于该配置值，则会抛异常，而acks=all，是需要保证所有的ISR列表的副本都同步了才可以发送成功响应. 如下图所示：</p><p><img src="//jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/min0.png" alt></p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>acks=0，生产者在成功写入消息之前不会等待任何来自服务器的响应.</p><p>acks=1,只要集群的leader分区副本接收到了消息，就会向生产者发送一个成功响应的ack.</p><p>acks=all,表示只有所有参与复制的节点(ISR列表的副本)全部收到消息时，生产者才会接收到来自服务器的响应，此时如果ISR同步副本的个数小于<strong><code>min.insync.replicas</code></strong>的值，消息不会被写入.</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Kafka </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Kafka </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>数仓开发应避免的10个陷阱</title>
+      <link href="/2020/06/30/%E6%95%B0%E4%BB%93%E5%BC%80%E5%8F%91%E5%BA%94%E9%81%BF%E5%85%8D%E7%9A%8410%E4%B8%AA%E9%99%B7%E9%98%B1/"/>
+      <url>/2020/06/30/%E6%95%B0%E4%BB%93%E5%BC%80%E5%8F%91%E5%BA%94%E9%81%BF%E5%85%8D%E7%9A%8410%E4%B8%AA%E9%99%B7%E9%98%B1/</url>
+      
+        <content type="html"><![CDATA[<p>在Ralph Kimball和Margy Ross 的《<em>数据仓库工具包</em>》一书中，提到了数据仓库设计中的10个常见陷阱，本文针对每个陷阱添加了一条与数据仓库设计经验有关的附加解释。在着手进行数据仓库项目之前，可以了解一下数这10个常见陷阱。这样才可以不被数据仓库设计的陷阱所困扰，避免这10个常见的陷阱可以在构建数仓的过程少走些弯路。</p><h2 id="陷阱10"><a href="#陷阱10" class="headerlink" title="陷阱10:"></a>陷阱10:</h2><p><strong>过于迷恋技术和数据，而没有将重点放在业务需求和目标上。</strong></p><blockquote><p>数仓归根结底是要解决业务问题的，狂拽酷炫的数据架构和层出不穷的新技术通常会比去了解用户需求更具有吸引力。其实，也没有完美的技术架构，只要是能够满足当下及未来可见的业务需求即可，合适就好。应当把时间投入在理解和梳理业务上，这样才能够构建出相对合理的数据模型，从而提高模型的复用性，及时响应业务需求。</p></blockquote><h2 id="陷阱9"><a href="#陷阱9" class="headerlink" title="陷阱9:"></a>陷阱9:</h2><p><strong>没有或无法找到一个有影响的、平易近人的、明白事理的高级管理人员作为数仓建设的发起人。</strong></p><blockquote><p>数仓建设是多部门合作的结果，只有这样才能够真正的实现数据赋能业务。所以没有高层的支持和重视，数仓的建设将会很难推进。缺乏远见，热情，支持，领导力以及影响企业投资于任何产品(不管是不是数仓)的能力，注定会走向失败。</p></blockquote><h2 id="陷阱8"><a href="#陷阱8" class="headerlink" title="陷阱8:"></a>陷阱8:</h2><p><strong>将项目处理为一个巨大的持续多年的项目，而不是追求更容易管理的、虽然仍然具有挑战性的迭代开发工作</strong></p><blockquote><p>这是一个经常出现的陷阱，试图建设一个庞大的，无所不包的系统，通常是不可取的。似乎只要建设一个“巨型无比”的系统就可以完成任何工作，解决任何问题一样，其实结果往往会适得其反。更糟的是，管理这些项目的人往往没有与业务进行足够详细的协商，从而开发有用的产品。一言以蔽之，银样镴枪头，中看不中用。                                        </p></blockquote><h2 id="陷阱7"><a href="#陷阱7" class="headerlink" title="陷阱7:"></a>陷阱7:</h2><p><strong>分配大量的精力去构建规范化数据结构， 在最终呈现数据之前，用尽所有的预算。</strong></p><blockquote><p>这个陷阱不像其他陷阱一样重要，在Kimball的方法论中，对维度模型进行更改所带来的业务风险要比更改源事务数据库小。所以应该留出足够的资源来构建它们，但是很少有中小型企业在资源上进行投资以创建完全一致的事实和维度表，更不用说OLAP数据立方体了，所以再多的理论也解决不了实际的问题，先跑起来才重要，不管姿势是否完美。</p></blockquote><h2 id="陷阱6"><a href="#陷阱6" class="headerlink" title="陷阱6 :"></a>陷阱6 :</h2><p><strong>将主要精力投入到后端操作型性能和易开发性，而没有重点考虑前端查询的性能和易用性。</strong></p><blockquote><p>为用户提供易于阅读的数据展示形式并具有良好的查询性能会很重要。</p></blockquote><h2 id="陷阱5"><a href="#陷阱5" class="headerlink" title="陷阱5:"></a>陷阱5:</h2><p><strong>使存在于应用层的可查询数据设计的过于复杂，应该通过简化解决方案开发出更适合需要的产品。</strong></p><blockquote><p>通常，大多数业务用户都希望简化数据表示方式。此外，对这些数据的访问应限于尽可能少入口。提高获取数据的易用性，会大大提升数仓的价值。</p></blockquote><h2 id="陷阱4"><a href="#陷阱4" class="headerlink" title="陷阱4:"></a>陷阱4:</h2><p><strong>烟囱式开发，不考虑使用可共享的、一致性维度将数据模型联系在一起。</strong></p><blockquote><p>当维度在整个数据仓库中不一致时，就是典型的烟囱式开发。其实，我们使用的维度在本质上是相同的，但是由于数据来自于不同的业务源，并会被随意更新。典型的例子是“时间”维度，在维模型不一致的情况下，最终用户通常完全不知道为什么一个报表中的数据可能与其他地方生成的报表有显着差异。一种好的做法是将数据模型与主数据管理（MDM）解决方案联系在一起，该解决方案包含可以在整个数据仓库中普遍使用的参考数据。</p></blockquote><h2 id="陷阱3"><a href="#陷阱3" class="headerlink" title="陷阱3:"></a>陷阱3:</h2><p><strong>只将汇总数据加载到展示区的维度结构中</strong></p><blockquote><p>在事务数据库和数据仓库之间创建的每个ETL（提取，转换和加载）过程中，不能只将汇总的数据装载到数仓中，要确保有一份原子数据存储在数仓中，即将数据同步一份放在准备区(ODS层)。</p></blockquote><h2 id="陷阱2"><a href="#陷阱2" class="headerlink" title="陷阱2 :"></a>陷阱2 :</h2><p><strong>臆想业务、业务需求及分析，其涉及的数据及支持技术都是静态的。</strong></p><blockquote><p>尽量不要开发仅限于某个特定业务需求和分析的数据模型，因为业务在不断地发生变化。一个差劲的模型设计通常是开发重复的数据模型及不一致的命名约定。在设计一个“完美”的事实表、维表与规范化程度之间取得平衡并不是一件容易的事情，但是开发出可伸缩的以适应业务发展的数据模型是非常重要的。</p></blockquote><h2 id="陷阱1"><a href="#陷阱1" class="headerlink" title="陷阱1 :"></a>陷阱1 :</h2><p><strong>忽略数据仓库的成功直接来源于业务的认可。如果用户未将数据仓库系统当成他们制定决策的基础，那么所有的工作都是徒劳。</strong></p><blockquote><p>这个是很致命的陷阱，如果从一开始都没有得到业务和高层的重视和认可，那么数仓项目多半是会夭折。从用户的角度出发，如果用户对建立的数仓不买账，根本就不会去使用它，结局只会game over。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数仓 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 数仓 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Hive的架构剖析</title>
       <link href="/2020/06/27/Hive%E7%9A%84%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/"/>
       <url>/2020/06/27/Hive%E7%9A%84%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/</url>
