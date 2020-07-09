@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-07-05T10:29:46.102Z</updated>
+  <updated>2020-07-08T15:08:53.960Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kafka的Controller Broker是什么</title>
+    <link href="https://jiamaoxiang.top/2020/07/06/Kafka%E7%9A%84Controller-Broker%E6%98%AF%E4%BB%80%E4%B9%88/"/>
+    <id>https://jiamaoxiang.top/2020/07/06/Kafka的Controller-Broker是什么/</id>
+    <published>2020-07-06T13:49:42.000Z</published>
+    <updated>2020-07-08T15:08:53.960Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Kafka" scheme="https://jiamaoxiang.top/categories/Kafka/"/>
+    
+    
+      <category term="Kafka" scheme="https://jiamaoxiang.top/tags/Kafka/"/>
+    
+  </entry>
   
   <entry>
     <title>Kafka生产者ack机制剖析</title>
@@ -458,26 +484,6 @@
     <summary type="html">
     
       &lt;p&gt;当我们在使用Flink的时候，避免不了要和时间(time)、水位线(watermarks)打交道，理解这些概念是开发分布式流处理应用的基础。那么Flink支持哪些时间语义？Flink是如何处理乱序事件的？什么是水位线？水位线是如何生成的？水位线的传播方式是什么？让我们带着这些问题来开始本文的内容。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flink DataStream API编程指南</title>
-    <link href="https://jiamaoxiang.top/2020/04/12/Flink-DataStream-API%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
-    <id>https://jiamaoxiang.top/2020/04/12/Flink-DataStream-API编程指南/</id>
-    <published>2020-04-12T13:39:43.000Z</published>
-    <updated>2020-05-06T01:42:51.059Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Flink DataStream API主要分为三个部分，分别为Source、Transformation以及Sink，其中Source是数据源，Flink内置了很多数据源，比如最常用的Kafka。Transformation是具体的转换操作，主要是用户定义的处理数据的逻辑，比如Map，FlatMap等。Sink(数据汇)是数据的输出，可以把处理之后的数据输出到存储设备上，Flink内置了许多的Sink，比如Kafka，HDFS等。另外除了Flink内置的Source和Sink外，用户可以实现自定义的Source与Sink。考虑到内置的Source与Sink使用起来比较简单且方便，所以，关于内置的Source与Sink的使用方式不在本文的讨论范围之内，本文会先从自定义Source开始说起，然后详细描述一些常见算子的使用方式，最后会实现一个自定义的Sink。&lt;/p&gt;
     
     </summary>
     

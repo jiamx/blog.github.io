@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/07/06/Kafka的Controller-Broker是什么/
 https://jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/
 https://jiamaoxiang.top/2020/06/30/数仓开发应避免的10个陷阱/
 https://jiamaoxiang.top/2020/06/27/Hive的架构剖析/
