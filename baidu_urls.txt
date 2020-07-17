@@ -1,3 +1,6 @@
+https://jiamaoxiang.top/2020/07/14/第一篇-Spark概览/
+https://jiamaoxiang.top/2020/07/11/数仓-大数据时代-维度建模过时了吗/
+https://jiamaoxiang.top/2020/07/09/使SQL更易于阅读的几个小技巧/
 https://jiamaoxiang.top/2020/07/06/Kafka的Controller-Broker是什么/
 https://jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/
 https://jiamaoxiang.top/2020/06/30/数仓开发应避免的10个陷阱/

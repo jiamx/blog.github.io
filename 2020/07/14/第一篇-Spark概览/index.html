@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>第一篇|Spark概览 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第一篇|Spark概览</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第一篇|Spark概览</h1><div class="post-meta">Jul 14, 2020<span> | </span><span class="category"><a href="/categories/Spark/">Spark</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 2.5k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 9</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><a id="more"></a>
+
+<p>Apache Spark最初在2009年诞生于美国加州大学伯克利分校的APM实验室，并于2010年开源，如今是Apache软件基金会下的顶级开源项目之一。Spark的目标是设计一种编程模型，能够快速地进行数据分析。Spark提供了内存计算，减少了IO开销。另外Spark是基于Scala编写的，提供了交互式的编程体验。经过10年的发展，Spark成为了炙手可热的大数据处理平台，目前最新的版本是Spark3.0。本文主要是对Spark进行一个总体概览式的介绍,后续内容会对具体的细节进行展开讨论。本文的主要内容包括：</p>
+<ul>
+<li><input checked disabled type="checkbox"> Spark的关注度分析</li>
+<li><input checked disabled type="checkbox"> Spark的特点</li>
+<li><input checked disabled type="checkbox"> Spark的一些重要概念</li>
+<li><input checked disabled type="checkbox"> Spark组件概览</li>
+<li><input checked disabled type="checkbox"> Spark运行架构概览</li>
+<li><input checked disabled type="checkbox"> Spark编程初体验</li>
+</ul>
+<h2 id="Spark的关注热度分析"><a href="#Spark的关注热度分析" class="headerlink" title="Spark的关注热度分析"></a>Spark的关注热度分析</h2><h3 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h3><p>下图展示了近1年内在国内关于Spark、Hadoop及Flink的搜索趋势</p>
+<p><img src="//jiamaoxiang.top/2020/07/14/第一篇-Spark概览/%E8%B6%8B%E5%8A%BF.png" alt></p>
+<p>近1年内全球关于Spark、Hadoop及Flink的搜索趋势，如下：</p>
+<p><img src="//jiamaoxiang.top/2020/07/14/第一篇-Spark概览/%E5%85%A8%E7%90%83%E8%B6%8B%E5%8A%BF.png" alt></p>
+<p>近1年国内关于Spark、Hadoop及Flink的搜索热度区域分布情况(按Flink搜索热度降序排列)：</p>
+<p><img src="//jiamaoxiang.top/2020/07/14/第一篇-Spark概览/%E4%B8%AD%E5%9B%BD%E5%85%B3%E6%B3%A8%E6%83%85%E5%86%B5.png" alt></p>
+<p>近1年全球关于Spark、Hadoop及Flink的搜索热度区域分布情况(按Flink搜索热度降序排列)：</p>
+<p><img src="//jiamaoxiang.top/2020/07/14/第一篇-Spark概览/%E5%85%A8%E7%90%83%E5%85%B3%E6%B3%A8%E6%83%85%E5%86%B5.png" alt></p>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>从上面的4幅图可以看出，近一年无论是在国内还是全球，关于Spark的搜索热度始终是比Hadoop和Flink要高。近年来Flink发展迅猛，其在国内有阿里的背书，Flink天然的流处理特点使其成为了开发流式应用的首选框架。可以看出，虽然Flink在国内很火，但是放眼全球，热度仍然不及Spark。所以学习并掌握Spark技术仍然是一个不错的选择，技术有很多的相似性，如果你已经掌握了Spark，再去学习Flink的话，相信你会有种似曾相识的感觉。</p>
+<h2 id="Spark的特点"><a href="#Spark的特点" class="headerlink" title="Spark的特点"></a>Spark的特点</h2><ul>
+<li><p>速度快</p>
+<p>Apache Spark使用DAG调度程序、查询优化器和物理执行引擎，为批处理和流处理提供了高性能。</p>
+</li>
+<li><p>易于使用</p>
+<p>支持使用Java，Scala，Python，R和SQL快速编写应用程序。Spark提供了80多个高级操作算子，可轻松构建并行应用程序。</p>
+</li>
+<li><p>通用性</p>
+<p>Spark提供了非常丰富的生态栈，包括SQL查询、流式计算、机器学习和图计算等组件，这些组件可以无缝整合在一个应用中，通过一站部署，可以应对多种复杂的计算场景</p>
+</li>
+<li><p>运行模式多样</p>
+<p>Spark可以使用Standalone模式运行，也可以运行在Hadoop，Apache Mesos，Kubernetes等环境中运行。并且可以访问HDFS、Alluxio、Apache Cassandra、Apache HBase、Apache Hive等多种数据源中的数据。</p>
+</li>
+</ul>
+<h2 id="Spark的一些重要概念"><a href="#Spark的一些重要概念" class="headerlink" title="Spark的一些重要概念"></a>Spark的一些重要概念</h2><ul>
+<li><p><strong>RDD</strong></p>
+<p>弹性分布式数据集(Resilient Distributed Dataset)，是分布式内存的一个抽象概念，提供了一种高度受限的共享内存模型</p>
+</li>
+<li><p><strong>DAG</strong></p>
+<p>有向无环图(Directed Acyclic Graph),反映RDD之间的依赖关系</p>
+</li>
+<li><p><strong>Application</strong></p>
+<p>  用户编写的Spark程序，由 driver program 和 <em>executors</em> 组成</p>
+</li>
+<li><p><strong>Application jar</strong><br>用户编写的应用程序JAR包</p>
+</li>
+<li><p><strong>Driver program</strong><br>用程序main()函数的进程，可以创建SparkContext</p>
+</li>
+<li><p><strong>Cluster manager</strong><br>集群管理器，属于一个外部服务，用于资源请求分配(如：standalone manager, Mesos, YARN)</p>
+</li>
+<li><p><strong>Deploy mode</strong></p>
+<p>  部署模式，决定Driver进程在哪里运行。如果是<strong>cluster</strong>模式，会由框架本身在集群内部某台机器上启动Driver进程。如果是<strong>client</strong>模式，会在提交程序的机器上启动Driver进程</p>
+</li>
+<li><p><strong>Worker node</strong></p>
+<p>  集群中运行应用程序的节点Executor运行在Worknode节点上的一个进程，负责运行具体的任务，并为应用程序存储数据</p>
+</li>
+<li><p><strong>Task</strong><br>运行在executor中的工作单元</p>
+</li>
+<li><p><strong>Job</strong><br>一个job包含多个RDD及一些列的运行在RDD之上的算子操作，job需要通过<strong>action</strong>操作进行触发(比如save、collect等)</p>
+</li>
+<li><p><strong>Stage</strong><br>每一个作业会被分成由一些列task组成的stage，stage之间会相互依赖</p>
+</li>
+</ul>
+<h2 id="Spark组件概览"><a href="#Spark组件概览" class="headerlink" title="Spark组件概览"></a>Spark组件概览</h2><p>Spark生态系统主要包括Spark Core、SparkSQL、SparkStreaming、MLlib和GraphX等组件，具体如下图所示：</p>
+<p><img src="//jiamaoxiang.top/2020/07/14/第一篇-Spark概览/spark%E7%BB%84%E4%BB%B6.png" alt></p>
+<ul>
+<li><p><strong>Spark Core</strong></p>
+<p>Spark core是Spark的核心，包含了Spark的基本功能，如内存计算、任务调度、部署模式、存储管理等。SparkCore提供了基于RDD的API是其他高级API的基础，主要功能是实现批处理。</p>
+</li>
+<li><p><strong>Spark SQL</strong></p>
+<p>Spark SQL主要是为了处理结构化和半结构化数据而设计的，SparkSQL允许用户在Spark程序中使用SQL、DataFrame和DataSetAPI查询结构化数据，支持Java、Scala、Python和R语言。由于DataFrame API提供了统一的访问各种数据源的方式(包括Hive、Avro、Parquet、ORC和JDBC)，用户可以通过相同的方式连接任何数据源。另外，Spark SQL可以使用hive的元数据，从而实现了与Hive的完美集成，用户可以将Hive的作业直接运行在Spark上。Spark SQL可以通过<strong>spark-sql</strong>的shell命令访问。</p>
+</li>
+<li><p><strong>SparkStreaming</strong></p>
+<p>SparkStreaming是Spark很重要的一个模块，可实现实时数据流的可伸缩，高吞吐量，容错流处理。在内部，其工作方式是将实时输入的数据流拆分为一系列的micro batch，然后由Spark引擎进行处理。SparkStreaming支持多种数据源，如kafka、Flume和TCP套接字等</p>
+</li>
+<li><p><strong>MLlib</strong></p>
+<p>MLlib是Spark提供的一个机器学习库，用户可以使用Spark API构建一个机器学习应用，Spark尤其擅长迭代计算，性能是Hadoop的100倍。该lib包含了常见机器学习算法，比如逻辑回归、支持向量机、分类、聚类、回归、随机森林、协同过滤、主成分分析等。</p>
+</li>
+<li><p><strong>GraphX</strong></p>
+<p>GraphX是Spark中用于图计算的API，可认为是Pregel在Spark上的重写及优化，GraphX性能良好，拥有丰富的功能和运算符，能在海量数据上自如地运行复杂的图算法。GraphX内置了许多图算法，比如著名的PageRank算法。</p>
+</li>
+</ul>
+<h2 id="Spark运行架构概览"><a href="#Spark运行架构概览" class="headerlink" title="Spark运行架构概览"></a>Spark运行架构概览</h2><p>从整体来看，Spark应用架构包括以下几个主要部分：</p>
+<ul>
+<li>Driver program</li>
+<li>Master node</li>
+<li>Work node</li>
+<li>Executor</li>
+<li>Tasks</li>
+<li>SparkContext</li>
+</ul>
+<p>在<strong>Standalone</strong>模式下，运行架构如下图所示：</p>
+<p><img src="//jiamaoxiang.top/2020/07/14/第一篇-Spark概览/%E8%BF%90%E8%A1%8C%E6%9E%B6%E6%9E%84.png" alt></p>
+<h3 id="Driver-program"><a href="#Driver-program" class="headerlink" title="Driver program"></a>Driver program</h3><p>Driver program是Spark应用程序的main()函数(创建SparkContext和Spark会话)。运行Driver进程的节点称之为Driver node，Driver进程与集群管理器(Cluster Manager)进行通信，向Executor发送调度的task。</p>
+<h3 id="Cluster-Manager"><a href="#Cluster-Manager" class="headerlink" title="Cluster Manager"></a>Cluster Manager</h3><p>称之为集群管理器，主要用于管理集群。常见的集群管理器包括YARN、Mesos和Standalone，Standalone集群管理器包括两个长期运行的后台进程，其中一个是在Master节点，另外一个是在Work节点。在后续集群部署模式篇，将详细探讨这一部分的内容，此处先有有一个大致印象即可。</p>
+<h3 id="Worker-node"><a href="#Worker-node" class="headerlink" title="Worker node"></a>Worker node</h3><p>熟悉Hadoop的朋友应该知道，Hadoop包括namenode和datanode节点。Spark也类似，Spark将运行具体任务的节点称之为Worker node。该节点会向Master节点汇报当前节点的可用资源，通常在每一台Worker node上启动一个work后台进程，用于启动和监控Executor。</p>
+<h3 id="Executor"><a href="#Executor" class="headerlink" title="Executor"></a>Executor</h3><p>Master节点分配资源，使用集群中的Work node创建Executor，Driver使用这些Executor分配运行具体的Task。每一个应用程序都有自己的Executor进程，使用多个线程执行具体的Task。Executor主要负责运行任务和保存数据。</p>
+<h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><p>Task是发送到Executor中的工作单元</p>
+<h3 id="SparkContext"><a href="#SparkContext" class="headerlink" title="SparkContext"></a>SparkContext</h3><p>SparkContext是Spark会话的入口，用于连接Spark集群。在提交应用程序之前，首先需要初始化SparkContext，SparkContext隐含了网络通信、存储体系、计算引擎、WebUI等内容。值得注意的是，一个JVM进程中只能有一个SparkContext，如果想创建新的SparkContext，需要在原来的SparkContext上调用stop()方法。</p>
+<h2 id="Spark编程小试牛刀"><a href="#Spark编程小试牛刀" class="headerlink" title="Spark编程小试牛刀"></a>Spark编程小试牛刀</h2><h3 id="Spark实现分组取topN案例"><a href="#Spark实现分组取topN案例" class="headerlink" title="Spark实现分组取topN案例"></a>Spark实现分组取topN案例</h3><p><strong>描述</strong>：在HDFS上有订单数据order.txt文件，文件字段的分割符号”,”，其中字段依次表示订单id，商品id，交易额。样本数据如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Order_00001,Pdt_01,222.8</span><br><span class="line">Order_00001,Pdt_05,25.8</span><br><span class="line">Order_00002,Pdt_03,522.8</span><br><span class="line">Order_00002,Pdt_04,122.4</span><br><span class="line">Order_00002,Pdt_05,722.4</span><br><span class="line">Order_00003,Pdt_01,222.8</span><br></pre></td></tr></table></figure>
+
+<p><strong>问题</strong>：使用sparkcore，求每个订单中成交额最大的商品id</p>
+<h3 id="实现代码"><a href="#实现代码" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.<span class="type">Row</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.hive.<span class="type">HiveContext</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.types.&#123;<span class="type">StringType</span>, <span class="type">StructField</span>, <span class="type">StructType</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.&#123;<span class="type">SparkConf</span>, <span class="type">SparkContext</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">TopOrderItemCluster</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>().setAppName(<span class="string">"top n order and item"</span>)</span><br><span class="line">    <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line">    <span class="keyword">val</span> hctx = <span class="keyword">new</span> <span class="type">HiveContext</span>(sc)</span><br><span class="line">    <span class="keyword">val</span> orderData = sc.textFile(<span class="string">"data.txt"</span>)</span><br><span class="line">    <span class="keyword">val</span> splitOrderData = orderData.map(_.split(<span class="string">","</span>))</span><br><span class="line">    <span class="keyword">val</span> mapOrderData = splitOrderData.map &#123; arrValue =&gt;</span><br><span class="line">      <span class="keyword">val</span> orderID = arrValue(<span class="number">0</span>)</span><br><span class="line">      <span class="keyword">val</span> itemID = arrValue(<span class="number">1</span>)</span><br><span class="line">      <span class="keyword">val</span> total = arrValue(<span class="number">2</span>).toDouble</span><br><span class="line">      (orderID, (itemID, total))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> groupOrderData = mapOrderData.groupByKey()</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">      ***groupOrderData.foreach(x =&gt; println(x))</span></span><br><span class="line"><span class="comment">      ***(Order_00003,CompactBuffer((Pdt_01,222.8)))</span></span><br><span class="line"><span class="comment">      ***(Order_00002,CompactBuffer((Pdt_03,522.8), (Pdt_04,122.4), (Pdt_05,722.4)))</span></span><br><span class="line"><span class="comment">      ***(Order_00001,CompactBuffer((Pdt_01,222.8), (Pdt_05,25.8)))</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">   </span><br><span class="line">    <span class="keyword">val</span> topOrderData = groupOrderData.map(tupleData =&gt; &#123;</span><br><span class="line">      <span class="keyword">val</span> orderid = tupleData._1</span><br><span class="line">      <span class="keyword">val</span> maxTotal = tupleData._2.toArray.sortWith(_._2 &gt; _._2).take(<span class="number">1</span>)</span><br><span class="line">      (orderid, maxTotal)</span><br><span class="line">    &#125;</span><br><span class="line">    )</span><br><span class="line">    topOrderData.foreach(value =&gt;</span><br><span class="line">      println(<span class="string">"最大成交额的订单ID为："</span> + value._1 + <span class="string">" ,对应的商品ID为："</span> + value._2(<span class="number">0</span>)._1)</span><br><span class="line"></span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">        ***最大成交额的订单ID为：Order_00003 ,对应的商品ID为：Pdt_01</span></span><br><span class="line"><span class="comment">        ***最大成交额的订单ID为：Order_00002 ,对应的商品ID为：Pdt_05</span></span><br><span class="line"><span class="comment">        ***最大成交额的订单ID为：Order_00001 ,对应的商品ID为：Pdt_01</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">      </span><br><span class="line">    )</span><br><span class="line">    <span class="comment">//构造出元数据为Row的RDD</span></span><br><span class="line">    <span class="keyword">val</span> <span class="type">RowOrderData</span> = topOrderData.map(value =&gt; <span class="type">Row</span>(value._1, value._2(<span class="number">0</span>)._1))</span><br><span class="line">    <span class="comment">//构建元数据</span></span><br><span class="line">    <span class="keyword">val</span> structType = <span class="type">StructType</span>(<span class="type">Array</span>(</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"orderid"</span>, <span class="type">StringType</span>, <span class="literal">false</span>),</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"itemid"</span>, <span class="type">StringType</span>, <span class="literal">false</span>))</span><br><span class="line">    )</span><br><span class="line">    <span class="comment">//转换成DataFrame</span></span><br><span class="line">    <span class="keyword">val</span> orderDataDF = hctx.createDataFrame(<span class="type">RowOrderData</span>, structType)</span><br><span class="line">   <span class="comment">// 将数据写入Hive</span></span><br><span class="line">    orderDataDF.registerTempTable(<span class="string">"tmptable"</span>)</span><br><span class="line">    hctx.sql(<span class="string">"CREATE TABLE IF NOT EXISTS orderid_itemid(orderid STRING,itemid STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\t'"</span>)</span><br><span class="line">      hctx.sql(<span class="string">"INSERT INTO orderid_itemid SELECT * FROM tmptable"</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将上述代码打包，提交到集群运行，可以进入hive cli或者spark-sql的shell查看Hive中的数据。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要从整体上对Spark进行了介绍，主要包括Spark的搜索热度分析、Spark的主要特点、Spark的一些重要概念以及Spark的运行架构，最后给出了一个Spark编程案例。本文是Spark系列分享的第一篇，可以先感受一下Spark的全局面貌，下一篇将分享Spark Core编程指南。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/07/11/数仓-大数据时代-维度建模过时了吗/" target="_blank">数仓|大数据时代,维度建模过时了吗?</a></li><li><a href="https://jiamaoxiang.top/2020/07/09/使SQL更易于阅读的几个小技巧/" target="_blank">使SQL更易于阅读的几个小技巧</a></li><li><a href="https://jiamaoxiang.top/2020/07/06/Kafka的Controller-Broker是什么/" target="_blank">Kafka的Controller Broker是什么</a></li><li><a href="https://jiamaoxiang.top/2020/07/05/Kafka生产者ack机制剖析/" target="_blank">Kafka生产者ack机制剖析</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/07/14/第一篇-Spark概览/">https://jiamaoxiang.top/2020/07/14/第一篇-Spark概览/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/07/14/第一篇-Spark概览/" data-id="ckcpjvm8j003hzo7qkgccoiss" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACNklEQVR42u3aS47jMAwFwNz/0p4DJK08kvEAlkqrIJ22VVoQ/Oj1itf1tta/ef9+/c36CT9bGBgYj2Vcy/X+4vyXf21uvdHkXR+egIGBcQCj+rgkXK5J+ZGt94aBgYGRM5JwXE0NMTAwMKqMXhVZLWgxMDAwJkXsr0rcJMW8sRbHwMB4ICPvuv//z7fMNzAwMB7FuForD5FRSlcMsh/2g4GBsTWjGgR7Dbj17/Mnf2nGYWBgbMrIi9V8GJBsJQ/EUSMPAwNja0berE+K2yS658PL8mgTAwPjGEYho2ylj9UDKjwNAwNjU8b6SkTeRJtsev32aCcYGBhbM3pJWO+vCbJ6jQMDA+McxvqheVk7uf7VS0wxMDDOYUxStB5s0p5r9g4xMDAey+iNKnvjgd4QYnS7DQMDYyNGr9HfGyrc0sjDwMA4hpE0wvKQOmn3J1fTMDAwzmRMxgD5AKA6SFgfBAYGxgmM6tWKXqp330F8uTmCgYGxBaOaolWb/jm4GppfvZPAwMB4ICO/sDW/DFEdZ+blNAYGxt6MSdKWbLR3BS0vcT+MMDEwMLZjzK9QNGN8APvBPBYDA2MLxlVckySvOooop4YYGBibMvJVbaglg4FeOjjCYGBgPJaRB9neeLJXAFfTUAwMjBMY1fZZsul5KE9KawwMDIxkYJl/riaXtwRcDAyMrRn5f+WXyXLGl+PAwMA4gFENdnlRGoXLVsr4YRKLgYGxKaNaOia8SenbSy4xMDA2ZfwDkT2EmrNuzUAAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/Spark/">Spark</a></div><div class="post-nav"><a class="next" href="/2020/07/11/数仓-大数据时代-维度建模过时了吗/">数仓|大数据时代,维度建模过时了吗?</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark的关注热度分析"><span class="toc-number">1.</span> <span class="toc-text">Spark的关注热度分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概况"><span class="toc-number">1.1.</span> <span class="toc-text">概况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分析"><span class="toc-number">1.2.</span> <span class="toc-text">分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark的特点"><span class="toc-number">2.</span> <span class="toc-text">Spark的特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark的一些重要概念"><span class="toc-number">3.</span> <span class="toc-text">Spark的一些重要概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark组件概览"><span class="toc-number">4.</span> <span class="toc-text">Spark组件概览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark运行架构概览"><span class="toc-number">5.</span> <span class="toc-text">Spark运行架构概览</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Driver-program"><span class="toc-number">5.1.</span> <span class="toc-text">Driver program</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cluster-Manager"><span class="toc-number">5.2.</span> <span class="toc-text">Cluster Manager</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Worker-node"><span class="toc-number">5.3.</span> <span class="toc-text">Worker node</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Executor"><span class="toc-number">5.4.</span> <span class="toc-text">Executor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Task"><span class="toc-number">5.5.</span> <span class="toc-text">Task</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SparkContext"><span class="toc-number">5.6.</span> <span class="toc-text">SparkContext</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark编程小试牛刀"><span class="toc-number">6.</span> <span class="toc-text">Spark编程小试牛刀</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spark实现分组取topN案例"><span class="toc-number">6.1.</span> <span class="toc-text">Spark实现分组取topN案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现代码"><span class="toc-number">6.2.</span> <span class="toc-text">实现代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
