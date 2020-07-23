@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-07-17T01:33:22.285Z</updated>
+  <updated>2020-07-22T15:49:37.376Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>第二篇|Spark core编程指南</title>
+    <link href="https://jiamaoxiang.top/2020/07/18/%E7%AC%AC%E4%BA%8C%E7%AF%87-Spark-core%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
+    <id>https://jiamaoxiang.top/2020/07/18/第二篇-Spark-core编程指南/</id>
+    <published>2020-07-18T09:42:25.000Z</published>
+    <updated>2020-07-22T15:49:37.376Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
+    
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
+    
+  </entry>
   
   <entry>
     <title>第一篇|Spark概览</title>
@@ -483,32 +509,6 @@
     
     
       <category term="greenplum" scheme="https://jiamaoxiang.top/tags/greenplum/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flink DataSet API编程指南</title>
-    <link href="https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
-    <id>https://jiamaoxiang.top/2020/05/09/Flink-DataSet-API编程指南/</id>
-    <published>2020-05-09T02:12:40.000Z</published>
-    <updated>2020-05-12T07:47:19.337Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
     
   </entry>
   
