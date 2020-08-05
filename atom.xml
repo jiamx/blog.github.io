@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-07-29T10:18:57.145Z</updated>
+  <updated>2020-08-05T01:38:16.028Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,84 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>第七篇|Spark平台下基于LDA的k-means算法实现</title>
+    <link href="https://jiamaoxiang.top/2020/08/02/%E7%AC%AC%E4%B8%83%E7%AF%87-Spark%E5%B9%B3%E5%8F%B0%E4%B8%8B%E5%9F%BA%E4%BA%8ELDA%E7%9A%84k-means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/"/>
+    <id>https://jiamaoxiang.top/2020/08/02/第七篇-Spark平台下基于LDA的k-means算法实现/</id>
+    <published>2020-08-02T14:59:27.000Z</published>
+    <updated>2020-08-05T01:38:16.028Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
+    
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>第六篇|Spark MLLib机器学习(1)</title>
+    <link href="https://jiamaoxiang.top/2020/07/31/%E7%AC%AC%E5%85%AD%E7%AF%87-Spark-MLLib%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    <id>https://jiamaoxiang.top/2020/07/31/第六篇-Spark-MLLib机器学习/</id>
+    <published>2020-07-31T05:06:54.000Z</published>
+    <updated>2020-08-02T14:56:57.246Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
+    
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>第五篇|Spark-Streaming编程指南(2)</title>
+    <link href="https://jiamaoxiang.top/2020/07/29/%E7%AC%AC%E4%BA%94%E7%AF%87-Spark-Streaming%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-2/"/>
+    <id>https://jiamaoxiang.top/2020/07/29/第五篇-Spark-Streaming编程指南-2/</id>
+    <published>2020-07-29T14:29:57.000Z</published>
+    <updated>2020-07-31T05:08:49.409Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
+    
+    
+      <category term="-Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
+    
+  </entry>
   
   <entry>
     <title>第四篇|Spark Streaming编程指南(1)</title>
@@ -99,7 +177,7 @@
     <link href="https://jiamaoxiang.top/2020/07/14/%E7%AC%AC%E4%B8%80%E7%AF%87-Spark%E6%A6%82%E8%A7%88/"/>
     <id>https://jiamaoxiang.top/2020/07/14/第一篇-Spark概览/</id>
     <published>2020-07-14T13:35:36.000Z</published>
-    <updated>2020-07-17T01:33:22.285Z</updated>
+    <updated>2020-08-01T10:38:11.781Z</updated>
     
     <summary type="html">
     
@@ -443,78 +521,6 @@
     
     
       <category term="数仓" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E4%BB%93/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flink Table API &amp; SQL编程指南之动态表(2)</title>
-    <link href="https://jiamaoxiang.top/2020/05/28/Flink-Table-API-SQL%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-2/"/>
-    <id>https://jiamaoxiang.top/2020/05/28/Flink-Table-API-SQL编程指南-2/</id>
-    <published>2020-05-28T01:56:25.000Z</published>
-    <updated>2020-06-02T14:07:02.619Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flink Table API &amp; SQL编程指南(1)</title>
-    <link href="https://jiamaoxiang.top/2020/05/25/Flink-Table-API-SQL%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
-    <id>https://jiamaoxiang.top/2020/05/25/Flink-Table-API-SQL编程指南/</id>
-    <published>2020-05-25T08:40:50.000Z</published>
-    <updated>2020-05-28T01:50:01.801Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Apache Flink提供了两种顶层的关系型API，分别为Table API和SQL，Flink通过Table API&amp;amp;SQL实现了批流统一。其中Table API是用于Scala和Java的语言集成查询API，它允许以非常直观的方式组合关系运算符（例如select，where和join）的查询。Flink SQL基于&lt;a href=&quot;https://calcite.apache.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Apache Calcite&lt;/a&gt; 实现了标准的SQL，用户可以使用标准的SQL处理数据集。Table API和SQL与Flink的DataStream和DataSet API紧密集成在一起，用户可以实现相互转化，比如可以将DataStream或者DataSet注册为table进行操作数据。值得注意的是，&lt;strong&gt;Table API and SQL&lt;/strong&gt;目前尚未完全完善，还在积极的开发中，所以并不是所有的算子操作都可以通过其实现。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
-    
-    
-      <category term="flink" scheme="https://jiamaoxiang.top/tags/flink/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一统江湖的数仓开发辅助神器--DBeaver</title>
-    <link href="https://jiamaoxiang.top/2020/05/21/%E4%B8%80%E7%BB%9F%E6%B1%9F%E6%B9%96%E7%9A%84%E6%95%B0%E4%BB%93%E5%BC%80%E5%8F%91%E8%BE%85%E5%8A%A9%E7%A5%9E%E5%99%A8-DBeaver/"/>
-    <id>https://jiamaoxiang.top/2020/05/21/一统江湖的数仓开发辅助神器-DBeaver/</id>
-    <published>2020-05-21T14:02:16.000Z</published>
-    <updated>2020-05-23T15:09:43.725Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="数仓" scheme="https://jiamaoxiang.top/categories/%E6%95%B0%E4%BB%93/"/>
-    
-    
-      <category term="DBeaver" scheme="https://jiamaoxiang.top/tags/DBeaver/"/>
     
   </entry>
   

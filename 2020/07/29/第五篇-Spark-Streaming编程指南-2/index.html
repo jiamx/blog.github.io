@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>第五篇|Spark-Streaming编程指南(2) | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第五篇|Spark-Streaming编程指南(2)</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第五篇|Spark-Streaming编程指南(2)</h1><div class="post-meta">Jul 29, 2020<span> | </span><span class="category"><a href="/categories/Spark/">Spark</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 3.8k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 15</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><a id="more"></a>
+
+<p><a href="https://mp.weixin.qq.com/s/yzjnf9682gDFUwIfd4n4eQ" target="_blank" rel="noopener">第四篇|Spark-Streaming编程指南(1)</a>对Spark Streaming执行机制、Transformations与Output Operations、Spark Streaming数据源(Sources)、Spark Streaming 数据汇(Sinks)进行了讨论。本文将延续上篇内容，主要包括以下内容：</p>
+<ul>
+<li><strong>有状态的计算</strong></li>
+<li><strong>基于时间的窗口操作</strong></li>
+<li><strong>持久化</strong></li>
+<li><strong>检查点Checkpoint</strong></li>
+<li><strong>使用DataFrames &amp; SQL处理流数据</strong></li>
+</ul>
+<h2 id="有状态的计算"><a href="#有状态的计算" class="headerlink" title="有状态的计算"></a>有状态的计算</h2><h3 id="updateStateByKey"><a href="#updateStateByKey" class="headerlink" title="updateStateByKey"></a>updateStateByKey</h3><p>上一篇文章中介绍了常见的无状态的转换操作，比如在WordCount的例子中，输出的结果只与当前batch interval的数据有关，不会依赖于上一个batch interval的计算结果。spark Streaming也提供了有状态的操作： <code>updateStateByKey</code>，该算子会维护一个状态，同时进行信息更新 。该操作会读取上一个batch interval的计算结果，然后将其结果作用到当前的batch interval数据统计中。其源码如下：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">updateStateByKey</span></span>[<span class="type">S</span>: <span class="type">ClassTag</span>](</span><br><span class="line">      updateFunc: (<span class="type">Seq</span>[<span class="type">V</span>], <span class="type">Option</span>[<span class="type">S</span>]) =&gt; <span class="type">Option</span>[<span class="type">S</span>]</span><br><span class="line">    ): <span class="type">DStream</span>[(<span class="type">K</span>, <span class="type">S</span>)] = ssc.withScope &#123;</span><br><span class="line">    updateStateByKey(updateFunc, defaultPartitioner())</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>该算子只能在key–value对的DStream上使用，需要接收一个状态更新函数 updateFunc作为参数。使用案例如下：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">StateWordCount</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">      .setMaster(<span class="string">"local[2]"</span>)</span><br><span class="line">      .setAppName(<span class="type">StateWordCount</span>.getClass.getSimpleName)</span><br><span class="line">    <span class="keyword">val</span> ssc = <span class="keyword">new</span> <span class="type">StreamingContext</span>(conf, <span class="type">Seconds</span>(<span class="number">5</span>))</span><br><span class="line">    <span class="comment">// 必须开启checkpoint,否则会报错</span></span><br><span class="line">    ssc.checkpoint(<span class="string">"file:///e:/checkpoint"</span>)</span><br><span class="line">    <span class="keyword">val</span> lines = ssc.socketTextStream(<span class="string">"localhost"</span>, <span class="number">9999</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 状态更新函数</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">updateFunc</span></span>(newValues: <span class="type">Seq</span>[<span class="type">Int</span>], stateValue: <span class="type">Option</span>[<span class="type">Int</span>]): <span class="type">Option</span>[<span class="type">Int</span>] = &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">var</span> oldvalue = stateValue.getOrElse(<span class="number">0</span>) <span class="comment">// 获取状态值</span></span><br><span class="line">      <span class="comment">// 遍历当前数据，并更新状态</span></span><br><span class="line">      <span class="keyword">for</span> (newValue &lt;- newValues) &#123;</span><br><span class="line">        oldvalue += newValue</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 返回最新的状态</span></span><br><span class="line">      <span class="type">Option</span>(oldvalue)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> count = lines.flatMap(_.split(<span class="string">" "</span>))</span><br><span class="line">      .map(w =&gt; (w, <span class="number">1</span>))</span><br><span class="line">      .updateStateByKey(updateFunc)</span><br><span class="line">    count.print()</span><br><span class="line">    ssc.start()</span><br><span class="line">    ssc.awaitTermination()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>尖叫提示：上面的代码必须要开启checkpoint，否则会报错：</p>
+<p><strong>Exception in thread “main” java.lang.IllegalArgumentException: requirement failed: The checkpoint directory has not been set. Please set it by StreamingContext.checkpoint()</strong></p>
+</blockquote>
+<h3 id="updateStateByKey缺点"><a href="#updateStateByKey缺点" class="headerlink" title="updateStateByKey缺点"></a>updateStateByKey缺点</h3><p>运行上面的代码会发现一个现象：即便没有数据源输入，Spark也会为新的batch interval更新状态，即如果没有数据源输入，则会不断地输出之前的计算状态结果。</p>
+<p>updateStateByKey可以在指定的批次间隔内返回之前的全部历史数据，包括新增的，改变的和没有改变的。由于updateStateByKey在使用的时候一定要做checkpoint，当数据量过大的时候，checkpoint会占据庞大的数据量，会影响性能，效率不高。</p>
+<h3 id="mapwithState"><a href="#mapwithState" class="headerlink" title="mapwithState"></a>mapwithState</h3><p>mapwithState是Spark提供的另外一个有状态的算子，该操作克服了updateStateByKey的缺点，从Spark 1.5开始引入。源码如下：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mapWithState</span></span>[<span class="type">StateType</span>: <span class="type">ClassTag</span>, <span class="type">MappedType</span>: <span class="type">ClassTag</span>](</span><br><span class="line">      spec: <span class="type">StateSpec</span>[<span class="type">K</span>, <span class="type">V</span>, <span class="type">StateType</span>, <span class="type">MappedType</span>]</span><br><span class="line">    ): <span class="type">MapWithStateDStream</span>[<span class="type">K</span>, <span class="type">V</span>, <span class="type">StateType</span>, <span class="type">MappedType</span>] = &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="type">MapWithStateDStreamImpl</span>[<span class="type">K</span>, <span class="type">V</span>, <span class="type">StateType</span>, <span class="type">MappedType</span>](</span><br><span class="line">      self,</span><br><span class="line">      spec.asInstanceOf[<span class="type">StateSpecImpl</span>[<span class="type">K</span>, <span class="type">V</span>, <span class="type">StateType</span>, <span class="type">MappedType</span>]]</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>mapWithState只返回发生变化的key的值，对于没有发生变化的Key，则不返回。这样做可以只关心那些已经发生的变化的key，对于没有数据输入，则不会返回那些没有变化的key 的数据。这样的话，即使数据量很大，checkpint也不会updateBykey那样，占用太多的存储，效率比较高（生产环境中建议使用）。</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">StatefulNetworkWordCount</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> sparkConf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">      .setAppName(<span class="string">"StatefulNetworkWordCount"</span>)</span><br><span class="line">      .setMaster(<span class="string">"local[2]"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> ssc = <span class="keyword">new</span> <span class="type">StreamingContext</span>(sparkConf, <span class="type">Seconds</span>(<span class="number">5</span>))</span><br><span class="line">    ssc.checkpoint(<span class="string">"file:///e:/checkpoint"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> lines = ssc.socketTextStream(<span class="string">"localhost"</span>, <span class="number">9999</span>)</span><br><span class="line">    <span class="keyword">val</span> words = lines.flatMap(_.split(<span class="string">" "</span>))</span><br><span class="line">    <span class="keyword">val</span> wordDstream = words.map(x =&gt; (x, <span class="number">1</span>))</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * word：当前key的值</span></span><br><span class="line"><span class="comment">      * one：当前key对应的value值</span></span><br><span class="line"><span class="comment">      * state：状态值</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">    <span class="keyword">val</span> mappingFunc = (batchTime: <span class="type">Time</span>, word: <span class="type">String</span>, one: <span class="type">Option</span>[<span class="type">Int</span>], state: <span class="type">State</span>[<span class="type">Int</span>]) =&gt; &#123;</span><br><span class="line">      <span class="keyword">val</span> sum = one.getOrElse(<span class="number">0</span>) + state.getOption.getOrElse(<span class="number">0</span>)</span><br><span class="line">      println(<span class="string">s"&gt;&gt;&gt; batchTime = <span class="subst">$batchTime</span>"</span>)</span><br><span class="line">      println(<span class="string">s"&gt;&gt;&gt; word      = <span class="subst">$word</span>"</span>)</span><br><span class="line">      println(<span class="string">s"&gt;&gt;&gt; one     = <span class="subst">$one</span>"</span>)</span><br><span class="line">      println(<span class="string">s"&gt;&gt;&gt; state     = <span class="subst">$state</span>"</span>)</span><br><span class="line">      <span class="keyword">val</span> output = (word, sum)</span><br><span class="line">      state.update(sum) <span class="comment">//更新当前key的状态值</span></span><br><span class="line">      <span class="type">Some</span>(output) <span class="comment">//返回结果</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 通过StateSpec.function构建StateSpec</span></span><br><span class="line">    <span class="keyword">val</span> spec = <span class="type">StateSpec</span>.function(mappingFunc)</span><br><span class="line">    <span class="keyword">val</span> stateDstream = wordDstream.mapWithState(spec)</span><br><span class="line">    stateDstream.print()</span><br><span class="line">    ssc.start()</span><br><span class="line">    ssc.awaitTermination()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="基于时间的窗口操作"><a href="#基于时间的窗口操作" class="headerlink" title="基于时间的窗口操作"></a>基于时间的窗口操作</h2><p>Spark Streaming提供了两种类型的窗口操作，分别是滚动窗口和滑动窗口。具体分析如下：</p>
+<h3 id="滚动窗口-Tumbling-Windows"><a href="#滚动窗口-Tumbling-Windows" class="headerlink" title="滚动窗口(Tumbling Windows)"></a>滚动窗口(Tumbling Windows)</h3><p>滚动窗口的示意图如下：滚动窗口只需要传入一个固定的时间间隔，滚动窗口是不存在重叠的。</p>
+<p><img src="//jiamaoxiang.top/2020/07/29/第五篇-Spark-Streaming编程指南-2/%E6%BB%9A%E5%8A%A8%E7%AA%97%E5%8F%A3.png" alt></p>
+<p>源码如下：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @param windowDuration:窗口的长度; 必须是batch interval的整数倍.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">window</span></span>(windowDuration: <span class="type">Duration</span>): <span class="type">DStream</span>[<span class="type">T</span>] = window(windowDuration, <span class="keyword">this</span>.slideDuration)</span><br></pre></td></tr></table></figure>
+
+<h3 id="滑动窗口-Sliding-Windows"><a href="#滑动窗口-Sliding-Windows" class="headerlink" title="滑动窗口(Sliding Windows)"></a>滑动窗口(Sliding Windows)</h3><p>滑动窗口的示意图如下：滑动窗口只需要传入两个参数，一个为窗口的长度，一个是滑动时间间隔。可以看出：滑动窗口是存在重叠的。</p>
+<p><img src="//jiamaoxiang.top/2020/07/29/第五篇-Spark-Streaming编程指南-2/%E6%BB%91%E5%8A%A8.png" alt></p>
+<p>源码如下：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @param windowDuration 窗口长度;必须是batching interval的整数倍</span></span><br><span class="line"><span class="comment">   *                       </span></span><br><span class="line"><span class="comment">   * @param slideDuration  滑动间隔;必须是batching interval的整数倍</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">window</span></span>(windowDuration: <span class="type">Duration</span>, slideDuration: <span class="type">Duration</span>): <span class="type">DStream</span>[<span class="type">T</span>] = ssc.withScope &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="type">WindowedDStream</span>(<span class="keyword">this</span>, windowDuration, slideDuration)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="窗口操作"><a href="#窗口操作" class="headerlink" title="窗口操作"></a>窗口操作</h3><ul>
+<li><p><strong>window</strong>(<em>windowLength</em>, <em>slideInterval</em>)</p>
+<ul>
+<li><p>解释</p>
+<blockquote>
+<p>基于源DStream产生的窗口化的批数据，计算得到一个新的Dstream</p>
+</blockquote>
+</li>
+<li><p>源码</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">window</span></span>(windowDuration: <span class="type">Duration</span>): <span class="type">DStream</span>[<span class="type">T</span>] = window(windowDuration, <span class="keyword">this</span>.slideDuration)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">window</span></span>(windowDuration: <span class="type">Duration</span>, slideDuration: <span class="type">Duration</span>): <span class="type">DStream</span>[<span class="type">T</span>] = ssc.withScope &#123;</span><br><span class="line">  <span class="keyword">new</span> <span class="type">WindowedDStream</span>(<span class="keyword">this</span>, windowDuration, slideDuration)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>countByWindow</strong>(<em>windowLength</em>, <em>slideInterval</em>)</p>
+<ul>
+<li>解释</li>
+</ul>
+<blockquote>
+<p>返回一个滑动窗口的元素个数</p>
+</blockquote>
+<ul>
+<li><p>源码</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @param windowDuration window长度，必须是batch interval的倍数 </span></span><br><span class="line"><span class="comment">   * @param slideDuration  滑动的时间间隔，必须是batch interval的倍数</span></span><br><span class="line"><span class="comment">   * 底层调用的是reduceByWindow</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">countByWindow</span></span>(</span><br><span class="line">      windowDuration: <span class="type">Duration</span>,</span><br><span class="line">      slideDuration: <span class="type">Duration</span>): <span class="type">DStream</span>[<span class="type">Long</span>] = ssc.withScope &#123;</span><br><span class="line">    <span class="keyword">this</span>.map(_ =&gt; <span class="number">1</span>L).reduceByWindow(_ + _, _ - _, windowDuration, slideDuration)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>reduceByWindow</strong>(<em>func</em>, <em>windowLength</em>, <em>slideInterval</em>) </p>
+<ul>
+<li>解释</li>
+</ul>
+<blockquote>
+<p>返回一个单元素流。利用函数func聚集滑动时间间隔的流的元素创建这个单元素流。函数func必须满足结合律，从而可以支持并行计算</p>
+</blockquote>
+<ul>
+<li><p>源码</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduceByWindow</span></span>(</span><br><span class="line">    reduceFunc: (<span class="type">T</span>, <span class="type">T</span>) =&gt; <span class="type">T</span>,</span><br><span class="line">    windowDuration: <span class="type">Duration</span>,</span><br><span class="line">    slideDuration: <span class="type">Duration</span></span><br><span class="line">  ): <span class="type">DStream</span>[<span class="type">T</span>] = ssc.withScope &#123;</span><br><span class="line">  <span class="keyword">this</span>.reduce(reduceFunc).window(windowDuration, slideDuration).reduce(reduceFunc)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>reduceByKeyAndWindow</strong>(<em>func</em>, <em>windowLength</em>, <em>slideInterval</em>, [<em>numTasks</em>])</p>
+<ul>
+<li>解释</li>
+</ul>
+<blockquote>
+<p>应用到一个(K,V)键值对组成的DStream上时，会返回一个由(K,V)键值对组成的新的DStream。每一个key的值均由给定的reduce函数(func函数)进行聚合计算。注意：在默认情况下，这个算子利用了Spark默认的并发任务数去分组。可以通过numTasks参数的设置来指定不同的任务数</p>
+</blockquote>
+<ul>
+<li><p>源码</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduceByKeyAndWindow</span></span>(</span><br><span class="line">    reduceFunc: (<span class="type">V</span>, <span class="type">V</span>) =&gt; <span class="type">V</span>,</span><br><span class="line">    windowDuration: <span class="type">Duration</span>,</span><br><span class="line">    slideDuration: <span class="type">Duration</span></span><br><span class="line">  ): <span class="type">DStream</span>[(<span class="type">K</span>, <span class="type">V</span>)] = ssc.withScope &#123;</span><br><span class="line">  reduceByKeyAndWindow(reduceFunc, windowDuration, slideDuration, defaultPartitioner())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>reduceByKeyAndWindow</strong>(<em>func</em>, <em>invFunc</em>, <em>windowLength</em>, <em>slideInterval</em>, [<em>numTasks</em>]) </p>
+<ul>
+<li>解释</li>
+</ul>
+<blockquote>
+<p>更加高效的reduceByKeyAndWindow，每个窗口的reduce值，是基于先前窗口的reduce值进行增量计算得到的；它会对进入滑动窗口的新数据进行reduce操作，并对离开窗口的老数据进行<code>逆向reduce</code>操作。但是，只能用于<code>可逆reduce函数</code>，即那些reduce函数都有一个对应的<code>逆向reduce函数</code>（以InvFunc参数传入）注意：必须开启 checkpointing</p>
+</blockquote>
+<ul>
+<li><p>源码</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduceByKeyAndWindow</span></span>(</span><br><span class="line">      reduceFunc: (<span class="type">V</span>, <span class="type">V</span>) =&gt; <span class="type">V</span>,</span><br><span class="line">      invReduceFunc: (<span class="type">V</span>, <span class="type">V</span>) =&gt; <span class="type">V</span>,</span><br><span class="line">      windowDuration: <span class="type">Duration</span>,</span><br><span class="line">      slideDuration: <span class="type">Duration</span>,</span><br><span class="line">      partitioner: <span class="type">Partitioner</span>,</span><br><span class="line">      filterFunc: ((<span class="type">K</span>, <span class="type">V</span>)) =&gt; <span class="type">Boolean</span></span><br><span class="line">    ): <span class="type">DStream</span>[(<span class="type">K</span>, <span class="type">V</span>)] = ssc.withScope &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> cleanedReduceFunc = ssc.sc.clean(reduceFunc)</span><br><span class="line">    <span class="keyword">val</span> cleanedInvReduceFunc = ssc.sc.clean(invReduceFunc)</span><br><span class="line">    <span class="keyword">val</span> cleanedFilterFunc = <span class="keyword">if</span> (filterFunc != <span class="literal">null</span>) <span class="type">Some</span>(ssc.sc.clean(filterFunc)) <span class="keyword">else</span> <span class="type">None</span></span><br><span class="line">    <span class="keyword">new</span> <span class="type">ReducedWindowedDStream</span>[<span class="type">K</span>, <span class="type">V</span>](</span><br><span class="line">      self, cleanedReduceFunc, cleanedInvReduceFunc, cleanedFilterFunc,</span><br><span class="line">      windowDuration, slideDuration, partitioner</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>countByValueAndWindow</strong>(<em>windowLength</em>, <em>slideInterval</em>, [<em>numTasks</em>])</p>
+<ul>
+<li><p>解释</p>
+<blockquote>
+<p>当应用到一个(K,V)键值对组成的DStream上，返回一个由(K,V)键值对组成的新的DStream。每个key的对应的value值都是它们在滑动窗口中出现的频率</p>
+</blockquote>
+</li>
+<li><p>源码</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">countByValueAndWindow</span></span>(</span><br><span class="line">      windowDuration: <span class="type">Duration</span>,</span><br><span class="line">      slideDuration: <span class="type">Duration</span>,</span><br><span class="line">      numPartitions: <span class="type">Int</span> = ssc.sc.defaultParallelism)</span><br><span class="line">      (<span class="keyword">implicit</span> ord: <span class="type">Ordering</span>[<span class="type">T</span>] = <span class="literal">null</span>)</span><br><span class="line">      : <span class="type">DStream</span>[(<span class="type">T</span>, <span class="type">Long</span>)] = ssc.withScope &#123;</span><br><span class="line">    <span class="keyword">this</span>.map((_, <span class="number">1</span>L)).reduceByKeyAndWindow(</span><br><span class="line">      (x: <span class="type">Long</span>, y: <span class="type">Long</span>) =&gt; x + y,</span><br><span class="line">      (x: <span class="type">Long</span>, y: <span class="type">Long</span>) =&gt; x - y,</span><br><span class="line">      windowDuration,</span><br><span class="line">      slideDuration,</span><br><span class="line">      numPartitions,</span><br><span class="line">      (x: (<span class="type">T</span>, <span class="type">Long</span>)) =&gt; x._2 != <span class="number">0</span>L</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用案例"><a href="#使用案例" class="headerlink" title="使用案例"></a>使用案例</h3><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">val</span> lines = ssc.socketTextStream(<span class="string">"localhost"</span>, <span class="number">9999</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> count = lines.flatMap(_.split(<span class="string">" "</span>))</span><br><span class="line">      .map(w =&gt; (w, <span class="number">1</span>))</span><br><span class="line">      .reduceByKeyAndWindow((w1: <span class="type">Int</span>, w2: <span class="type">Int</span>) =&gt; w1 + w2, <span class="type">Seconds</span>(<span class="number">30</span>), <span class="type">Seconds</span>(<span class="number">10</span>))</span><br><span class="line">      .print()</span><br><span class="line"><span class="comment">//滚动窗口</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*    lines.window(Seconds(20))</span></span><br><span class="line"><span class="comment">      .flatMap(_.split(" "))</span></span><br><span class="line"><span class="comment">      .map((_, 1))</span></span><br><span class="line"><span class="comment">      .reduceByKey(_ + _)</span></span><br><span class="line"><span class="comment">      .print()*/</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>持久化是提升Spark应用性能的一种方式，在<a href="https://mp.weixin.qq.com/s/z22uJwTnBxeZnYlCKIXzNQ" target="_blank" rel="noopener">第二篇|Spark core编程指南</a>一文中讲解了RDD持久化的使用方式。其实，DStream也是支持持久化的，同样是使用persist()与cache()方法，持久化通常在有状态的算子中使用，比如窗口操作，默认情况下，虽然没有显性地调用持久化方法，但是底层已经帮用户做了持久化操作，通过下面的源码可以看出。</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span>[streaming]</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WindowedDStream</span>[<span class="type">T</span>: <span class="type">ClassTag</span>](<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">    parent: <span class="type">DStream</span>[<span class="type">T</span>],</span></span></span><br><span class="line"><span class="class"><span class="params">    _windowDuration: <span class="type">Duration</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">    _slideDuration: <span class="type">Duration</span></span>)</span></span><br><span class="line"><span class="class">  <span class="keyword">extends</span> <span class="title">DStream</span>[<span class="type">T</span>](<span class="params">parent.ssc</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 省略代码...</span></span><br><span class="line">  <span class="comment">// Persist parent level by default, as those RDDs are going to be obviously reused.</span></span><br><span class="line">  parent.persist(<span class="type">StorageLevel</span>.<span class="type">MEMORY_ONLY_SER</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：与RDD的持久化不同，DStream的默认持久性级别将数据序列化在内存中，通过下面的源码可以看出：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="comment">/** 给定一个持计划级别 */</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">persist</span></span>(level: <span class="type">StorageLevel</span>): <span class="type">DStream</span>[<span class="type">T</span>] = &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.isInitialized) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">UnsupportedOperationException</span>(</span><br><span class="line">        <span class="string">"Cannot change storage level of a DStream after streaming context has started"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.storageLevel = level</span><br><span class="line">    <span class="keyword">this</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** 默认的持久化级别为(MEMORY_ONLY_SER) */</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">persist</span></span>(): <span class="type">DStream</span>[<span class="type">T</span>] = persist(<span class="type">StorageLevel</span>.<span class="type">MEMORY_ONLY_SER</span>)</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">cache</span></span>(): <span class="type">DStream</span>[<span class="type">T</span>] = persist()</span><br></pre></td></tr></table></figure>
+
+<p>从上面的源码可以看出persist()与cache()的主要区别是：</p>
+<ul>
+<li>cache()方法底层调用的是persist()方法</li>
+<li>persist()方法有两个重载的方法<ul>
+<li>无参数的persist()，默认是内存</li>
+<li>perisist(level: StorageLevel),可以选择与RDD持久化相同的持久化级别</li>
+</ul>
+</li>
+</ul>
+<h2 id="检查点Checkpoint"><a href="#检查点Checkpoint" class="headerlink" title="检查点Checkpoint"></a>检查点Checkpoint</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>流应用程序通常是24/7运行的，因此必须对与应用程序逻辑无关的故障（例如系统故障，JVM崩溃等）具有弹性的容错能力。为此，Spark Streaming需要将足够的信息<code>checkpoint</code>到容错存储系统(比如HDFS)，以便可以从故障中恢复。检查点包括两种类型：</p>
+<ul>
+<li><p><strong>元数据检查点</strong></p>
+<p> 元数据检查点可以保证从Driver程序失败中恢复。即如果运行drive的节点失败时，可以查看最近的checkpoin数据获取最新的状态。典型的应用程序元数据包括：</p>
+<ul>
+<li><strong>配置</strong> ：用于创建流应用程序的配置。</li>
+<li><strong>DStream操作</strong> ：定义流应用程序的DStream操作。</li>
+<li><strong>未完成的batch</strong> ：当前运行batch对应的job在队列中排队，还没有计算到该batch的数据。</li>
+</ul>
+</li>
+<li><p><strong>数据检查点</strong> </p>
+<p> 将生成的RDD保存到可靠的存储中。在某些<em>有状态</em>转换中，需要合并多个批次中的数据，所以需要开启检查点。在此类转换中，生成的RDD依赖于先前批次的RDD，这导致依赖链的长度随时间不断增加。为了避免恢复时间无限制的增加（与依赖链成比例），有状态转换的中间RDD定期 <em>checkpoint</em>到可靠的存储（例如HDFS），以切断依赖链，功能类似于持久化，只需要从当前的状态恢复，而不需要重新计算整个lineage。</p>
+</li>
+</ul>
+<p>总而言之，从Driver程序故障中恢复时，主要需要元数据检查点。而如果使用有状态转换，则需要数据或RDD检查点。</p>
+<h3 id="什么时候启用检查点"><a href="#什么时候启用检查点" class="headerlink" title="什么时候启用检查点"></a>什么时候启用检查点</h3><p>必须为具有以下类型的应用程序启用检查点：</p>
+<ul>
+<li><p><strong>使用了有状态转换转换操作</strong> </p>
+<p>如果在应用程序中使用<code>updateStateByKey</code>或<code>reduceByKeyAndWindow</code>，则必须提供检查点目录以允许定期进行RDD检查点。</p>
+</li>
+<li><p><strong>从运行应用程序的Driver程序故障中恢复</strong> </p>
+<p>元数据检查点用于恢复进度信息。</p>
+</li>
+</ul>
+<p>注意，没有前述状态转换的简单流应用程序可以在不启用检查点的情况下运行。在这种情况下，从驱动程序故障中恢复也将是部分的（某些丢失但未处理的数据可能会丢失）。这通常是可以接受的，并且许多都以这种方式运行Spark Streaming应用程序。预计将来会改善对非Hadoop环境的支持。</p>
+<h3 id="如何配置检查点"><a href="#如何配置检查点" class="headerlink" title="如何配置检查点"></a>如何配置检查点</h3><p>可以通过具有容错的、可靠的文件系统（例如HDFS，S3等）中设置目录来启用检查点，将检查点信息保存到该目录中。开启检查点，需要开启下面的两个配置：</p>
+<ul>
+<li>streamingContext.checkpoint(<dir>)：配置检查点的目录，比如HDFS路径</dir></li>
+<li>dstream.checkpoint(<duration>)：检查点的频率</duration></li>
+</ul>
+<p>其中配置检查点的时间间隔是可选的。如果不设置，会根据DStream的类型选择一个默认值。对于MapWithStateDStream，默认的检查点间隔是batch interval的10倍。对于其他的DStream，默认的检查点间隔是10S，或者是batch interval的间隔时间。<strong>需要注意的是：checkpoint的频率必须是 batch interval的整数倍，否则会报错</strong>。</p>
+<p>此外，如果要使应用程序从Driver程序故障中恢复，则需要使用下面的方式创建StreamingContext：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createStreamingContext</span> </span>(conf: <span class="type">SparkConf</span>,checkpointPath: <span class="type">String</span>):</span><br><span class="line"><span class="type">StreamingContext</span> = &#123;</span><br><span class="line"><span class="keyword">val</span> ssc = <span class="keyword">new</span> <span class="type">StreamingContext</span>( &lt;<span class="type">ConfInfo</span>&gt; )</span><br><span class="line"><span class="comment">// .... other code ...</span></span><br><span class="line">ssc.checkPoint(checkpointDirectory)</span><br><span class="line">ssc</span><br><span class="line">&#125;</span><br><span class="line">#创建一个新的<span class="type">StreamingContext</span>或者从最近的checkpoint获取</span><br><span class="line"><span class="keyword">val</span> context = <span class="type">StreamingContext</span>.getOrCreate(checkpointDirectory,</span><br><span class="line">createStreamingContext _)</span><br><span class="line">#启动</span><br><span class="line">context.start()</span><br><span class="line">context.awaitTermination()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>程序首次启动时，它将创建一个新的StreamingContext，然后调用start（）。</li>
+<li>失败后重新启动程序时，它将根据检查点目录中的检查点数据重新创建StreamingContext。</li>
+</ul>
+<blockquote>
+<p><strong>注意：</strong></p>
+<p>RDD的检查点需要将数据保存到可靠存储上，由此带来一些成本开销。这可能会导致RDD获得检查点的那些批次的处理时间增加。因此，需要设置一个合理的检查点的间隔。在batch interval较小时(例如1秒），每个batch interval都进行检查点可能会大大降低吞吐量。相反，检查点时间间隔太长会导致 lineage和任务规模增加，这可能会产生不利影响。对于需要RDD检查点的有状态转换，默认间隔为batch interval的倍数，至少应为10秒。可以使用 <strong>dstream.checkpoint(checkpointInterval)</strong>进行配置。通常，DStream的5-10个batch interval的检查点间隔是一个较好的选择。</p>
+</blockquote>
+<h3 id="检查点和持久化之间的区别"><a href="#检查点和持久化之间的区别" class="headerlink" title="检查点和持久化之间的区别"></a>检查点和持久化之间的区别</h3><ul>
+<li><p>持久化</p>
+<ul>
+<li>当我们将RDD保持在DISK_ONLY存储级别时，RDD将存储在一个位置，该RDD的后续使用将不会重新计算lineage。</li>
+<li>在调用persist（）之后，Spark会记住RDD的lineage，即使它没有调用它。</li>
+<li>作业运行完成后，将清除缓存并销毁文件。</li>
+</ul>
+</li>
+<li><p>检查点</p>
+<ul>
+<li>检查点将RDD存储在HDFS中，将会删除lineage血缘关系。</li>
+<li>在完成作业运行后，与持计划不同，不会删除检查点文件。</li>
+<li>当checkpoint一个RDD时，将导致双重计算。即该操作在完成实际的计算工作之前，首先会调用持久化方法，然后再将其写入检查点目录。</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用DataFrames-amp-SQL处理流数据"><a href="#使用DataFrames-amp-SQL处理流数据" class="headerlink" title="使用DataFrames &amp; SQL处理流数据"></a>使用DataFrames &amp; SQL处理流数据</h2><p>在Spark Streaming应用中，可以轻松地对流数据使用DataFrames和SQL操作。使用案例如下：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">SqlStreaming</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">      .setAppName(<span class="type">SqlStreaming</span>.getClass.getSimpleName)</span><br><span class="line">      .setMaster(<span class="string">"local[4]"</span>)</span><br><span class="line">    <span class="keyword">val</span> ssc = <span class="keyword">new</span> <span class="type">StreamingContext</span>(conf, <span class="type">Seconds</span>(<span class="number">5</span>))</span><br><span class="line">    <span class="keyword">val</span> lines = ssc.socketTextStream(<span class="string">"localhost"</span>, <span class="number">9999</span>)</span><br><span class="line">    <span class="keyword">val</span> words = lines.flatMap(_.split(<span class="string">" "</span>))</span><br><span class="line"></span><br><span class="line">    words.foreachRDD &#123; rdd =&gt;</span><br><span class="line">      <span class="comment">// 调用SparkSession单例方法,如果已经创建了，则直接返回</span></span><br><span class="line">      <span class="keyword">val</span> spark = <span class="type">SparkSessionSingleton</span>.getInstance(rdd.sparkContext.getConf)</span><br><span class="line">      <span class="keyword">import</span> spark.implicits._</span><br><span class="line"></span><br><span class="line">      <span class="keyword">val</span> wordsDataFrame = rdd.toDF(<span class="string">"word"</span>)</span><br><span class="line">      wordsDataFrame.show()</span><br><span class="line"></span><br><span class="line">      wordsDataFrame.createOrReplaceTempView(<span class="string">"words"</span>)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">val</span> wordCountsDataFrame =</span><br><span class="line">        spark.sql(<span class="string">"select word, count(*) as total from words group by word"</span>)</span><br><span class="line">      wordCountsDataFrame.show()</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    ssc.start()</span><br><span class="line">    ssc.awaitTermination()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/** SparkSession单例 */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">SparkSessionSingleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@transient</span> <span class="keyword">private</span> <span class="keyword">var</span> instance: <span class="type">SparkSession</span> = _</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">getInstance</span></span>(sparkConf: <span class="type">SparkConf</span>): <span class="type">SparkSession</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">      instance = <span class="type">SparkSession</span></span><br><span class="line">        .builder</span><br><span class="line">        .config(sparkConf)</span><br><span class="line">        .getOrCreate()</span><br><span class="line">    &#125;</span><br><span class="line">    instance</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文是Spark Streaming编程指南的第二篇分享，主要包括有状态的计算、基于时间的窗口操作、检查点等内容。下一篇将分享<strong>Spark MLLib机器学习</strong>。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/08/02/第七篇-Spark平台下基于LDA的k-means算法实现/" target="_blank">第七篇|Spark平台下基于LDA的k-means算法实现</a></li><li><a href="https://jiamaoxiang.top/2020/07/31/第六篇-Spark-MLLib机器学习/" target="_blank">第六篇|Spark MLLib机器学习(1)</a></li><li><a href="https://jiamaoxiang.top/2020/07/27/第四篇-Spark-Streaming编程指南/" target="_blank">第四篇|Spark Streaming编程指南(1)</a></li><li><a href="https://jiamaoxiang.top/2020/07/23/第三篇-Spark-SQL编程指南/" target="_blank">第三篇|Spark SQL编程指南</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/07/29/第五篇-Spark-Streaming编程指南-2/">https://jiamaoxiang.top/2020/07/29/第五篇-Spark-Streaming编程指南-2/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/07/29/第五篇-Spark-Streaming编程指南-2/" data-id="ckdgpfqs40048gw7q0u9gjktz" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtklEQVR42u3aUW7bQAwFQN3/0ukBCsnvkdrWAUZfhmVIOxtgyZC8rvj6Ka/n59w9+fn75yevLjw8PLxXl373m79fmYPzu3dbU2wuHh4e3jHe8yH+/LLkQM/fsgkSeHh4eN/Ja4/sNtdNQggeHh7eb+TlC8qT5jwY4OHh4X0DLylGzAqss6Q5T9Nfq7Xg4eHhTfpTV77E//v5SH8PDw8P79hAQPuatp3WhoHb1eLh4eEd4OXLbRPWZKF5Op6/HQ8PD+/f8/Ii7KYs245ttZuOh4eHd46Xl03b7/PRq1lrLQobeHh4eAd4bQzJD/EknMx+mQ9m4eHh4Z3m5Y/Om1UJOB87aMcR8PDw8E7w9uWD2V5u3luMXuHh4eEd481KBvtiRDuOUJd08fDw8A7zZsWCYeYe82btt9uZMjw8PLyXeO1C85GCWZDYFJev/d8BDw8PL8hX88ZSfnzPxgU27a5bMB4eHt6rvE2xtb0+lFzLJ0TrxMPDwzvG248L5A3+fMhg1nKLIh4eHh7egrcplc6CRzvk+kIpGQ8PD+9Yl2o/5LTflASfj2Th4eHhneC1B+4s1d40ujYhBw8PD+8ELy895K36NmxsGmnFCvHw8PBe4rUJa5uItwXZJEQVd/Hw8PAO8GbFiNmoQTT/tbhbpNR4eHh4a15SCGh/M0usZxu0Gr3Cw8PDW/DyYDBLgvODPinmFok7Hh4e3jFe0tBqyxCbltWsGfYhpcbDw8Nb837KK29x5S2r2YZGd/Hw8PAO8N4aacpLwG1JYvYZDw8P7zQvP+hnI1N5SDixQXh4eHjneG2zP0+j2+S7jV0ffomHh4f3Bbx2mCAfRMjfUqwHDw8P72t4yaGfF22TDWrHufDw8PBO82aJ72xT9sMExcgCHh4e3gHe7B/+tv2fjyDMtv7aXHh4eHgp7w+/bX2CF9duFgAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/Spark/">-Spark</a></div><div class="post-nav"><a class="pre" href="/2020/07/31/第六篇-Spark-MLLib机器学习/">第六篇|Spark MLLib机器学习(1)</a><a class="next" href="/2020/07/27/第四篇-Spark-Streaming编程指南/">第四篇|Spark Streaming编程指南(1)</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#有状态的计算"><span class="toc-number">1.</span> <span class="toc-text">有状态的计算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#updateStateByKey"><span class="toc-number">1.1.</span> <span class="toc-text">updateStateByKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#updateStateByKey缺点"><span class="toc-number">1.2.</span> <span class="toc-text">updateStateByKey缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapwithState"><span class="toc-number">1.3.</span> <span class="toc-text">mapwithState</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于时间的窗口操作"><span class="toc-number">2.</span> <span class="toc-text">基于时间的窗口操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#滚动窗口-Tumbling-Windows"><span class="toc-number">2.1.</span> <span class="toc-text">滚动窗口(Tumbling Windows)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#滑动窗口-Sliding-Windows"><span class="toc-number">2.2.</span> <span class="toc-text">滑动窗口(Sliding Windows)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#窗口操作"><span class="toc-number">2.3.</span> <span class="toc-text">窗口操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用案例"><span class="toc-number">2.4.</span> <span class="toc-text">使用案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#持久化"><span class="toc-number">3.</span> <span class="toc-text">持久化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检查点Checkpoint"><span class="toc-number">4.</span> <span class="toc-text">检查点Checkpoint</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">4.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么时候启用检查点"><span class="toc-number">4.2.</span> <span class="toc-text">什么时候启用检查点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何配置检查点"><span class="toc-number">4.3.</span> <span class="toc-text">如何配置检查点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检查点和持久化之间的区别"><span class="toc-number">4.4.</span> <span class="toc-text">检查点和持久化之间的区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用DataFrames-amp-SQL处理流数据"><span class="toc-number">5.</span> <span class="toc-text">使用DataFrames &amp; SQL处理流数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

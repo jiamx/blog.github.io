@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://jiamaoxiang.top/2020/08/02/%E7%AC%AC%E4%B8%83%E7%AF%87-Spark%E5%B9%B3%E5%8F%B0%E4%B8%8B%E5%9F%BA%E4%BA%8ELDA%E7%9A%84k-means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/</loc>
+    <lastmod>2020-08-05</lastmod>
+  </url>  <url>
+    <loc>https://jiamaoxiang.top/2020/07/31/%E7%AC%AC%E5%85%AD%E7%AF%87-Spark-MLLib%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2020-08-02</lastmod>
+  </url>  <url>
+    <loc>https://jiamaoxiang.top/2020/07/14/%E7%AC%AC%E4%B8%80%E7%AF%87-Spark%E6%A6%82%E8%A7%88/</loc>
+    <lastmod>2020-08-01</lastmod>
+  </url>  <url>
+    <loc>https://jiamaoxiang.top/2020/07/29/%E7%AC%AC%E4%BA%94%E7%AF%87-Spark-Streaming%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-2/</loc>
+    <lastmod>2020-07-31</lastmod>
+  </url>  <url>
     <loc>https://jiamaoxiang.top/2020/07/27/%E7%AC%AC%E5%9B%9B%E7%AF%87-Spark-Streaming%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2020-07-29</lastmod>
   </url>  <url>
@@ -9,9 +21,6 @@
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/07/18/%E7%AC%AC%E4%BA%8C%E7%AF%87-Spark-core%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2020-07-22</lastmod>
-  </url>  <url>
-    <loc>https://jiamaoxiang.top/2020/07/14/%E7%AC%AC%E4%B8%80%E7%AF%87-Spark%E6%A6%82%E8%A7%88/</loc>
-    <lastmod>2020-07-17</lastmod>
   </url>  <url>
     <loc>https://jiamaoxiang.top/2020/07/11/%E6%95%B0%E4%BB%93-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%97%B6%E4%BB%A3-%E7%BB%B4%E5%BA%A6%E5%BB%BA%E6%A8%A1%E8%BF%87%E6%97%B6%E4%BA%86%E5%90%97/</loc>
     <lastmod>2020-07-12</lastmod>

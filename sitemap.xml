@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://jiamaoxiang.top/2020/08/02/%E7%AC%AC%E4%B8%83%E7%AF%87-Spark%E5%B9%B3%E5%8F%B0%E4%B8%8B%E5%9F%BA%E4%BA%8ELDA%E7%9A%84k-means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/</loc>
+    
+    <lastmod>2020-08-05T01:38:16.028Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jiamaoxiang.top/2020/07/31/%E7%AC%AC%E5%85%AD%E7%AF%87-Spark-MLLib%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
+    
+    <lastmod>2020-08-02T14:56:57.246Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jiamaoxiang.top/2020/07/14/%E7%AC%AC%E4%B8%80%E7%AF%87-Spark%E6%A6%82%E8%A7%88/</loc>
+    
+    <lastmod>2020-08-01T10:38:11.781Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jiamaoxiang.top/2020/07/29/%E7%AC%AC%E4%BA%94%E7%AF%87-Spark-Streaming%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-2/</loc>
+    
+    <lastmod>2020-07-31T05:08:49.409Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jiamaoxiang.top/2020/07/27/%E7%AC%AC%E5%9B%9B%E7%AF%87-Spark-Streaming%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/</loc>
     
     <lastmod>2020-07-29T10:18:57.145Z</lastmod>
@@ -19,13 +47,6 @@
     <loc>https://jiamaoxiang.top/2020/07/18/%E7%AC%AC%E4%BA%8C%E7%AF%87-Spark-core%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/</loc>
     
     <lastmod>2020-07-22T15:49:37.376Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jiamaoxiang.top/2020/07/14/%E7%AC%AC%E4%B8%80%E7%AF%87-Spark%E6%A6%82%E8%A7%88/</loc>
-    
-    <lastmod>2020-07-17T01:33:22.285Z</lastmod>
     
   </url>
   
