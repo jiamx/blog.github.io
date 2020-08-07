@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/08/06/数仓面试-四个在工作后才知道的SQL密技/
 https://jiamaoxiang.top/2020/08/02/第七篇-Spark平台下基于LDA的k-means算法实现/
 https://jiamaoxiang.top/2020/07/31/第六篇-Spark-MLLib机器学习/
 https://jiamaoxiang.top/2020/07/29/第五篇-Spark-Streaming编程指南-2/
