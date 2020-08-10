@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>内含面试|一文搞懂HBase的基本原理 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">内含面试|一文搞懂HBase的基本原理</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">内含面试|一文搞懂HBase的基本原理</h1><div class="post-meta">Aug 7, 2020<span> | </span><span class="category"><a href="/categories/HBase/">HBase</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 3.6k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 12</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><h2 id="从BigTable说起"><a href="#从BigTable说起" class="headerlink" title="从BigTable说起"></a>从BigTable说起</h2><p>HBase是在谷歌BigTable的基础之上进行开源实现的，是一个高可靠、高性能、面向列、可伸缩的分布式数据库，可以用来存储非结构化和半结构化的稀疏数据。HBase支持超大规模数据存储，可以通过水平扩展的方式处理超过10亿行数据和百万列元素组成的数据表。</p>
+<p>BigTable是一个分布式存储系统，利用谷歌提出的MapReduce分布式并行计算模型来处理海量数据，使用谷歌分布式文件系统GFS作为底层的数据存储，并采用Chubby提供协同服务管理，具备广泛的应用型、可扩展性、高可用性及高性能性等特点。关于BigTable与HBase的对比，见下表：</p>
+<table>
+<thead>
+<tr>
+<th>依赖</th>
+<th>BigTbale</th>
+<th>HBase</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据存储</td>
+<td>GFS</td>
+<td>HDFS</td>
+</tr>
+<tr>
+<td>数据处理</td>
+<td>MapReduce</td>
+<td>Hadoop的MapReduce</td>
+</tr>
+<tr>
+<td>协同服务</td>
+<td>Chubby</td>
+<td>Zookeeper</td>
+</tr>
+<tr>
+<td>## CAP理论</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>2000年，Berkerly大学有位Eric Brewer教授提出了一个CAP理论，在2002年，麻省理工学院的<code>Seth Gilbert(赛斯·吉尔伯特)</code>和<code>Nancy Lynch(南希·林奇)</code>发表了布鲁尔猜想的证明，证明了CAP理论的正确性。所谓CAP理论，是指对于一个分布式计算系统来说，不可能同时满足以下三点：</p>
+<ul>
+<li><p>一致性（<strong>C</strong>onsistency）</p>
+<p>等同于所有节点访问同一份最新的数据副本。即任何一个读操作总是能够读到之前完成的写操作的结果，也就是说，在分布式环境中，不同节点访问的数据是一致的。</p>
+</li>
+<li><p>可用性（<strong>A</strong>vailability）</p>
+<p>每次请求都能获取到非错的响应——<strong>但是不保证获取的数据为最新数据</strong>。即快速获取数据，可以在确定的时间内返回操作结果。</p>
+</li>
+<li><p>分区容错性（<strong>P</strong>artition tolerance）</p>
+<p>以实际效果而言，分区相当于对通信的时限要求。系统如果不能在时限内达成数据一致性，就意味着发生了分区的情况，必须就当前操作在C和A之间做出选择。即指当出现网络分区时(系统中的一部分节点无法与其他的节点进行通信)，分离的系统也能够正常运行，即可靠性。</p>
+</li>
+</ul>
+<p><img src="//jiamaoxiang.top/2020/08/07/一文搞懂HBase的基本原理/CAP.png" alt></p>
+<p>如上图所示：一个分布式的系统不可能同时满足一致性、可用性和分区容错性，最多同时满足两个。当处理CAP的问题时，可以有一下几个选择：</p>
+<ul>
+<li><p>满足CA，不满足P。将所有与事务相关的内容都放在同一个机器上，这样会影响系统的可扩展性。传统的关系型数据库。如MySQL、SQL Server 、PostgresSQL等都采用了此种设计原则。</p>
+</li>
+<li><p>满足AP，不满足C。不满足一致性(C)，即允许系统返回不一致的数据。其实，对于WEB2.0的网站而言，更加关注的是服务是否可用，而不是一致性。比如你发了一篇博客或者写一篇微博，你的一部分朋友立马看到了这篇文章或者微博，另一部分朋友却要等一段时间之后才能刷出这篇文章或者微博。虽然有延时，但是对于一个娱乐性质的Web 2.0网站而言，这几分钟的延时并不重要，不会影响用户体验。相反，当发布一篇文章或微博时，不能够立即发布(不满足可用性)，用户对此肯定不爽。所以呢，对于WEB2.0的网站而言，可用性和分区容错性的优先级要高于数据一致性，当然，并没有完全放弃一致性，而是最终的一致性(有延时)。如Dynamo、Cassandra、CouchDB等NoSQL数据库采用了此原则。</p>
+</li>
+<li><p>满足CP，不满足A。强调一致性性(C)和分区容错性(P)，放弃可用性性(A)。当出现网络分区时，受影响的服务需要等待数据一致，在等待期间无法对外提供服务。如Neo4J、HBase 、MongoDB、Redis等采用了此种设计原则。</p>
+</li>
+</ul>
+<h2 id="为什么出现NoSQL"><a href="#为什么出现NoSQL" class="headerlink" title="为什么出现NoSQL"></a>为什么出现NoSQL</h2><p>所谓<strong>NoSQL</strong>，即<strong>Not Only SQL</strong>的缩写，意思是不只是SQL。上面提到的CAP理论正是NoSQL的设计原则。那么，为什么会兴起NoSQL数据库呢?因为WEB2.0以及大数据时代的到来，关系型数据库越来越不能满足需求。大数据、物联网、移动互联网和云计算的发展，使得非结构化的数据比例高达90%以上，关系型数据库由于模型不灵活以及扩展水平较差，在面对大数据时，暴露出了越来越多的缺陷。由此NoSQL数据库应运而生，更好地满足了大数据时代及WEB2.0的需求。</p>
+<p>面对WEB2.0以及大数据的挑战，关系型数据库在以下几个方面表现欠佳：</p>
+<ul>
+<li><p>对于海量数据的处理性能较差</p>
+<p>WEB2.0时代，尤其是移动互联网的发展，UGC(用户生成内容，User Generated Content)以及PGC(公众生成内容，Public Generated Content)占据了我们的日常。现如今，自媒体发展遍地开花，几乎每个人都成了内容的创造者，比如博文、评论、意见、新闻消息、视频等等，不一而足。可见，这些数据产生的速度之快，数据量之大。比如微博、公众号、抑或是淘宝，在一分钟内产生的数据可能就会非常的惊人，面对这些千万级、亿级的数据记录，关系型数据库的查询效率显然是不能接受的。</p>
+</li>
+<li><p>无法满足高并发需求</p>
+<p>WEB1.0时代，大部分是静态网页(即提供什么就看什么)，从而在大规模用户访问时，可以实现较好的响应能力。但是，在WEB2.0时代，强调的是用户的交互性(用户创造内容)，所有信息都需要事实动态生成，会造成高并发的数据库访问，可能每秒上万次的读写请求，对于很多关系型数据库而言，这显示是难以承受的。</p>
+</li>
+<li><p>无法满足扩展性和高可用性的需求</p>
+<p>在当今<code>娱乐至死</code>的时代，热点问题(吸引人眼球，满足猎奇心理)会引来一窝蜂的流量，比如微博曝出某明星出轨，热搜榜会迅速引来大批用户围观(俗称吃瓜群众)，从而产生大量的互动交流(蹭热点)，这些都会造成数据库的读写负荷急剧增加，从而需要数据库能够在短时间内迅速提升性能以应对突发需求(毕竟宕机会非常影响户体验)。但是关系型数据库通常难以水平扩展，不能够像网页服务器和应用服务器那样简单地通过增加更多的硬件和服务节点来扩展性能和负载能力。</p>
+</li>
+</ul>
+<p>综上，NoSQL数据库应运而生，是IT发展的必然。</p>
+<h2 id="HBase的特点及使用场景"><a href="#HBase的特点及使用场景" class="headerlink" title="HBase的特点及使用场景"></a>HBase的特点及使用场景</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li><strong>强一致性读写</strong></li>
+</ul>
+<p>HBase 不是 <code>最终一致性(eventually consistent)</code> 数据存储. 这让它很适合高速计数聚合类任务</p>
+<ul>
+<li><strong>自动分片(Automatic sharding)</strong></li>
+</ul>
+<p>HBase 表通过region分布在集群中。数据增长时，region会自动分割并重新分布</p>
+<ul>
+<li><p><strong>RegionServer 自动故障转移</strong></p>
+</li>
+<li><p><strong>Hadoop/HDFS 集成</strong></p>
+<p>HBase 支持本机外HDFS 作为它的分布式文件系统</p>
+</li>
+<li><p><strong>MapReduce集成</strong></p>
+<p>HBase 通过MapReduce支持大并发处理， HBase 可以同时做源(Source)和汇(Sink)</p>
+</li>
+<li><p><strong>Java 客户端 API</strong></p>
+<p>HBase 支持易于使用的 Java API 进行编程访问</p>
+</li>
+<li><p><strong>Thrift/REST API</strong></p>
+</li>
+</ul>
+<p>支持Thrift 和 REST 的方式访问HBase</p>
+<ul>
+<li><strong>Block Cache 和 布隆过滤器（Bloom Filter）</strong></li>
+</ul>
+<p>HBase支持 Block Cache 和 布隆过滤器进行查询优化，提升查询性能</p>
+<ul>
+<li><strong>运维管理</strong></li>
+</ul>
+<p>HBase提供内置的用于运维的网页和JMX 指标</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p><strong>HBase并不适合所有场景</strong></p>
+<p>首先，*<em>数据量方面 *</em>。确信有足够多数据，如果有上亿或十亿行数据，至少单表数据量超过千万，HBase会是一个很好的选择。 如果只有上千或上百万行，用传统的RDBMS可能是更好的选择。</p>
+<p>其次，<strong>关系型数据库特性方面</strong>。确信可以不依赖所有RDBMS的额外特性 (如列数据类型、二级索引、事务、高级查询语言等) 。一个建立在RDBMS上应用，并不能通过简单的改变JDBC驱动就能迁移到HBase，需要一次完全的重新设计。</p>
+<p>再次，<strong>硬件方面</strong>。 确信你有足够硬件。比如由于HDFS 的默认副本是3，所以一般至少5个数据节点才能够发挥其特性，另外 还要加上一个 NameNode节点。</p>
+<p>最后，<strong>数据分析方面</strong>。数据分析是HBase的弱项，因为对于HBase乃至整个NoSQL生态圈来说，基本上都是不支持表关联的。如果主要需求是数据分析，比如做报表，显然HBase是不太合适的。</p>
+<h2 id="HBase的数据模型"><a href="#HBase的数据模型" class="headerlink" title="HBase的数据模型"></a>HBase的数据模型</h2><h3 id="基本术语"><a href="#基本术语" class="headerlink" title="基本术语"></a>基本术语</h3><p>HBase是一个稀疏、多维、持久化存储的映射表，采用的row key、列族、列限定符合时间戳进行索引，每个cell的值都是字节数组byte[]。了解HBase需要先知道下面的一些概念：</p>
+<ul>
+<li><p><strong>Namespace</strong></p>
+<p>Namespace，即命名空间，是表的逻辑分组，类似于关系型数据库管理系统的database。HBase存在两个预定义的特殊的命名空间：<strong>hbase</strong>和<strong>default</strong>，其中hbase属于系统命名空间，用来存储HBase的内部的表。default属于默认的命名空间，即如果建表时不指定命名空间，则默认使用default。</p>
+</li>
+<li><p><strong>表</strong></p>
+<p>由行和列组成，列划分为若干个列族</p>
+</li>
+<li><p><strong>行</strong></p>
+<p>row key是未解释的字节数组，在HBase内部，row key是按字典排序由低到高存储在表中的。每个HBase的表由若干行组成，每个行由行键(row key)标识。可以利用这一特性，将经常一起读取的行存储在一起。</p>
+</li>
+<li><p><strong>列族</strong></p>
+<p>HBase中，列是由列族进行组织的。一个列族所有列成员是有着相同的前缀，比如，列<em>courses:history</em> 和 <em>courses:math</em>都是 列族 <em>courses</em>的成员。冒号(:)是列族的分隔符，用来区分前缀和列名。列族必须在表建立的时候声明，而列则可以在使用时进行声明。另外，存储在一个列族中的所有数据，通常都具有相同的数据类型，这可以极大提高数据的压缩率。在物理上，一个的列族成员在文件系统上都是存储在一起。</p>
+</li>
+<li><p><strong>列</strong></p>
+<p>列族里面的数据通过列限定符来定位。列通常不需要在创建表时就去定义，也不需要在不同行之间保持一致。列没有明确的数据类型，总是被视为字节数组byte[]。</p>
+</li>
+<li><p><strong>cell</strong></p>
+<p>单元格，即通过row key、列族、列确定的具体存储的数据。单元格中存储的数据也没有明确的数据类型，总被视为字节数组byte[]。另外，每个单元格的数据是多版本的，每个版本会对应一个时间戳。</p>
+</li>
+<li><p><strong>时间戳</strong></p>
+<p>由于HBase的表数据是具有版本的，这些版本是通过时间戳进行标识的。每次对一个单元格进行修改或删除时，HBase会自动为其生成并存储一个时间戳。一个单元格的不同版本是根据时间戳降序的顺序进行存储的，即优先读取最新的数据。</p>
+<p>关于HBase的数据模型，详见下图：</p>
+<p><img src="//jiamaoxiang.top/2020/08/07/一文搞懂HBase的基本原理/%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B.png" alt></p>
+</li>
+</ul>
+<h3 id="概念模型"><a href="#概念模型" class="headerlink" title="概念模型"></a>概念模型</h3><p>在HBase概念模型中，一个表可以被看做是一个稀疏的、多维的映射关系，如下图所示：</p>
+<img src="//jiamaoxiang.top/2020/08/07/一文搞懂HBase的基本原理/概念模型.png" style="zoom:80%;">
+
+<p>如上表所示：</p>
+<p>该表包含两行数据，分别为<code>com.cnn.www</code>和<code>com.example.www</code>;</p>
+<p>三个列族，分别为：<code>contents</code>, <code>anchor</code> 和<code>people</code>。</p>
+<p>对于第一行数据(对应的row key为<code>com.cnn.www</code>),列族<code>anchor</code>包含两列：<code>anchor:cssnsi.com</code>和<code>anchor:my.look.ca</code>;列族<code>contents</code>包含一列：<code>contents:html</code>;</p>
+<p>对于第一行数据(对应的row key为<code>com.cnn.www</code>),包含5个版本的数据</p>
+<p>对于第二行数据(对应的row key为<code>com.example.www</code>),包含1个版本的数据</p>
+<p>上表中可以通过一个四维坐标定位一个单元格数据：[row key,列族,列,时间戳]，比如[<code>com.cnn.www</code>,<code>contents</code>,<code>contents:html</code>,<code>t6</code>]</p>
+<h3 id="物理模型"><a href="#物理模型" class="headerlink" title="物理模型"></a>物理模型</h3><p>从概念模型上看，HBase的表是稀疏的。在物理存储的时候，是按照列族进行存储的。一个列限定符(<code>column_family:column_qualifier</code>)可以被随时添加到已经存在的列族上。</p>
+<img src="//jiamaoxiang.top/2020/08/07/一文搞懂HBase的基本原理/物理模型.png" style="zoom: 80%;">
+
+<p>从物理模型上看，概念模型中存在的<code>空单元格</code>是不会被存储的。比如要访问<code>contents:html</code>，时间戳为<code>t8</code>,则不会返回值。值得注意的是，如果访问数据时没有指定时间戳，则默认访问最新版本的数据，因为数据是按照版本时间戳降序排列的。</p>
+<p>如上表：如果访问行<code>com.cnn.www</code>，列<code>contents:html</code>，在没有指定时间戳的情况下，则返回<code>t6</code>对应的数据;同理如果访问<code>anchor:cnnsi.com</code>,则返回<code>t9</code>对应的数据。</p>
+<h2 id="HBase的原理及运行机制"><a href="#HBase的原理及运行机制" class="headerlink" title="HBase的原理及运行机制"></a>HBase的原理及运行机制</h2><h3 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h3><p>通过上面的描述，应该对HBase有了一定的了解。现在我们在来看一下HBase的宏观架构，如下图：</p>
+<img src="//jiamaoxiang.top/2020/08/07/一文搞懂HBase的基本原理/整体架构.png" style="zoom:50%;">
+
+
+
+<h3 id="微观架构"><a href="#微观架构" class="headerlink" title="微观架构"></a>微观架构</h3><h3 id="数据读写方式"><a href="#数据读写方式" class="headerlink" title="数据读写方式"></a>数据读写方式</h3><h3 id="Region的定位"><a href="#Region的定位" class="headerlink" title="Region的定位"></a>Region的定位</h3><h3 id="Region-Server的工作原理"><a href="#Region-Server的工作原理" class="headerlink" title="Region Server的工作原理"></a>Region Server的工作原理</h3><h3 id="Store的工作原理"><a href="#Store的工作原理" class="headerlink" title="Store的工作原理"></a>Store的工作原理</h3><h3 id="HLog的工作原理"><a href="#HLog的工作原理" class="headerlink" title="HLog的工作原理"></a>HLog的工作原理</h3><h2 id="客户端API基本使用"><a href="#客户端API基本使用" class="headerlink" title="客户端API基本使用"></a>客户端API基本使用</h2><h2 id="易混淆知识点总结"><a href="#易混淆知识点总结" class="headerlink" title="易混淆知识点总结"></a>易混淆知识点总结</h2><h3 id="MemStore的作用是什么"><a href="#MemStore的作用是什么" class="headerlink" title="MemStore的作用是什么"></a>MemStore的作用是什么</h3><h3 id="读取数据时会先从MemStore读取吗"><a href="#读取数据时会先从MemStore读取吗" class="headerlink" title="读取数据时会先从MemStore读取吗"></a>读取数据时会先从MemStore读取吗</h3><h3 id="BlockCache有什么用"><a href="#BlockCache有什么用" class="headerlink" title="BlockCache有什么用"></a>BlockCache有什么用</h3><h3 id="是每个RegionServer共享一个WAL，还是每个region共享一个WAL"><a href="#是每个RegionServer共享一个WAL，还是每个region共享一个WAL" class="headerlink" title="是每个RegionServer共享一个WAL，还是每个region共享一个WAL"></a>是每个RegionServer共享一个WAL，还是每个region共享一个WAL</h3><h3 id="HBase是怎么删除数据的？"><a href="#HBase是怎么删除数据的？" class="headerlink" title="HBase是怎么删除数据的？"></a>HBase是怎么删除数据的？</h3><h3 id="为什么HBase具有高性能的读写能力"><a href="#为什么HBase具有高性能的读写能力" class="headerlink" title="为什么HBase具有高性能的读写能力"></a>为什么HBase具有高性能的读写能力</h3><p>LSM树就是一堆小树，在内存中的小树即memstore，每次flush，内存中的memstore变成磁盘上一个新的storefile。</p>
+<h3 id="Store与列簇是什么关系"><a href="#Store与列簇是什么关系" class="headerlink" title="Store与列簇是什么关系"></a>Store与列簇是什么关系</h3></div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/08/06/数仓面试-四个在工作后才知道的SQL密技/" target="_blank">数仓面试|四个在工作后才知道的SQL密技</a></li><li><a href="https://jiamaoxiang.top/2020/08/02/第七篇-Spark平台下基于LDA的k-means算法实现/" target="_blank">第七篇|Spark平台下基于LDA的k-means算法实现</a></li><li><a href="https://jiamaoxiang.top/2020/07/31/第六篇-Spark-MLLib机器学习/" target="_blank">第六篇|Spark MLLib机器学习(1)</a></li><li><a href="https://jiamaoxiang.top/2020/07/29/第五篇-Spark-Streaming编程指南-2/" target="_blank">第五篇|Spark-Streaming编程指南(2)</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/08/07/一文搞懂HBase的基本原理/">https://jiamaoxiang.top/2020/08/07/一文搞懂HBase的基本原理/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/08/07/一文搞懂HBase的基本原理/" data-id="ckdny47fk002uu07qxgyc15co" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqElEQVR42u3aUW7jMAwE0N7/0t0DFE5mSKkbFM9fQeI4fC5gsSN+fcXH949j9q2fV3i6Wn7mgQMPDw9vXfrTpZN32vOT92fn4OHh4d3mPT1R92tOvjC0t+B1zXh4eHifyXtdaHL+68c6Hh4e3l/i5WUlQUNLwsPDw/sE3ixsTdrivLFuI93DWQseHh5ezMsDhc95fWV/Dw8PD2+9qz5rmvetdh5bvKkWDw8P7wIvf+C2bXce1+6j2ze3Dw8PD+/XebMtq9elJ0FDG2E8/i4eHh7eUV4eg24+bSOGWdRbT3vh4eHhjXhtQJBsd802+/eteTQ6gIeHh7fmtc3xLLSdjW21w1XRTAQeHh7empeX3jbWOSzvhIejV3h4eHhHeXnkuglwN69XY2F4eHh4l3lJNDBreW+MZ0VhNB4eHt5lXrswtHFDu0uV59CP7+Dh4eFd4LVp56mot2WsZsrw8PDwrvHaUCD/yRw2G1Oop8zw8PDw1rx8W2vfRidXm22PrWbK8PDw8GJePrrUPvrb9rodvYpafzw8PLwLvM1P5i1v3qzPRqyiAAIPDw/vGm8WPbRxbf6tdujqzcKAh4eHt+bNys2b5lmm2i4qxd8NDw8Pb81rN8By/CYIzpv++mp4eHh4h3jtY/ds/Joz2nAZDw8P7zd5+UXbQa5T7XJRAx4eHt413uuA9Ur/Prq5bUOPh4eHd483W0I2bXTbjrfLDx4eHt4N3nd5JMXNlpZkKyv5FA8PD+82r33s5mMBs9GrU69rKh4eHl7Jy8tK2uKE1C4/q2UDDw8P7xovjx7a8KK9Te3aVcyR4eHh4f1XXg7ehx1tNIyHh4f3aby2sb4xWFDcYjw8PLxrvFn8ummd87B4UxseHh7eDd6Bf/jLIk615odHB/Dw8PDe8/4B0PGSl2OiOy8AAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/HBase/">HBase</a></div><div class="post-nav"><a class="next" href="/2020/08/06/数仓面试-四个在工作后才知道的SQL密技/">数仓面试|四个在工作后才知道的SQL密技</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#从BigTable说起"><span class="toc-number">1.</span> <span class="toc-text">从BigTable说起</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么出现NoSQL"><span class="toc-number">2.</span> <span class="toc-text">为什么出现NoSQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HBase的特点及使用场景"><span class="toc-number">3.</span> <span class="toc-text">HBase的特点及使用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#特点"><span class="toc-number">3.1.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用场景"><span class="toc-number">3.2.</span> <span class="toc-text">使用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HBase的数据模型"><span class="toc-number">4.</span> <span class="toc-text">HBase的数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本术语"><span class="toc-number">4.1.</span> <span class="toc-text">基本术语</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概念模型"><span class="toc-number">4.2.</span> <span class="toc-text">概念模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#物理模型"><span class="toc-number">4.3.</span> <span class="toc-text">物理模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HBase的原理及运行机制"><span class="toc-number">5.</span> <span class="toc-text">HBase的原理及运行机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#整体架构"><span class="toc-number">5.1.</span> <span class="toc-text">整体架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#微观架构"><span class="toc-number">5.2.</span> <span class="toc-text">微观架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据读写方式"><span class="toc-number">5.3.</span> <span class="toc-text">数据读写方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Region的定位"><span class="toc-number">5.4.</span> <span class="toc-text">Region的定位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Region-Server的工作原理"><span class="toc-number">5.5.</span> <span class="toc-text">Region Server的工作原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Store的工作原理"><span class="toc-number">5.6.</span> <span class="toc-text">Store的工作原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HLog的工作原理"><span class="toc-number">5.7.</span> <span class="toc-text">HLog的工作原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端API基本使用"><span class="toc-number">6.</span> <span class="toc-text">客户端API基本使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#易混淆知识点总结"><span class="toc-number">7.</span> <span class="toc-text">易混淆知识点总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MemStore的作用是什么"><span class="toc-number">7.1.</span> <span class="toc-text">MemStore的作用是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#读取数据时会先从MemStore读取吗"><span class="toc-number">7.2.</span> <span class="toc-text">读取数据时会先从MemStore读取吗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BlockCache有什么用"><span class="toc-number">7.3.</span> <span class="toc-text">BlockCache有什么用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是每个RegionServer共享一个WAL，还是每个region共享一个WAL"><span class="toc-number">7.4.</span> <span class="toc-text">是每个RegionServer共享一个WAL，还是每个region共享一个WAL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HBase是怎么删除数据的？"><span class="toc-number">7.5.</span> <span class="toc-text">HBase是怎么删除数据的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么HBase具有高性能的读写能力"><span class="toc-number">7.6.</span> <span class="toc-text">为什么HBase具有高性能的读写能力</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Store与列簇是什么关系"><span class="toc-number">7.7.</span> <span class="toc-text">Store与列簇是什么关系</span></a></li></ol></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
