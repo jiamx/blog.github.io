@@ -1,3 +1,5 @@
+https://jiamaoxiang.top/2020/08/12/实时数仓-基于Flink1-11的SQL构建实时数仓探索实践/
+https://jiamaoxiang.top/2020/08/12/Flink1-11中的CDC-Connectors操作实践/
 https://jiamaoxiang.top/2020/08/07/一文搞懂HBase的基本原理/
 https://jiamaoxiang.top/2020/08/06/数仓面试-四个在工作后才知道的SQL密技/
 https://jiamaoxiang.top/2020/08/02/第七篇-Spark平台下基于LDA的k-means算法实现/
@@ -16,7 +18,6 @@ https://jiamaoxiang.top/2020/06/27/Hive的架构剖析/
 https://jiamaoxiang.top/2020/06/26/数据分析-使用多元线性回归构建销售额预测模型/
 https://jiamaoxiang.top/2020/06/10/‘Hive-on-MR执行计划解析/
 https://jiamaoxiang.top/2020/06/06/数仓-Hive性能调优指北/
-https://jiamaoxiang.top/2020/06/05/‘实时数仓-基于Flink-SQL构建实时数仓探索实践/
 https://jiamaoxiang.top/2020/06/05/实时数仓-Flink-SQL之维表join/
 https://jiamaoxiang.top/2020/06/02/Flink-Table-API-SQL编程指南之时间属性-3/
 https://jiamaoxiang.top/2020/05/28/数仓开发需要了解的BI数据分析方法/
