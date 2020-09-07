@@ -1,0 +1,523 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>使用Hive SQL的窗口函数进行商务数据分析 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">使用Hive SQL的窗口函数进行商务数据分析</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">使用Hive SQL的窗口函数进行商务数据分析</h1><div class="post-meta">Sep 7, 2020<span> | </span><span class="category"><a href="/categories/Hive/">Hive</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.9k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 9</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><a id="more"></a>
+
+<p>本文会从一个商务分析案例入手，说明SQL窗口函数的使用方式。通过本文的5个需求分析，可以看出SQL窗口函数的功能十分强大，不仅能够使我们编写的SQL逻辑更加清晰，而且在某种程度上可以简化需求开发。</p>
+<h2 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h2><p>本文主要分析只涉及一张订单表orders，操作过程在Hive中完成，具体数据如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 建表</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> orders(</span><br><span class="line">    order_id <span class="built_in">int</span>,</span><br><span class="line">    customer_id <span class="keyword">string</span>,</span><br><span class="line">    city <span class="keyword">string</span>,</span><br><span class="line">    add_time <span class="keyword">string</span>,</span><br><span class="line">    amount <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 准备数据                              </span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> orders <span class="keyword">VALUES</span></span><br><span class="line">(<span class="number">1</span>,<span class="string">"A"</span>,<span class="string">"上海"</span>,<span class="string">"2020-01-01 00:00:00.000000"</span>,<span class="number">200</span>),</span><br><span class="line">(<span class="number">2</span>,<span class="string">"B"</span>,<span class="string">"上海"</span>,<span class="string">"2020-01-05 00:00:00.000000"</span>,<span class="number">250</span>),</span><br><span class="line">(<span class="number">3</span>,<span class="string">"C"</span>,<span class="string">"北京"</span>,<span class="string">"2020-01-12 00:00:00.000000"</span>,<span class="number">200</span>),</span><br><span class="line">(<span class="number">4</span>,<span class="string">"A"</span>,<span class="string">"上海"</span>,<span class="string">"2020-02-04 00:00:00.000000"</span>,<span class="number">400</span>),</span><br><span class="line">(<span class="number">5</span>,<span class="string">"D"</span>,<span class="string">"上海"</span>,<span class="string">"2020-02-05 00:00:00.000000"</span>,<span class="number">250</span>),</span><br><span class="line">(<span class="number">5</span>,<span class="string">"D"</span>,<span class="string">"上海"</span>,<span class="string">"2020-02-05 12:00:00.000000"</span>,<span class="number">300</span>),</span><br><span class="line">(<span class="number">6</span>,<span class="string">"C"</span>,<span class="string">"北京"</span>,<span class="string">"2020-02-19 00:00:00.000000"</span>,<span class="number">300</span>),</span><br><span class="line">(<span class="number">7</span>,<span class="string">"A"</span>,<span class="string">"上海"</span>,<span class="string">"2020-03-01 00:00:00.000000"</span>,<span class="number">150</span>),</span><br><span class="line">(<span class="number">8</span>,<span class="string">"E"</span>,<span class="string">"北京"</span>,<span class="string">"2020-03-05 00:00:00.000000"</span>,<span class="number">500</span>),</span><br><span class="line">(<span class="number">9</span>,<span class="string">"F"</span>,<span class="string">"上海"</span>,<span class="string">"2020-03-09 00:00:00.000000"</span>,<span class="number">250</span>),</span><br><span class="line">(<span class="number">10</span>,<span class="string">"B"</span>,<span class="string">"上海"</span>,<span class="string">"2020-03-21 00:00:00.000000"</span>,<span class="number">600</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="需求1：收入增长"><a href="#需求1：收入增长" class="headerlink" title="需求1：收入增长"></a>需求1：收入增长</h2><p>在业务方面，第m1个月的收入增长计算如下：<strong>100 *（m1-m0）/ m0</strong></p>
+<p>其中，<em>m1</em>是给定月份的收入，<em>m0</em>是上个月的收入。因此，从技术上讲，我们需要找到每个月的收入，然后以某种方式将每个月的收入与上一个收入相关联，以便进行上述计算。计算当时如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WITH</span></span><br><span class="line">monthly_revenue <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">    trunc(add_time,<span class="string">'MM'</span>) <span class="keyword">as</span> <span class="keyword">month</span>,</span><br><span class="line">    <span class="keyword">sum</span>(amount) <span class="keyword">as</span> revenue</span><br><span class="line">    <span class="keyword">FROM</span> orders</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="number">1</span></span><br><span class="line">)</span><br><span class="line">,prev_month_revenue <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> </span><br><span class="line">    <span class="keyword">month</span>,</span><br><span class="line">    revenue,</span><br><span class="line">    lag(revenue) <span class="keyword">over</span> (<span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">month</span>) <span class="keyword">as</span> prev_month_revenue <span class="comment">-- 上一月收入</span></span><br><span class="line">    <span class="keyword">FROM</span> monthly_revenue</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">  <span class="keyword">month</span>,</span><br><span class="line">  revenue,</span><br><span class="line">  prev_month_revenue,</span><br><span class="line">  <span class="keyword">round</span>(<span class="number">100.0</span>*(revenue-prev_month_revenue)/prev_month_revenue,<span class="number">1</span>) <span class="keyword">as</span> revenue_growth</span><br><span class="line"><span class="keyword">FROM</span> prev_month_revenue</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>结果输出</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">month</th>
+<th align="left">revenue</th>
+<th align="left">prev_month_revenue</th>
+<th align="left">revenue_growth</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">2020-01-01</td>
+<td align="left">650</td>
+<td align="left">NULL</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">2020-02-01</td>
+<td align="left">1250</td>
+<td align="left">650</td>
+<td align="left">92.3</td>
+</tr>
+<tr>
+<td align="left">2020-03-01</td>
+<td align="left">1500</td>
+<td align="left">1250</td>
+<td align="left">20</td>
+</tr>
+</tbody></table>
+<p>我们还可以按照按城市分组进行统计，查看某个城市某个月份的收入增长情况</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WITH</span></span><br><span class="line">monthly_revenue <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">     trunc(add_time,<span class="string">'MM'</span>) <span class="keyword">as</span> <span class="keyword">month</span>,</span><br><span class="line">    city,</span><br><span class="line">    <span class="keyword">sum</span>(amount) <span class="keyword">as</span> revenue</span><br><span class="line">    <span class="keyword">FROM</span> orders</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">)</span><br><span class="line">,prev_month_revenue <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> </span><br><span class="line">    <span class="keyword">month</span>,</span><br><span class="line">    city,</span><br><span class="line">    revenue,</span><br><span class="line">    lag(revenue) <span class="keyword">over</span> (<span class="keyword">partition</span> <span class="keyword">by</span> city <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">month</span>) <span class="keyword">as</span> prev_month_revenue</span><br><span class="line">    <span class="keyword">FROM</span> monthly_revenue</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line"><span class="keyword">month</span>,</span><br><span class="line">city,</span><br><span class="line">revenue,</span><br><span class="line"><span class="keyword">round</span>(<span class="number">100.0</span>*(revenue-prev_month_revenue)/prev_month_revenue,<span class="number">1</span>) <span class="keyword">as</span> revenue_growth</span><br><span class="line"><span class="keyword">FROM</span> prev_month_revenue</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">2</span>,<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>结果输出</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">month</th>
+<th align="left">city</th>
+<th align="left">revenue</th>
+<th align="left">revenue_growth</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">2020-01-01</td>
+<td align="left">上海</td>
+<td align="left">450</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">2020-02-01</td>
+<td align="left">上海</td>
+<td align="left">950</td>
+<td align="left">111.1</td>
+</tr>
+<tr>
+<td align="left">2020-03-01</td>
+<td align="left">上海</td>
+<td align="left">1000</td>
+<td align="left">5.3</td>
+</tr>
+<tr>
+<td align="left">2020-01-01</td>
+<td align="left">北京</td>
+<td align="left">200</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">2020-02-01</td>
+<td align="left">北京</td>
+<td align="left">300</td>
+<td align="left">50</td>
+</tr>
+<tr>
+<td align="left">2020-03-01</td>
+<td align="left">北京</td>
+<td align="left">500</td>
+<td align="left">66.7</td>
+</tr>
+</tbody></table>
+<h2 id="需求2：累计求和"><a href="#需求2：累计求和" class="headerlink" title="需求2：累计求和"></a>需求2：累计求和</h2><p>累计汇总，即当前元素和所有先前元素的总和，如下面的SQL：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WITH</span></span><br><span class="line">monthly_revenue <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">    trunc(add_time,<span class="string">'MM'</span>) <span class="keyword">as</span> <span class="keyword">month</span>,</span><br><span class="line">    <span class="keyword">sum</span>(amount) <span class="keyword">as</span> revenue</span><br><span class="line">    <span class="keyword">FROM</span> orders</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="number">1</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line"><span class="keyword">month</span>,</span><br><span class="line">revenue,</span><br><span class="line"><span class="keyword">sum</span>(revenue) <span class="keyword">over</span> (<span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">month</span> <span class="keyword">rows</span> <span class="keyword">between</span> <span class="keyword">unbounded</span> <span class="keyword">preceding</span> <span class="keyword">and</span> <span class="keyword">current</span> <span class="keyword">row</span>) <span class="keyword">as</span> running_total</span><br><span class="line"><span class="keyword">FROM</span> monthly_revenue</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>结果输出</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">month</th>
+<th align="left">revenue</th>
+<th align="left">running_total</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">2020-01-01</td>
+<td align="left">650</td>
+<td align="left">650</td>
+</tr>
+<tr>
+<td align="left">2020-02-01</td>
+<td align="left">1250</td>
+<td align="left">1900</td>
+</tr>
+<tr>
+<td align="left">2020-03-01</td>
+<td align="left">1500</td>
+<td align="left">3400</td>
+</tr>
+</tbody></table>
+<p>我们还可以使用下面的组合方式进行分析，SQL如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">   order_id,</span><br><span class="line">   customer_id,</span><br><span class="line">   city,</span><br><span class="line">   add_time,</span><br><span class="line">   amount,</span><br><span class="line">   <span class="keyword">sum</span>(amount) <span class="keyword">over</span> () <span class="keyword">as</span> amount_total, <span class="comment">-- 所有数据求和</span></span><br><span class="line">   <span class="keyword">sum</span>(amount) <span class="keyword">over</span> (<span class="keyword">order</span> <span class="keyword">by</span> order_id <span class="keyword">rows</span> <span class="keyword">between</span> <span class="keyword">unbounded</span> <span class="keyword">preceding</span> <span class="keyword">and</span> <span class="keyword">current</span> <span class="keyword">row</span>) <span class="keyword">as</span> running_sum, <span class="comment">-- 累计求和</span></span><br><span class="line">   <span class="keyword">sum</span>(amount) <span class="keyword">over</span> (<span class="keyword">partition</span> <span class="keyword">by</span> customer_id <span class="keyword">order</span> <span class="keyword">by</span> add_time <span class="keyword">rows</span> <span class="keyword">between</span> <span class="keyword">unbounded</span>    <span class="keyword">preceding</span> <span class="keyword">and</span> <span class="keyword">current</span> <span class="keyword">row</span>) <span class="keyword">as</span> running_sum_by_customer, </span><br><span class="line">   <span class="keyword">avg</span>(amount) <span class="keyword">over</span> (<span class="keyword">order</span> <span class="keyword">by</span> add_time <span class="keyword">rows</span> <span class="keyword">between</span> <span class="number">5</span> <span class="keyword">preceding</span> <span class="keyword">and</span> <span class="keyword">current</span> <span class="keyword">row</span>) <span class="keyword">as</span>  trailing_avg <span class="comment">-- 滚动求平均</span></span><br><span class="line"><span class="keyword">FROM</span> orders</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>结果输出</strong>：</p>
+<table>
+<thead>
+<tr>
+<th align="left">order_id</th>
+<th align="left">customer_id</th>
+<th align="left">city</th>
+<th align="left">add_time</th>
+<th align="left">amount</th>
+<th align="left">amount_total</th>
+<th align="left">running_sum</th>
+<th align="left">running_sum_by_customer</th>
+<th align="left">trailing_avg</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-01-01 00:00:00.000000</td>
+<td align="left">200</td>
+<td align="left">3400</td>
+<td align="left">200</td>
+<td align="left">200</td>
+<td align="left">200</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">B</td>
+<td align="left">上海</td>
+<td align="left">2020-01-05 00:00:00.000000</td>
+<td align="left">250</td>
+<td align="left">3400</td>
+<td align="left">450</td>
+<td align="left">250</td>
+<td align="left">225</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">C</td>
+<td align="left">北京</td>
+<td align="left">2020-01-12 00:00:00.000000</td>
+<td align="left">200</td>
+<td align="left">3400</td>
+<td align="left">650</td>
+<td align="left">200</td>
+<td align="left">216.666667</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-02-04 00:00:00.000000</td>
+<td align="left">400</td>
+<td align="left">3400</td>
+<td align="left">1050</td>
+<td align="left">600</td>
+<td align="left">262.5</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">D</td>
+<td align="left">上海</td>
+<td align="left">2020-02-05 00:00:00.000000</td>
+<td align="left">250</td>
+<td align="left">3400</td>
+<td align="left">1300</td>
+<td align="left">250</td>
+<td align="left">260</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">D</td>
+<td align="left">上海</td>
+<td align="left">2020-02-05 12:00:00.000000</td>
+<td align="left">300</td>
+<td align="left">3400</td>
+<td align="left">1600</td>
+<td align="left">550</td>
+<td align="left">266.666667</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">C</td>
+<td align="left">北京</td>
+<td align="left">2020-02-19 00:00:00.000000</td>
+<td align="left">300</td>
+<td align="left">3400</td>
+<td align="left">1900</td>
+<td align="left">500</td>
+<td align="left">283.333333</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-03-01 00:00:00.000000</td>
+<td align="left">150</td>
+<td align="left">3400</td>
+<td align="left">2050</td>
+<td align="left">750</td>
+<td align="left">266.666667</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">E</td>
+<td align="left">北京</td>
+<td align="left">2020-03-05 00:00:00.000000</td>
+<td align="left">500</td>
+<td align="left">3400</td>
+<td align="left">2550</td>
+<td align="left">500</td>
+<td align="left">316.666667</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">F</td>
+<td align="left">上海</td>
+<td align="left">2020-03-09 00:00:00.000000</td>
+<td align="left">250</td>
+<td align="left">3400</td>
+<td align="left">2800</td>
+<td align="left">250</td>
+<td align="left">291.666667</td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="left">B</td>
+<td align="left">上海</td>
+<td align="left">2020-03-21 00:00:00.000000</td>
+<td align="left">600</td>
+<td align="left">3400</td>
+<td align="left">3400</td>
+<td align="left">850</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<h2 id="需求3：处理重复数据"><a href="#需求3：处理重复数据" class="headerlink" title="需求3：处理重复数据"></a>需求3：处理重复数据</h2><p>从上面的数据可以看出，存在两条重复的数据<strong>(5,”D”,”上海”,”2020-02-05 00:00:00.000000”,250),<br>(5,”D”,”上海”,”2020-02-05 12:00:00.000000”,300),</strong>显然需要对其进行清洗去重，保留最新的一条数据，SQL如下：</p>
+<p>我们先进行分组排名，然后保留最新的那条数据即可：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> *</span><br><span class="line"><span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> *,</span><br><span class="line">    row_number() <span class="keyword">over</span> (<span class="keyword">partition</span> <span class="keyword">by</span> order_id <span class="keyword">order</span> <span class="keyword">by</span> add_time <span class="keyword">desc</span>) <span class="keyword">as</span> <span class="keyword">rank</span></span><br><span class="line">    <span class="keyword">FROM</span> orders</span><br><span class="line">) t</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">rank</span>=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>结果输出</strong>：</p>
+<table>
+<thead>
+<tr>
+<th align="left">t.order_id</th>
+<th align="left">t.customer_id</th>
+<th align="left">t.city</th>
+<th align="left">t.add_time</th>
+<th align="left">t.amount</th>
+<th align="left">t.rank</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-01-01 00:00:00.000000</td>
+<td align="left">200</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">B</td>
+<td align="left">上海</td>
+<td align="left">2020-01-05 00:00:00.000000</td>
+<td align="left">250</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">C</td>
+<td align="left">北京</td>
+<td align="left">2020-01-12 00:00:00.000000</td>
+<td align="left">200</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-02-04 00:00:00.000000</td>
+<td align="left">400</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">D</td>
+<td align="left">上海</td>
+<td align="left">2020-02-05 12:00:00.000000</td>
+<td align="left">300</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">C</td>
+<td align="left">北京</td>
+<td align="left">2020-02-19 00:00:00.000000</td>
+<td align="left">300</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-03-01 00:00:00.000000</td>
+<td align="left">150</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">E</td>
+<td align="left">北京</td>
+<td align="left">2020-03-05 00:00:00.000000</td>
+<td align="left">500</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">F</td>
+<td align="left">上海</td>
+<td align="left">2020-03-09 00:00:00.000000</td>
+<td align="left">250</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="left">B</td>
+<td align="left">上海</td>
+<td align="left">2020-03-21 00:00:00.000000</td>
+<td align="left">600</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<p>经过上面的清洗过程，对数据进行了去重。重新计算上面的需求1，正确SQL脚本为：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WITH</span></span><br><span class="line">orders_cleaned <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> *</span><br><span class="line">    <span class="keyword">FROM</span> (</span><br><span class="line">        <span class="keyword">SELECT</span> *,</span><br><span class="line">        row_number() <span class="keyword">over</span> (<span class="keyword">partition</span> <span class="keyword">by</span> order_id <span class="keyword">order</span> <span class="keyword">by</span> add_time <span class="keyword">desc</span>) <span class="keyword">as</span> <span class="keyword">rank</span></span><br><span class="line">        <span class="keyword">FROM</span> orders</span><br><span class="line">    )t</span><br><span class="line">    <span class="keyword">WHERE</span> <span class="keyword">rank</span>=<span class="number">1</span></span><br><span class="line">)</span><br><span class="line">,monthly_revenue <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">    trunc(add_time,<span class="string">'MM'</span>) <span class="keyword">as</span> <span class="keyword">month</span>,</span><br><span class="line">    <span class="keyword">sum</span>(amount) <span class="keyword">as</span> revenue</span><br><span class="line">    <span class="keyword">FROM</span> orders_cleaned</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="number">1</span></span><br><span class="line">)</span><br><span class="line">,prev_month_revenue <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> </span><br><span class="line">    <span class="keyword">month</span>,</span><br><span class="line">    revenue,</span><br><span class="line">    lag(revenue) <span class="keyword">over</span> (<span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">month</span>) <span class="keyword">as</span> prev_month_revenue</span><br><span class="line">    <span class="keyword">FROM</span> monthly_revenue</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line"><span class="keyword">month</span>,</span><br><span class="line">revenue,</span><br><span class="line"><span class="keyword">round</span>(<span class="number">100.0</span>*(revenue-prev_month_revenue)/prev_month_revenue,<span class="number">1</span>) <span class="keyword">as</span> revenue_growth</span><br><span class="line"><span class="keyword">FROM</span> prev_month_revenue</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>结果输出</strong>：</p>
+<table>
+<thead>
+<tr>
+<th align="left">month</th>
+<th align="left">revenue</th>
+<th align="left">revenue_growth</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">2020-01-01</td>
+<td align="left">650</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">2020-02-01</td>
+<td align="left">1000</td>
+<td align="left">53.8</td>
+</tr>
+<tr>
+<td align="left">2020-03-01</td>
+<td align="left">1500</td>
+<td align="left">50</td>
+</tr>
+</tbody></table>
+<p>将清洗后的数据创建成视图，方便以后使用</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> orders_cleaned <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    order_id, </span><br><span class="line">    customer_id, </span><br><span class="line">    city, </span><br><span class="line">    add_time, </span><br><span class="line">    amount</span><br><span class="line"><span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> *,</span><br><span class="line">    row_number() <span class="keyword">over</span> (<span class="keyword">partition</span> <span class="keyword">by</span> order_id <span class="keyword">order</span> <span class="keyword">by</span> add_time <span class="keyword">desc</span>) <span class="keyword">as</span> <span class="keyword">rank</span></span><br><span class="line">    <span class="keyword">FROM</span> orders</span><br><span class="line">)t</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">rank</span>=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="需求4：分组取TopN"><a href="#需求4：分组取TopN" class="headerlink" title="需求4：分组取TopN"></a>需求4：分组取TopN</h2><p>分组取topN是最长见的SQL窗口函数使用场景，下面的SQL是计算每个月份的top2订单金额，如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WITH</span> orders_ranked <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">    trunc(add_time,<span class="string">'MM'</span>) <span class="keyword">as</span> <span class="keyword">month</span>,</span><br><span class="line">    *,</span><br><span class="line">    row_number() <span class="keyword">over</span> (<span class="keyword">partition</span> <span class="keyword">by</span> trunc(add_time,<span class="string">'MM'</span>) <span class="keyword">order</span> <span class="keyword">by</span> amount <span class="keyword">desc</span>, add_time) <span class="keyword">as</span> <span class="keyword">rank</span></span><br><span class="line">    <span class="keyword">FROM</span> orders_cleaned</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    <span class="keyword">month</span>,</span><br><span class="line">    order_id,</span><br><span class="line">    customer_id,</span><br><span class="line">    city,</span><br><span class="line">    add_time,</span><br><span class="line">    amount</span><br><span class="line"><span class="keyword">FROM</span> orders_ranked</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">rank</span> &lt;=<span class="number">2</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="需求5：重复购买行为"><a href="#需求5：重复购买行为" class="headerlink" title="需求5：重复购买行为"></a>需求5：重复购买行为</h2><p>下面的SQL计算重复购买率：重复购买的人数/总人数*100%以及第一笔订单金额与第二笔订单金额之间的典型差额:avg(第二笔订单金额/第一笔订单金额)</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WITH</span> customer_orders <span class="keyword">as</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> *,</span><br><span class="line">    row_number() <span class="keyword">over</span> (<span class="keyword">partition</span> <span class="keyword">by</span> customer_id <span class="keyword">order</span> <span class="keyword">by</span> add_time) <span class="keyword">as</span> customer_order_n,</span><br><span class="line">    lag(amount) <span class="keyword">over</span> (<span class="keyword">partition</span> <span class="keyword">by</span> customer_id <span class="keyword">order</span> <span class="keyword">by</span> add_time) <span class="keyword">as</span> prev_order_amount</span><br><span class="line">    <span class="keyword">FROM</span> orders_cleaned</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span></span><br><span class="line"><span class="keyword">round</span>(<span class="number">100.0</span>*<span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> customer_order_n=<span class="number">2</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">end</span>)/<span class="keyword">count</span>(<span class="keyword">distinct</span> customer_id),<span class="number">1</span>) <span class="keyword">as</span> repeat_purchases,<span class="comment">-- 重复购买率</span></span><br><span class="line"><span class="keyword">avg</span>(<span class="keyword">case</span> <span class="keyword">when</span> customer_order_n=<span class="number">2</span> <span class="keyword">then</span> <span class="number">1.0</span>*amount/prev_order_amount <span class="keyword">end</span>) <span class="keyword">as</span> revenue_expansion <span class="comment">-- 重复购买较上次购买差异，第一笔订单金额与第二笔订单金额之间的典型差额</span></span><br><span class="line"><span class="keyword">FROM</span> customer_orders</span><br></pre></td></tr></table></figure>
+
+<p><strong>结果输出</strong>：</p>
+<p>WITH结果输出：</p>
+<table>
+<thead>
+<tr>
+<th align="left">orders_cleaned.order_id</th>
+<th align="left">orders_cleaned.customer_id</th>
+<th align="left">orders_cleaned.city</th>
+<th align="left">orders_cleaned.add_time</th>
+<th align="left">orders_cleaned.amount</th>
+<th align="left">customer_order_n</th>
+<th align="left">prev_order_amount</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-01-01 00:00:00.000000</td>
+<td align="left">200</td>
+<td align="left">1</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-02-04 00:00:00.000000</td>
+<td align="left">400</td>
+<td align="left">2</td>
+<td align="left">200</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">A</td>
+<td align="left">上海</td>
+<td align="left">2020-03-01 00:00:00.000000</td>
+<td align="left">150</td>
+<td align="left">3</td>
+<td align="left">400</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">B</td>
+<td align="left">上海</td>
+<td align="left">2020-01-05 00:00:00.000000</td>
+<td align="left">250</td>
+<td align="left">1</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="left">B</td>
+<td align="left">上海</td>
+<td align="left">2020-03-21 00:00:00.000000</td>
+<td align="left">600</td>
+<td align="left">2</td>
+<td align="left">250</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">C</td>
+<td align="left">北京</td>
+<td align="left">2020-01-12 00:00:00.000000</td>
+<td align="left">200</td>
+<td align="left">1</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">C</td>
+<td align="left">北京</td>
+<td align="left">2020-02-19 00:00:00.000000</td>
+<td align="left">300</td>
+<td align="left">2</td>
+<td align="left">200</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">D</td>
+<td align="left">上海</td>
+<td align="left">2020-02-05 12:00:00.000000</td>
+<td align="left">300</td>
+<td align="left">1</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">E</td>
+<td align="left">北京</td>
+<td align="left">2020-03-05 00:00:00.000000</td>
+<td align="left">500</td>
+<td align="left">1</td>
+<td align="left">NULL</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">F</td>
+<td align="left">上海</td>
+<td align="left">2020-03-09 00:00:00.000000</td>
+<td align="left">250</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>最终结果输出：</p>
+<table>
+<thead>
+<tr>
+<th align="left">repeat_purchases</th>
+<th align="left">revenue_expansion</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">50</td>
+<td align="left">1.9666666666666668</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要分享了SQL窗口函数的基本使用方式以及使用场景，并结合了具体的分析案例。通过本文的分析案例，可以加深对SQL窗口函数的理解。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/08/29/项目实践-基于Flink的用户行为日志分析系统/" target="_blank">项目实践|基于Flink的用户行为日志分析系统</a></li><li><a href="https://jiamaoxiang.top/2020/08/20/元数据管理-Hive-Hooks和Metastore监听器介绍/" target="_blank">元数据管理|Hive Hooks和Metastore监听器介绍</a></li><li><a href="https://jiamaoxiang.top/2020/08/19/SQL查询的执行顺序分析/" target="_blank">SQL查询的执行顺序分析</a></li><li><a href="https://jiamaoxiang.top/2020/08/18/两阶段提交-Flink端到端的EXACTLY-ONCE实现细节/" target="_blank">两阶段提交|Flink端到端的EXACTLY ONCE实现细节</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/09/07/使用Hive-SQL的窗口函数进行商务数据分析/">https://jiamaoxiang.top/2020/09/07/使用Hive-SQL的窗口函数进行商务数据分析/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/09/07/使用Hive-SQL的窗口函数进行商务数据分析/" data-id="ckes1uig70031p47qbno1gav7" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADMklEQVR42u3a224iQQwE0Pz/T7NSnlZCQJVNJOg584S4DH06UozL/fMTX7ff6//HyXV/h/tXk/c/v8/9e952YWNjY38JO1n684U+f+bRspJtev5M+yfBxsbGPpud3+75p9o7tCUtf/zCiI2NjX1J9vPSkjCSlqPdGmxsbGzsWQHbxE/t/fNSh42NjX1ldluE8pKWREV5k9MWvDdkadjY2Ngfz54Nej/z8Z/Pt7GxsbE/jH0rr02zkZS3dgB8G13Y2NjYJ7H3h2OSgjcbMOQbNxxIY2NjYx/BnoU+bbjTjm9nG50XSGxsbOzz2HmMPhshbIYKeTOTbDQ2Njb2eexN2UgO3LQFbFM46xEvNjY29hHstjy04c6sndi0HNFRIWxsbOzj2Mlgtf6hv9jKIh4aBWHY2NjY12HPWou82WjblZr3aCXY2NjYx7HbcD8vY/n98wZmNqL4mS0LGxsb++PZ7Y/7/FOzYUA+hNg8j42NjX0Se3+MZtPAzIL+WbF8GCphY2NjH8eelbHZWaFkFJGsIR85YGNjY5/HbktUW/DaRSehf7uhLxI1bGxs7C9nz/71t2UmD/H3g+Rou7GxsbEvw07K1exAT3v/d0VR2NjY2OexNw1JEi21S0ne2Ra8F9uKjY2NfQT7Fl9tK9IGTG0z05bkeqaBjY2N/YXsvLWYFbn9gLbdbmxsbOyz2bNwfxbxb+KqNpx68VlsbGzs49jvOkyzJ80O6OSbhY2NjX0Fdh4etUWrbUvaoW/R5GBjY2MfxG5LVx70bA7itIPbvAw/PIKJjY2N/bXs2UGcnLcZBs9GxdEGYWNjYx/EzpuK9sBNHkLNjg1tVoWNjY19Erv9Kb+Jh/ZHJ6OylIx+sbGxsY9jb4Ke2Sa28dCmfGJjY2NfgT1rA/5i+9pQqY2usLGxsc9jv6vBmB2yyYcNwwn2Ho+NjY39JezZEHfGyL+rjaLqrcfGxsY+jj0L+vPGo20/ctJwnouNjY19SfZ7BwNtgWxL5osyho2NjX1h9iyan73ajjGKsoeNjY19HHsTCeXB/eawTj7ujcbP2NjY2AexZ4Pe5MjOLOLPw6Z28IyNjY19HPsfClT9Yd07IgkAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/Hive/">Hive</a></div><div class="post-nav"><a class="next" href="/2020/08/29/项目实践-基于Flink的用户行为日志分析系统/">项目实践|基于Flink的用户行为日志分析系统</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据准备"><span class="toc-number">1.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需求1：收入增长"><span class="toc-number">2.</span> <span class="toc-text">需求1：收入增长</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需求2：累计求和"><span class="toc-number">3.</span> <span class="toc-text">需求2：累计求和</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需求3：处理重复数据"><span class="toc-number">4.</span> <span class="toc-text">需求3：处理重复数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需求4：分组取TopN"><span class="toc-number">5.</span> <span class="toc-text">需求4：分组取TopN</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需求5：重复购买行为"><span class="toc-number">6.</span> <span class="toc-text">需求5：重复购买行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

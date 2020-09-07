@@ -1,0 +1,401 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>SQL查询的执行顺序分析 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">SQL查询的执行顺序分析</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">SQL查询的执行顺序分析</h1><div class="post-meta">Aug 19, 2020<span> | </span><span class="category"><a href="/categories/SQL/">SQL</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.8k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 7</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><a id="more"></a>
+
+<p><strong>SQL 语言无处不在</strong>。SQL 已经不仅仅是技术人员的专属技能了，似乎人人都会写SQL，就如同人人都是产品经理一样。如果你是做后台开发的，那么CRUD就是家常便饭。如果你是做数仓开发的，那么写SQL可能占据了你的大部分工作时间。我们在理解 SELECT 语法的时候，还需要了解 SELECT 执行时的底层原理。只有这样，才能让我们对 SQL 有更深刻的认识。本文分享将逐步分解SQL的执行过程，希望对你有所帮助。</p>
+<h2 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h2><p>本文旨在说明SQL查询的执行过程，不会涉及太复杂的SQL操作，主要涉及两张表：<strong>citizen</strong>和<strong>city</strong>,具体数据如下所示：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> citizen ( </span><br><span class="line">    <span class="keyword">name</span> <span class="built_in">CHAR</span> ( <span class="number">20</span> ), </span><br><span class="line">    city_id <span class="built_in">INT</span> ( <span class="number">10</span> ) </span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> city (</span><br><span class="line">    city_id <span class="built_in">INT</span> ( <span class="number">10</span> ), </span><br><span class="line">    city_name <span class="built_in">CHAR</span> ( <span class="number">20</span> ) </span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> city</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	( <span class="number">1</span>, <span class="string">"上海"</span> ),</span><br><span class="line">	( <span class="number">2</span>, <span class="string">"北京"</span> ),</span><br><span class="line">	( <span class="number">3</span>, <span class="string">"杭州"</span> );</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> citizen</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">(<span class="string">"tom"</span>,<span class="number">3</span>),</span><br><span class="line">(<span class="string">"jack"</span>,<span class="number">2</span>),</span><br><span class="line">(<span class="string">"robin"</span>,<span class="number">1</span>),</span><br><span class="line">(<span class="string">"jasper"</span>,<span class="number">3</span>),</span><br><span class="line">(<span class="string">"kevin"</span>,<span class="number">1</span>),</span><br><span class="line">(<span class="string">"rachel"</span>,<span class="number">2</span>),</span><br><span class="line">(<span class="string">"trump"</span>,<span class="number">3</span>),</span><br><span class="line">(<span class="string">"lilei"</span>,<span class="number">1</span>),</span><br><span class="line">(<span class="string">"hanmeiei"</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="查询执行顺序"><a href="#查询执行顺序" class="headerlink" title="查询执行顺序"></a>查询执行顺序</h2><p>本文所涉及的查询语句如下，主要是citizen表与city表进行join，然后筛掉city_name != “上海”的数据，接着按照city_name进行分组，统计每个城市总人数大于2的城市，具体如下：</p>
+<h3 id="查询语句"><a href="#查询语句" class="headerlink" title="查询语句"></a>查询语句</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    city.city_name <span class="keyword">AS</span> <span class="string">"City"</span>,</span><br><span class="line">    <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> <span class="string">"citizen_cnt"</span></span><br><span class="line"><span class="keyword">FROM</span> citizen</span><br><span class="line">  <span class="keyword">JOIN</span> city <span class="keyword">ON</span> citizen.city_id = city.city_id </span><br><span class="line"><span class="keyword">WHERE</span> city.city_name != <span class="string">'上海'</span></span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> city.city_name</span><br><span class="line"><span class="keyword">HAVING</span> <span class="keyword">COUNT</span>(*) &gt;= <span class="number">2</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> city.city_name <span class="keyword">ASC</span></span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="执行步骤"><a href="#执行步骤" class="headerlink" title="执行步骤"></a>执行步骤</h3><p>上面SQL查询语句的书写书序是：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ... <span class="keyword">FROM</span> ... <span class="keyword">WHERE</span> ... <span class="keyword">GROUP</span> <span class="keyword">BY</span> ... <span class="keyword">HAVING</span> ... <span class="keyword">ORDER</span> <span class="keyword">BY</span> ...</span><br></pre></td></tr></table></figure>
+
+<p>但是执行顺序并不是这样，具体的执行顺序如下步骤所示：</p>
+<ul>
+<li>1.获取数据 (<em>From, Join</em>)</li>
+<li>2.过滤数据 (<em>Where</em>)</li>
+<li>3.分组 (<em>Group by</em>)</li>
+<li>4.分组过滤 (<em>Having</em>)</li>
+<li>5.返回查询字段 (<em>Select</em>)</li>
+<li>6.排序与分页 (<em>Order by &amp; Limit / Offset</em>)</li>
+</ul>
+<blockquote>
+<p>尖叫提示：本文旨在说明通用的SQL执行底层原理，对于其优化技术不做考虑，比如谓词下推、投影下推等等。</p>
+</blockquote>
+<h3 id="执行的底层原理"><a href="#执行的底层原理" class="headerlink" title="执行的底层原理"></a>执行的底层原理</h3><p>其实上面所说的SQL执行顺序就是所谓的底层原理，当我们在执行SELECT语句时，每个步骤都会产生一张<strong>虚拟表(virtual table）</strong>，在执行下一步骤时，会将该虚拟表作为输入。指的注意的是，这些过程是对用户透明的。</p>
+<p>你可以注意到，SELECT 是先从FROM 这一步开始执行的。在这个阶段，如果是多张表进行JOIN，还会经历下面的几个步骤：</p>
+<h4 id="获取数据-From-Join"><a href="#获取数据-From-Join" class="headerlink" title="获取数据 (From, Join)"></a>获取数据 (<em>From, Join</em>)</h4><ul>
+<li><p>首先会通过 CROSS JOIN 求笛卡尔积，相当于得到虚拟表 vt1-1；</p>
+</li>
+<li><p>接着通过ON 条件进行筛选，虚拟表 vt1-1 作为输入，输出虚拟表 vt1-2；</p>
+</li>
+<li><p>添加外部行。我们使用的是左连接、右链接或者全连接，就会涉及到外部行，也就是在虚拟表 vt1-2 的基础上增加外部行，得到虚拟表 vt1-3</p>
+</li>
+</ul>
+<h4 id="过滤数据-Where"><a href="#过滤数据-Where" class="headerlink" title="过滤数据 (Where)"></a>过滤数据 (<em>Where</em>)</h4><p>经过上面的步骤，我们得到了一张最终的虚拟表vt1，在此表之上作用where过滤，通过筛选条件过滤掉不满足条件的数据，从而得到虚拟表vt2。</p>
+<h4 id="分组-Group-by"><a href="#分组-Group-by" class="headerlink" title="分组 (Group by)"></a>分组 (<em>Group by</em>)</h4><p>经过where过滤操作之后，得到vt2。接下来进行GROUP BY操作，得到中间的虚拟表vt3。</p>
+<h4 id="分组过滤-Having"><a href="#分组过滤-Having" class="headerlink" title="分组过滤 (Having)"></a>分组过滤 (<em>Having</em>)</h4><p>在虚拟表vt3的基础之上，使用having过滤掉不满足条件的聚合数据，得到vt4。</p>
+<h4 id="返回查询字段-Select"><a href="#返回查询字段-Select" class="headerlink" title="返回查询字段 (Select)"></a>返回查询字段 (<em>Select</em>)</h4><p>当我们完成了条件筛选部分之后，就可以筛选表中提取的字段，也就是进入到 SELECT 和 DISTINCT 阶段。首先在 SELECT 阶段会提取目标字段，然后在 DISTINCT 阶段过滤掉重复的行，分别得到中间的虚拟表 vt5-1 和 vt5-2。</p>
+<h4 id="排序与分页-Order-by-amp-Limit-Offset"><a href="#排序与分页-Order-by-amp-Limit-Offset" class="headerlink" title="排序与分页 (Order by &amp; Limit / Offset)"></a>排序与分页 (<em>Order by &amp; Limit / Offset</em>)</h4><p>当我们提取了想要的字段数据之后，就可以按照指定的字段进行排序，也就是 ORDER BY 阶段，得到虚拟表 vt6。最后在 vt6 的基础上，取出指定行的记录，也就是 LIMIT 阶段，得到最终的结果，对应的是虚拟表 vt7</p>
+<h3 id="详细执行步骤分析"><a href="#详细执行步骤分析" class="headerlink" title="详细执行步骤分析"></a>详细执行步骤分析</h3><h4 id="Step-1-获取数据-From-Join"><a href="#Step-1-获取数据-From-Join" class="headerlink" title="Step 1:获取数据 (From, Join)"></a>Step 1:获取数据 (<em>From, Join</em>)</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">FROM citizen</span><br><span class="line">JOIN city</span><br></pre></td></tr></table></figure>
+
+<p>该过程的第一步是执行From子句中的语句，然后执行Join子句。这些操作的结果是得到两个表的笛卡尔积。</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>city_id</th>
+<th>city_id</th>
+<th>city_name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>tom</td>
+<td>3</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>tom</td>
+<td>3</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>tom</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>jack</td>
+<td>2</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>jack</td>
+<td>2</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>jack</td>
+<td>2</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>robin</td>
+<td>1</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>robin</td>
+<td>1</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>robin</td>
+<td>1</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>jasper</td>
+<td>3</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>jasper</td>
+<td>3</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>jasper</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>kevin</td>
+<td>1</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>kevin</td>
+<td>1</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>kevin</td>
+<td>1</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>rachel</td>
+<td>2</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>rachel</td>
+<td>2</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>rachel</td>
+<td>2</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>trump</td>
+<td>3</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>trump</td>
+<td>3</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>trump</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>lilei</td>
+<td>1</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>lilei</td>
+<td>1</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>lilei</td>
+<td>1</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>hanmeiei</td>
+<td>1</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>hanmeiei</td>
+<td>1</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>hanmeiei</td>
+<td>1</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+</tbody></table>
+<p>在FROM和JOIN执行结束之后，会按照JOIN的ON条件，筛选所需要的行</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">ON citizen.city_id = city.city_id</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>city_id</th>
+<th>city_id</th>
+<th>city_name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>tom</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>jack</td>
+<td>2</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>robin</td>
+<td>1</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>jasper</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>kevin</td>
+<td>1</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>rachel</td>
+<td>2</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>trump</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>lilei</td>
+<td>1</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+<tr>
+<td>hanmeiei</td>
+<td>1</td>
+<td>1</td>
+<td>上海</td>
+</tr>
+</tbody></table>
+<h4 id="Step-2-过滤数据-Where"><a href="#Step-2-过滤数据-Where" class="headerlink" title="Step 2:过滤数据 (Where)"></a>Step 2:过滤数据 (<em>Where</em>)</h4><p>获得满足条件的行后，将传递给Where子句。这将使用条件表达式评估每一行。如果行的计算结果不为true，则会将其从集合中删除。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">WHERE city.city_name != '上海'</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>city_id</th>
+<th>city_id</th>
+<th>city_name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>tom</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>jack</td>
+<td>2</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>jasper</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+<tr>
+<td>rachel</td>
+<td>2</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>trump</td>
+<td>3</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+</tbody></table>
+<h4 id="Step-3-分组-Group-by"><a href="#Step-3-分组-Group-by" class="headerlink" title="Step 3:分组 (Group by)"></a>Step 3:分组 (<em>Group by</em>)</h4><p>下一步是执行Group by子句，它将具有相同值的行分为一组。此后，将按组对所有Select表达式进行评估，而不是按行进行评估。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">GROUP BY city.city_name</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>GROUP_CONCAT(citizen.<code>name</code>)</th>
+<th>city_id</th>
+<th>city_name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>jack,rachel</td>
+<td>2</td>
+<td>北京</td>
+</tr>
+<tr>
+<td>tom,jasper,trump</td>
+<td>3</td>
+<td>杭州</td>
+</tr>
+</tbody></table>
+<h4 id="Step-4-分组过滤-Having"><a href="#Step-4-分组过滤-Having" class="headerlink" title="Step 4:分组过滤 (Having)"></a>Step 4:分组过滤 (<em>Having</em>)</h4><p>对分组后的数据使用Having子句所包含的谓词进行过滤</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">HAVING COUNT(*) &gt;= 2</span><br></pre></td></tr></table></figure>
+
+<h4 id="Step-5-返回查询字段-Select"><a href="#Step-5-返回查询字段-Select" class="headerlink" title="Step 5:返回查询字段 (Select)"></a>Step 5:返回查询字段 (<em>Select</em>)</h4><p>在此步骤中，处理器将评估查询结果将要打印的内容，以及是否有一些函数要对数据运行，例如Distinct，Max，Sqrt，Date，Lower等等。本案例中，SELECT子句只会打印城市名称和其对应分组的count(*)值，并使用标识符“ City”作为city_name列的别名。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    city.city_name <span class="keyword">AS</span> <span class="string">"City"</span>,</span><br><span class="line">	<span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> <span class="string">"citizen_cnt"</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>city</th>
+<th>citizen_cnt</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>北京</td>
+<td>2</td>
+</tr>
+<tr>
+<td>杭州</td>
+<td>3</td>
+</tr>
+</tbody></table>
+<h4 id="Step-6-排序与分页-Order-by-amp-Limit-Offset"><a href="#Step-6-排序与分页-Order-by-amp-Limit-Offset" class="headerlink" title="Step 6:排序与分页 (Order by &amp; Limit / Offset)"></a>Step 6:排序与分页 (<em>Order by &amp; Limit / Offset</em>)</h4><p>查询的最后处理步骤涉及结果集的排序与输出大小。在我们的示例中，按照字母顺序升序排列，并输出两条数据结果。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">ORDER BY city.city_name ASC</span><br><span class="line">LIMIT 2</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>city</th>
+<th>citizen_cnt</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>北京</td>
+<td>2</td>
+</tr>
+<tr>
+<td>杭州</td>
+<td>3</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要剖析了SQL语句的执行顺序和底层原理，基本的SQL查询会分为六大步骤。本文结合具体事例，给出了每一步骤的详细结果，这样会对其执行的底层原理有更加深刻的认识。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/08/29/项目实践-基于Flink的用户行为日志分析系统/" target="_blank">项目实践|基于Flink的用户行为日志分析系统</a></li><li><a href="https://jiamaoxiang.top/2020/08/20/元数据管理-Hive-Hooks和Metastore监听器介绍/" target="_blank">元数据管理|Hive Hooks和Metastore监听器介绍</a></li><li><a href="https://jiamaoxiang.top/2020/08/18/两阶段提交-Flink端到端的EXACTLY-ONCE实现细节/" target="_blank">两阶段提交|Flink端到端的EXACTLY ONCE实现细节</a></li><li><a href="https://jiamaoxiang.top/2020/08/12/实时数仓-基于Flink1-11的SQL构建实时数仓探索实践/" target="_blank">实时数仓|基于Flink1.11的SQL构建实时数仓探索实践</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/08/19/SQL查询的执行顺序分析/">https://jiamaoxiang.top/2020/08/19/SQL查询的执行顺序分析/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/08/19/SQL查询的执行顺序分析/" data-id="ckes1uifx002vp47q76t7syi0" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACwElEQVR42u3aQW7cQAwEQP//0w6Qk5Fg5W5yxpsApdPClqUpGdBwm/z4iI/P38fXz19/kpz56vy//za58uEDDw8Pb7T0V8fzjRPMM7K9Qr5mPDw8vNu85BWfvL6fF9Se/7yGaPPAw8PDeysv3zDyhzIrtfHw8PD+L14SH+Qv9GQDwMPDw/s3eUkYMYtfNyFvHnAcyFrw8PDwYt6sAfbez9f7e3h4eHijrvqsJZaUzrNhgnqdeHh4eBd4bZmbFL7JdtKW2u1IwbCKx8PDwwt4iT4PAtpW2eyaz+us+2Z4eHh4JS8pgvOWWPsg2kI8L9bx8PDwbvPacjZ/EHlz62xkXIQReHh4eCWvLWGTF3cbyM62nDqMwMPDwzvKmw0NnPrWn28nbYmPh4eHd4OXA5JydlZMt3esNyo8PDy8o7y2KdW2svKhgbY0j6INPDw8vAu8lrTqsC3wsxExPDw8vBu8dgSqbZXNhqtmZXSRo+Dh4eGtecnNTrX8k7ZZEuZGTTI8PDy8N/ESdvvbdrRrOGSAh4eHd4E3e+nvkXmo0V6zKLLx8PDwRrxTAcRmuOpUgBvNRODh4eGtecmi28ZVcePRWEByzSKSwMPDw1vzZkNU+dJnQwY1Kf/P4OHh4ZW8PEjNj6JBtW6JfbNyPDw8vB/ntQMBt4ex6nEEPDw8vAu858I0b9LnZW5yZh6OFN8b8PDw8A7x2lBgVlK3ZXT+WPHw8PB+nte2o5KNYVM010ucwfDw8PAWvM/y2IS5OSYPbb8p7vHw8PAu8O5tEu0wQc6bDTfg4eHhneXlzap9sZtfebNh4OHh4f0Mr13WJkTIA4u2fH+5MeDh4eG9lTcbimpHEPICOkpc8PDw8N7EmwW1m4e1eXB4eHh4t3mzMGJ2+3wYK98qXq4TDw8P7wJv0wDLy+tNWdxGvcdGB/Dw8PD+/MkvrKnQdbLdm70AAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/SQL/">SQL</a></div><div class="post-nav"><a class="pre" href="/2020/08/20/元数据管理-Hive-Hooks和Metastore监听器介绍/">元数据管理|Hive Hooks和Metastore监听器介绍</a><a class="next" href="/2020/08/18/两阶段提交-Flink端到端的EXACTLY-ONCE实现细节/">两阶段提交|Flink端到端的EXACTLY ONCE实现细节</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据准备"><span class="toc-number">1.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询执行顺序"><span class="toc-number">2.</span> <span class="toc-text">查询执行顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查询语句"><span class="toc-number">2.1.</span> <span class="toc-text">查询语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行步骤"><span class="toc-number">2.2.</span> <span class="toc-text">执行步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行的底层原理"><span class="toc-number">2.3.</span> <span class="toc-text">执行的底层原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#获取数据-From-Join"><span class="toc-number">2.3.1.</span> <span class="toc-text">获取数据 (From, Join)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#过滤数据-Where"><span class="toc-number">2.3.2.</span> <span class="toc-text">过滤数据 (Where)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分组-Group-by"><span class="toc-number">2.3.3.</span> <span class="toc-text">分组 (Group by)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分组过滤-Having"><span class="toc-number">2.3.4.</span> <span class="toc-text">分组过滤 (Having)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#返回查询字段-Select"><span class="toc-number">2.3.5.</span> <span class="toc-text">返回查询字段 (Select)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#排序与分页-Order-by-amp-Limit-Offset"><span class="toc-number">2.3.6.</span> <span class="toc-text">排序与分页 (Order by &amp; Limit / Offset)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#详细执行步骤分析"><span class="toc-number">2.4.</span> <span class="toc-text">详细执行步骤分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Step-1-获取数据-From-Join"><span class="toc-number">2.4.1.</span> <span class="toc-text">Step 1:获取数据 (From, Join)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Step-2-过滤数据-Where"><span class="toc-number">2.4.2.</span> <span class="toc-text">Step 2:过滤数据 (Where)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Step-3-分组-Group-by"><span class="toc-number">2.4.3.</span> <span class="toc-text">Step 3:分组 (Group by)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Step-4-分组过滤-Having"><span class="toc-number">2.4.4.</span> <span class="toc-text">Step 4:分组过滤 (Having)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Step-5-返回查询字段-Select"><span class="toc-number">2.4.5.</span> <span class="toc-text">Step 5:返回查询字段 (Select)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Step-6-排序与分页-Order-by-amp-Limit-Offset"><span class="toc-number">2.4.6.</span> <span class="toc-text">Step 6:排序与分页 (Order by &amp; Limit / Offset)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
