@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>面试|Kafka常见面试问题总结 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">面试|Kafka常见面试问题总结</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">面试|Kafka常见面试问题总结</h1><div class="post-meta">Sep 8, 2020<span> | </span><span class="category"><a href="/categories/Kafka/">Kafka</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 4.4k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 15</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>现如今，Kafka已不再是一个单纯的消息队列系统。Kafka是一个分布式的流处理平台，被越来越多的公司使用，Kafka可以被用于高性能的数据管道，流处理分析，数据集成等场景。本文分享总结了几个Kafka常见的面试问题，希望对你有所帮助。主要包括以下内容：</p>
+<ul>
+<li><p>Kafka是如何保障数据不丢失的？</p>
+</li>
+<li><p>如何解决Kafka数据丢失问题？</p>
+</li>
+<li><p>Kafka可以保障永久不丢失数据吗？</p>
+</li>
+<li><p>如何保障Kafka中的消息是有序的？</p>
+</li>
+<li><p>如何确定Kafka主题的分区数量？</p>
+</li>
+<li><p>如何调整生产环境中Kafka主题的分区数量？</p>
+</li>
+<li><p>如何重平衡Kafka集群？</p>
+</li>
+<li><p>如何查看消费者组是否存在滞后消费？</p>
+</li>
+</ul>
+<h2 id="Q1：Kafka是如何保障数据不丢失的？"><a href="#Q1：Kafka是如何保障数据不丢失的？" class="headerlink" title="Q1：Kafka是如何保障数据不丢失的？"></a>Q1：Kafka是如何保障数据不丢失的？</h2><p>该问题已经成为了Kafka面试的惯例，如同Java的<strong>HashMap</strong>，属于高频出现的面试问题。那么，我们该怎么理解这个问题呢？问题是<strong>Kafka如何保障数据不丢失</strong>，即<strong>Kafka的Broker提供了什么机制保证数据不丢失的。</strong></p>
+<p>其实对于Kafka的Broker而言，Kafka 的<strong>复制机制</strong>和<strong>分区的多副本</strong>架构是Kafka 可靠性保证的核心。把消息写入多个副本可以使Kafka 在发生崩溃时仍能保证消息的持久性。</p>
+<p>搞清楚了问题的核心，再来看一下该怎么回答这个问题：主要包括三个方面</p>
+<blockquote>
+<p>1.Topic 副本因子个数：replication.factor &gt;= 3</p>
+<p>2.同步副本列表(ISR)：min.insync.replicas = 2</p>
+<p>3.禁用unclean选举： unclean.leader.election.enable=false</p>
+</blockquote>
+<p>下面将会逐步分析上面的三个配置：</p>
+<ul>
+<li><strong>副本因子</strong></li>
+</ul>
+<p>Kafka的topic是可以分区的，并且可以为分区配置多个副本，该配置可以通过<code>replication.factor</code>参数实现。Kafka中的分区副本包括两种类型：领导者副本（Leader Replica）和追随者副本（Follower Replica)，每个分区在创建时都要选举一个副本作为领导者副本，其余的副本自动变为追随者副本。在 Kafka 中，追随者副本是不对外提供服务的，也就是说，任何一个追随者副本都不能响应消费者和生产者的读写请求。所有的请求都必须由领导者副本来处理。换句话说，所有的读写请求都必须发往领导者副本所在的 Broker，由该 Broker 负责处理。追随者副本不处理客户端请求，它唯一的任务就是从领导者副本<strong>异步拉取</strong>消息，并写入到自己的提交日志中，从而实现与领导者副本的同步。</p>
+<p>一般来说，副本设为3可以满足大部分的使用场景，也有可能是5个副本(比如银行)。如果副本因子为N，那么在N-1个broker 失效的情况下，仍然能够从主题读取数据或向主题写入数据。所以，更高的副本因子会带来更高的可用性、可靠性和更少的故障。另一方面，副本因子N需要至少N个broker ，而且会有N个数据副本，也就是说它们会占用N倍的磁盘空间。实际生产环境中一般会在可用性和存储硬件之间作出权衡。</p>
+<p>除此之外，副本的分布同样也会影响可用性。默认情况下，Kafka会确保分区的每个副本分布在不同的Broker上，但是如果这些Broker在同一个机架上，一旦机架的交换机发生故障，分区就会不可用。所以建议把Broker分布在不同的机架上，可以使用<strong>broker.rack</strong>参数配置Broker所在机架的名称。</p>
+<ul>
+<li><strong>同步副本列表</strong></li>
+</ul>
+<p>In-sync replica(ISR)称之为同步副本，ISR中的副本都是与Leader进行同步的副本，所以不在该列表的follower会被认为与Leader是不同步的。那么，ISR中存在是什么副本呢？首先可以明确的是：Leader副本总是存在于ISR中。而follower副本是否在ISR中，取决于该follower副本是否与Leader副本保持了“同步”。</p>
+<p>Kafka的broker端有一个参数<strong><code>replica.lag.time.max.ms</code></strong>, 该参数表示follower副本滞后与Leader副本的最长时间间隔，默认是10秒。这就意味着，只要follower副本落后于leader副本的时间间隔不超过10秒，就可以认为该follower副本与leader副本是同步的，所以哪怕当前follower副本落后于Leader副本几条消息，只要在10秒之内赶上Leader副本，就不会被踢出出局。</p>
+<p>可以看出ISR是一个动态的，所以即便是为分区配置了3个副本，还是会出现同步副本列表中只有一个副本的情况(其他副本由于不能够与leader及时保持同步，被移出ISR列表)。如果这个同步副本变为不可用，我们必须在<strong>可用性</strong>和<strong>一致性</strong>之间作出选择(CAP理论)。</p>
+<p>根据Kafka 对可靠性保证的定义，消息只有在被写入到所有同步副本之后才被认为是已提交的。但如果这里的“所有副本”只包含一个同步副本，那么在这个副本变为不可用时，数据就会丢失。如果要确保已提交的数据被写入不止一个副本，就需要把最小同步副本数量设置为大一点的值。对于一个包含3 个副本的主题分区，如果<strong>min.insync.replicas=2</strong> ，那么至少要存在两个同步副本才能向分区写入数据。</p>
+<p>如果进行了上面的配置，此时必须要保证ISR中至少存在两个副本，如果ISR中的副本个数小于2，那么Broker就会停止接受生产者的请求。尝试发送数据的生产者会收到<strong>NotEnoughReplicasException</strong>异常，消费者仍然可以继续读取已有的数据。</p>
+<ul>
+<li><strong>禁用unclean选举</strong></li>
+</ul>
+<p>选择一个同步副本列表中的分区作为leader 分区的过程称为<strong>clean leader election</strong>。注意，这里要与在非同步副本中选一个分区作为leader分区的过程区分开，在非同步副本中选一个分区作为leader的过程称之为<strong>unclean leader election</strong>。由于ISR是动态调整的，所以会存在ISR列表为空的情况，通常来说，非同步副本落后 Leader 太多，因此，如果选择这些副本作为新 Leader，就可能出现数据的丢失。毕竟，这些副本中保存的消息远远落后于老 Leader 中的消息。在 Kafka 中，选举这种副本的过程可以通过Broker 端参数 *<em>unclean.leader.election.enable *</em>控制是否允许 Unclean 领导者选举。开启 Unclean 领导者选举可能会造成数据丢失，但好处是，它使得分区 Leader 副本一直存在，不至于停止对外提供服务，因此提升了高可用性。反之，禁止 Unclean Leader 选举的好处在于维护了数据的一致性，避免了消息丢失，但牺牲了高可用性。分布式系统的CAP理论说的就是这种情况。</p>
+<p>不幸的是，<strong>unclean leader election</strong>的选举过程仍可能会造成数据的不一致，因为同步副本并不是<strong>完全</strong>同步的。由于复制是<strong>异步</strong>完成的，因此无法保证follower可以获取最新消息。比如Leader分区的最后一条消息的offset是100，此时副本的offset可能不是100，这受到两个参数的影响：</p>
+<blockquote>
+<ul>
+<li><p><strong>replica.lag.time.max.ms</strong>：同步副本滞后与leader副本的时间</p>
+</li>
+<li><p><strong>zookeeper.session.timeout.ms</strong>：与zookeeper会话超时时间</p>
+</li>
+</ul>
+</blockquote>
+<p>简而言之，如果我们允许不同步的副本成为leader，那么就要承担丢失数据和出现数据不一致的风险。如果不允许它们成为leader，那么就要接受较低的可用性，因为我们必须等待原先的首领恢复到可用状态。</p>
+<p>关于unclean选举，不同的场景有不同的配置方式。对<strong>数据质量和数据一致性</strong>要求较高的系统会禁用这种unclean的leader选举(比如银行)。如果在<strong>可用性</strong>要求较高的系统里，比如实时点击流分析系统， 一般不会禁用unclean的leader选举。</p>
+<h2 id="Q2：如何解决Kafka数据丢失问题？"><a href="#Q2：如何解决Kafka数据丢失问题？" class="headerlink" title="Q2：如何解决Kafka数据丢失问题？"></a>Q2：如何解决Kafka数据丢失问题？</h2><p>你可能会问：这个问题跟Q1有什么区别呢？其实一般在面试问题中可以理解成一个问题。之所以在这里做出区分，是因为两者的解决方式不一样。<strong>Q1问题是从Kafka的Broker侧来看待数据丢失的问题，而Q2是从Kafka的生产者与消费者的角度来看待数据丢失的问题</strong>。</p>
+<p>先来看一下如何回答这个问题：主要包括两个方面：</p>
+<blockquote>
+<ul>
+<li><p><strong>Producer</strong></p>
+<ul>
+<li><p>retries=Long.MAX_VALUE</p>
+<p>设置 retries 为一个较大的值。这里的 retries 同样是 Producer 的参数，对应前面提到的 Producer 自动重试。当出现网络的瞬时抖动时，消息发送可能会失败，此时配置了 retries &gt; 0 的 Producer 能够自动重试消息发送，避免消息丢失。</p>
+</li>
+<li><p>acks=all</p>
+<p>设置 acks = all。acks 是 Producer 的一个参数，代表了你对“已提交”消息的定义。如果设置成 all，则表明所有副本 Broker 都要接收到消息，该消息才算是“已提交”。这是最高等级的“已提交”定义。</p>
+</li>
+<li><p>max.in.flight.requests.per.connections=1</p>
+<p>该参数指定了生产者在收到服务器晌应之前可以发送多少个消息。它的值越高，就会占用越多的内存，不过也会提升吞吐量。把它设为1 可以保证消息是按照发送的顺序写入服务器的，即使发生了重试。</p>
+</li>
+<li><p>Producer要使用带有回调通知的API，也就是说不要使用 producer.send(msg)，而要使用 producer.send(msg, callback)。</p>
+</li>
+<li><p>其他错误处理</p>
+<p>使用生产者内置的重试机制，可以在不造成消息丢失的情况下轻松地处理大部分错误，不过<br>仍然需要处理其他类型的错误，例如消息大小错误、序列化错误等等。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Consumer</strong></p>
+<ul>
+<li><p>禁用自动提交：enable.auto.commit=false</p>
+</li>
+<li><p>消费者处理完消息之后再提交offset</p>
+</li>
+<li><p>配置auto.offset.reset</p>
+<p>这个参数指定了在没有偏移量可提交时(比如消费者第l次启动时)或者请求的偏移量在broker上不存在时(比如数据被删了)，消费者会做些什么。</p>
+<p>这个参数有两种配置。一种是<strong>earliest</strong>：消费者会从分区的开始位置读取数据，不管偏移量是否有效，这样会导致消费者读取大量的重复数据，但可以保证最少的数据丢失。一种是<strong>latest(默认)</strong>，如果选择了这种配置， 消费者会从分区的末尾开始读取数据，这样可以减少重复处理消息，但很有可能会错过一些消息。</p>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h2 id="Q3：Kafka可以保障永久不丢失数据吗？"><a href="#Q3：Kafka可以保障永久不丢失数据吗？" class="headerlink" title="Q3：Kafka可以保障永久不丢失数据吗？"></a>Q3：Kafka可以保障永久不丢失数据吗？</h2><p>上面分析了一些保障数据不丢失的措施，在一定程度上可以避免数据的丢失。但是请注意：<strong>Kafka 只对“已提交”的消息（committed message）做有限度的持久化保证</strong>。所以说，Kafka不能够完全保证数据不丢失，需要做出一些权衡。</p>
+<p>首先，要理解什么是<strong>已提交的消息</strong>，当 Kafka 的若干个 Broker 成功地接收到一条消息并写入到日志文件后，它们会告诉生产者程序这条消息已成功提交。此时，这条消息在 Kafka 看来就正式变为<strong>已提交</strong>消息了。所以说无论是ack=all，还是ack=1,不论哪种情况，Kafka 只对已提交的消息做持久化保证这件事情是不变的。</p>
+<p>其次，要理解<strong>有限度的持久化保证</strong>，也就是说 Kafka 不可能保证在任何情况下都做到不丢失消息。必须保证Kafka的Broker是可用的，换句话说，假如消息保存在 N 个 Kafka Broker 上，那么这个前提条件就是这 N 个 Broker 中至少有 1 个存活。只要这个条件成立，Kafka 就能保证你的这条消息永远不会丢失。</p>
+<p>总结一下，Kafka 是能做到不丢失消息的，<strong>只不过这些消息必须是已提交的消息</strong>，而且还要满足一定的条件。</p>
+<h2 id="Q4：如何保障Kafka中的消息是有序的？"><a href="#Q4：如何保障Kafka中的消息是有序的？" class="headerlink" title="Q4：如何保障Kafka中的消息是有序的？"></a>Q4：如何保障Kafka中的消息是有序的？</h2><p>首先需要明确的是：<strong>Kafka的主题是分区有序的</strong>，如果一个主题有多个分区，那么Kafka会按照key将其发送到对应的分区中，所以，对于给定的key，与其对应的record在分区内是有序的。</p>
+<p>Kafka可以保证同一个分区里的消息是有序的，即生产者按照一定的顺序发送消息，Broker就会按照这个顺序将他们写入对应的分区中，同理，消费者也会按照这个顺序来消费他们。</p>
+<p>在一些场景下，消息的顺序是非常重要的。比如，<strong>先存钱再取钱</strong>与<strong>先取钱再存钱</strong>是截然不同的两种结果。</p>
+<p>上面的问题中提到一个参数<strong>max.in.flight.requests.per.connections=1</strong>,该参数的作用是在重试次数大于等于1时，保证数据写入的顺序。如果该参数不为1，那么当第一个批次写入失败时，第二个批次写入成功，Broker会重试写入第一个批次，如果此时第一个批次重试写入成功，那么这两个批次消息的顺序就反过来了。</p>
+<p>一般来说，如果对消息的顺序有要求，那么在为了保障数据不丢失，需要先设置发送重试次数retries&gt;0,同时需要把<strong>max.in.flight.requests.per.connections</strong>参数设为1，这样在生产者尝试发送第一批消息时，就不会有其他的消息发送给broker，虽然会影响吞吐量，但是可以保证消息的顺序。</p>
+<p>除此之外，还可以使用单分区的Topic，但是会严重影响吞吐量。</p>
+<h2 id="Q5：如何确定合适的Kafka主题的分区数量？"><a href="#Q5：如何确定合适的Kafka主题的分区数量？" class="headerlink" title="Q5：如何确定合适的Kafka主题的分区数量？"></a>Q5：如何确定合适的Kafka主题的分区数量？</h2><p>选择合适的分区数量可以达到高度并行读写和负载均衡的目的，在分区上达到均衡负载是实现吞吐量的关键。需要根据每个分区的生产者和消费者的期望吞吐量进行估计。</p>
+<p>举个栗子：假设期望读取数据的速率(吞吐量)为<strong>1GB/Sec</strong>，而一个消费者的读取速率为<strong>50MB/Sec</strong>，此时至少需要20个分区以及20个消费者(一个消费者组)。同理，如果期望生产数据的速率为<strong>1GB/Sec</strong>，而每个生产者的生产速率为<strong>100MB/Sec</strong>，此时就需要有10个分区。在这种情况下，如果设置20个分区，既可以保障<strong>1GB/Sec</strong>的生产速率，也可以保障消费者的吞吐量。通常需要将分区的数量调整为消费者或者生产者的数量，只有这样才可以同时实现生产者和消费者的吞吐量。</p>
+<p>一个简单的计算公式为：<strong>分区数 = max(生产者数量，消费者数量)</strong></p>
+<ul>
+<li>生产者数量=整体生产吞吐量/每个生产者对单个分区的最大生产吞吐量</li>
+<li>消费者数量=整体消费吞吐量/每个消费者从单个分区消费的最大吞吐量</li>
+</ul>
+<h2 id="Q6：如何调整生产环境中Kafka主题的分区数量？"><a href="#Q6：如何调整生产环境中Kafka主题的分区数量？" class="headerlink" title="Q6：如何调整生产环境中Kafka主题的分区数量？"></a>Q6：如何调整生产环境中Kafka主题的分区数量？</h2><p>需要注意的是：当我们增加主题的分区数量时，会违背<strong>同一个key进行同一个分区</strong>的事实。我们可以创建一个新的主题，使得该主题有更多的分区数，然后暂停生产者，将旧的主题中的数据复制到新的主题中，然后将消费者和生产者切换到新的主题，操作起来会非常棘手。</p>
+<h2 id="Q7-如何重平衡Kafka集群？"><a href="#Q7-如何重平衡Kafka集群？" class="headerlink" title="Q7:如何重平衡Kafka集群？"></a>Q7:如何重平衡Kafka集群？</h2><p>在下面情况发生时，需要重平衡集群：</p>
+<ul>
+<li>主题分区在整个集群里的不均衡分布造成了集群负载的不均衡。</li>
+<li>broker离线造成分区不同步。</li>
+<li>新加入的broker 需要从集群里获得负载。</li>
+</ul>
+<p>使用<strong>kafka-reassign-partitions.sh</strong>命令进行重平衡</p>
+<h2 id="Q8-如何查看消费者组是否存在滞后消费？"><a href="#Q8-如何查看消费者组是否存在滞后消费？" class="headerlink" title="Q8:如何查看消费者组是否存在滞后消费？"></a>Q8:如何查看消费者组是否存在滞后消费？</h2><p>我们可以使用<strong>kafka-consumer-groups.sh</strong>命令进行查看，比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ bin/kafka-consumer-groups.sh --bootstrap-server cdh02:9092 --describe --group my-group</span><br><span class="line"><span class="comment">## 会显示下面的一些指标信息</span></span><br><span class="line">TOPIC PARTITION CURRENT-OFFSET LOG-END-OFFSET   LAG          CONSUMER-ID HOST CLIENT-ID</span><br><span class="line">主题   分区       当前offset      LEO           滞后消息数       消费者id     主机   客户端id</span><br></pre></td></tr></table></figure>
+
+<p>一般情况下，如果运行良好，<strong>CURRENT-OFFSET</strong>的值会与*<em>LOG-END-OFFSET *</em>的值非常接近。通过这个命令可以查看哪个分区的消费出现了滞后。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要分享了8个常见的Kafka面试题，对于每个题目都给出了相应的答案。对照这些问题，相信会对Kafka会有更深刻的认识。</p>
+<blockquote>
+<p>如果觉得本文对你有所帮助，请分享、点赞、转发。</p>
+</blockquote>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/09/07/Hive-SQL使用过程中的奇怪现象/" target="_blank">Hive SQL使用过程中的奇怪现象</a></li><li><a href="https://jiamaoxiang.top/2020/09/07/使用Hive-SQL的窗口函数进行商务数据分析/" target="_blank">使用Hive SQL的窗口函数进行商务数据分析</a></li><li><a href="https://jiamaoxiang.top/2020/08/29/项目实践-基于Flink的用户行为日志分析系统/" target="_blank">项目实践|基于Flink的用户行为日志分析系统</a></li><li><a href="https://jiamaoxiang.top/2020/08/20/元数据管理-Hive-Hooks和Metastore监听器介绍/" target="_blank">元数据管理|Hive Hooks和Metastore监听器介绍</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/09/08/面试-Kafka常见面试问题总结/">https://jiamaoxiang.top/2020/09/08/面试-Kafka常见面试问题总结/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/09/08/面试-Kafka常见面试问题总结/" data-id="ckewyrjd700437k7qrksinuo2" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACwklEQVR42u3a0W7bMAwF0Pz/T3fAnopttu+lpKQDjp+CxlF0VMBkSL5e8fX1+/r++vtf7j91f//f717dn3zj8MLDw8Mbbf3qul/6fnPJRvNNJ9/yj9Xw8PDwjvGS5RJAy8uPLz9uPDw8vJ/DS5LpNoG+DzBtOMHDw8P7abwknZ09xFde4+Hh4X2KN0uUk0d5VDIIwsPxWgseHh5et3JdQv3s6+P9PTw8PLxRV7298pLEm/aDh4eHd+xRt5KMJsXWJEHPy7V5sQMPDw/vHK99TOdDV7NRgPyzRTEXDw8PbxMvb9XnKe/6MMH9YRX/Nzw8PLwDvDwVbssNyYby5HvDDwA8PDy8rby2THC/9N4BgrZscTkZgYeHh7eJt9Kwb1PwlZXbo38oRuDh4eFt4uUtqzZpXtlufpTDGIWHh4d3gJckwW2zalaqyEMLHh4e3jt5J2aW1kNCW2LGw8PDO8fLg8GJIYNdM2IP6+Dh4eFt5bWLtil1sqFZEy4KM3h4eHiHeW1gWBnDShh5av4wOoCHh4e3ldfemm9iNrzVFouLw8LDw8PbxJsNTu196rYhp2in4eHh4X2I1xYRkiCRbzQveVz+YsDDw8M7wMvb83kgSRr/szGCPLHGw8PDO8dLKhazg8jLrPkAQRFg8PDw8A7w8lQ4SWfbZlj+0F8KYHh4eHgHeCut+ln59XQjbTgRhoeHhxfzVsoNbaiYpdcJ7GEmAg8PD+8wb1ecyQNGG6KKwIaHh4e3lfdVXq9NV9sYS0oSrzzC4OHh4S3wZpGkbZLNSh73jJXvxcPDw1vntc34vNDQDlTNxgseDhQPDw/vGG+lLNuOBbTHN0vQ8fDw8P4X3srQwArpcld4eHh4H+XNiq3r6+QlYDw8PLx38vJt5WMEeXFh5VPbai14eHh43U6GDbAkBW+PbxYkjvT38PDw8P685xcbGwMnLBYC8wAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/Kafka/">Kafka</a></div><div class="post-nav"><a class="next" href="/2020/09/07/Hive-SQL使用过程中的奇怪现象/">Hive SQL使用过程中的奇怪现象</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Q1：Kafka是如何保障数据不丢失的？"><span class="toc-number">1.</span> <span class="toc-text">Q1：Kafka是如何保障数据不丢失的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q2：如何解决Kafka数据丢失问题？"><span class="toc-number">2.</span> <span class="toc-text">Q2：如何解决Kafka数据丢失问题？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q3：Kafka可以保障永久不丢失数据吗？"><span class="toc-number">3.</span> <span class="toc-text">Q3：Kafka可以保障永久不丢失数据吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q4：如何保障Kafka中的消息是有序的？"><span class="toc-number">4.</span> <span class="toc-text">Q4：如何保障Kafka中的消息是有序的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q5：如何确定合适的Kafka主题的分区数量？"><span class="toc-number">5.</span> <span class="toc-text">Q5：如何确定合适的Kafka主题的分区数量？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q6：如何调整生产环境中Kafka主题的分区数量？"><span class="toc-number">6.</span> <span class="toc-text">Q6：如何调整生产环境中Kafka主题的分区数量？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q7-如何重平衡Kafka集群？"><span class="toc-number">7.</span> <span class="toc-text">Q7:如何重平衡Kafka集群？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q8-如何查看消费者组是否存在滞后消费？"><span class="toc-number">8.</span> <span class="toc-text">Q8:如何查看消费者组是否存在滞后消费？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
