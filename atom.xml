@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-09-10T15:24:23.146Z</updated>
+  <updated>2020-09-13T13:08:32.299Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>篇一|ClickHouse快速入门</title>
+    <link href="https://jiamaoxiang.top/2020/09/13/%E7%AF%87%E4%B8%80-ClickHouse%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/"/>
+    <id>https://jiamaoxiang.top/2020/09/13/篇一-ClickHouse快速入门/</id>
+    <published>2020-09-13T09:35:35.000Z</published>
+    <updated>2020-09-13T13:08:32.299Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="ClickHouse" scheme="https://jiamaoxiang.top/categories/ClickHouse/"/>
+    
+    
+      <category term="ClickHouse" scheme="https://jiamaoxiang.top/tags/ClickHouse/"/>
+    
+  </entry>
   
   <entry>
     <title>面试|Kafka常见面试问题总结</title>
@@ -478,32 +504,6 @@
     <id>https://jiamaoxiang.top/2020/07/11/数仓-大数据时代-维度建模过时了吗/</id>
     <published>2020-07-11T06:21:54.000Z</published>
     <updated>2020-07-12T14:43:03.751Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="数仓" scheme="https://jiamaoxiang.top/categories/%E6%95%B0%E4%BB%93/"/>
-    
-    
-      <category term="数仓" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E4%BB%93/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>使SQL更易于阅读的几个小技巧</title>
-    <link href="https://jiamaoxiang.top/2020/07/09/%E4%BD%BFSQL%E6%9B%B4%E6%98%93%E4%BA%8E%E9%98%85%E8%AF%BB%E7%9A%84%E5%87%A0%E4%B8%AA%E5%B0%8F%E6%8A%80%E5%B7%A7/"/>
-    <id>https://jiamaoxiang.top/2020/07/09/使SQL更易于阅读的几个小技巧/</id>
-    <published>2020-07-09T01:51:41.000Z</published>
-    <updated>2020-07-09T06:10:42.813Z</updated>
     
     <summary type="html">
     
