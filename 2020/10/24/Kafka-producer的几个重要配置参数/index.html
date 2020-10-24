@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>Kafka producer的几个重要配置参数 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Kafka producer的几个重要配置参数</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Kafka producer的几个重要配置参数</h1><div class="post-meta">Oct 24, 2020<span> | </span><span class="category"><a href="/categories/Kafka/">Kafka</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 3k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 10</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><p>Kafka在弹性、容错性以及高吞吐量方面有着很大的优势。想要达到生产环境最优，发挥这些特性，需要我们进行一系列的配置。Kafka提供了非常多的配置属性，对于初学者而言，很容易陷入困惑。其实，多数的配置已经满足了大部分的使用场景，本文分享总结了几个比较重要的配置参数，主要是针对producer端的配置，希望对你有所帮助。本文所讨论的配置文件包括：</p>
+<ul>
+<li><p>acks</p>
+</li>
+<li><p>min.insync.replicas</p>
+</li>
+<li><p>replica.lag.time.max.ms</p>
+</li>
+<li><p>retries</p>
+</li>
+<li><p>enable.idempotence</p>
+</li>
+<li><p>max.in.flight.requests.per.connection</p>
+</li>
+<li><p>buffer.memory</p>
+</li>
+<li><p>max.block.ms</p>
+</li>
+<li><p>linger.ms</p>
+</li>
+<li><p>batch.size</p>
+</li>
+<li><p>compression.type</p>
+<h2 id="acks"><a href="#acks" class="headerlink" title="acks"></a>acks</h2><p>cks参数指定了必须要有多少个分区副本收到消息，生产者才认为该消息是写入成功的，这个参数对于消息是否丢失起着重要作用，该参数的配置具体如下：</p>
+<ul>
+<li><p>acks=0，表示生产者在成功写入消息之前不会等待任何来自服务器的响应.  换句话说，一旦出现了问题导致服务器没有收到消息，那么生产者就无从得知，消息也就丢失了. 改配置由于不需要等到服务器的响应，所以可以以网络支持的最大速度发送消息，从而达到很高的吞吐量。</p>
+</li>
+<li><p>acks=1，表示只要集群的leader分区副本接收到了消息，就会向生产者发送一个成功响应的ack，此时生产者接收到ack之后就可以认为该消息是写入成功的. 一旦消息无法写入leader分区副本(比如网络原因、leader节点崩溃),生产者会收到一个错误响应，当生产者接收到该错误响应之后，为了避免数据丢失，会重新发送数据.这种方式的吞吐量取决于使用的是异步发送还是同步发送.</p>
+<blockquote>
+<p>尖叫提示：如果生产者收到了错误响应，即便是重新发消息，还是会有可能出现丢数据的现象. 比如，如果一个没有收到消息的节点成为了新的Leader，消息就会丢失.</p>
+</blockquote>
+</li>
+<li><p>acks =all,表示只有所有参与复制的节点(ISR列表的副本)全部收到消息时，生产者才会接收到来自服务器的响应. 这种模式是最高级别的，也是最安全的，可以确保不止一个Broker接收到了消息. 该模式的延迟会很高.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="min-insync-replicas"><a href="#min-insync-replicas" class="headerlink" title="min.insync.replicas"></a>min.insync.replicas</h2><p>上面提到，当acks=all时，需要所有的副本都同步了才会发送成功响应到生产者. 其实这里面存在一个问题：如果Leader副本是唯一的同步副本时会发生什么呢？此时相当于acks=1.所以是不安全的.</p>
+<p>Kafka的Broker端提供了一个参数<strong><code>min.insync.replicas</code></strong>,该参数控制的是消息至少被写入到多少个副本才算是”真正写入”,该值默认值为1，生产环境设定为一个大于1的值可以提升消息的持久性. 因为如果同步副本的数量低于该配置值，则生产者会收到错误响应，从而确保消息不丢失.</p>
+<h2 id="replica-lag-time-max-ms"><a href="#replica-lag-time-max-ms" class="headerlink" title="replica.lag.time.max.ms"></a>replica.lag.time.max.ms</h2><p>In-sync replica(ISR)称之为同步副本，ISR中的副本都是与Leader进行同步的副本，所以不在该列表的follower会被认为与Leader是不同步的. 那么，ISR中存在是什么副本呢？首先可以明确的是：Leader副本总是存在于ISR中. 而follower副本是否在ISR中，取决于该follower副本是否与Leader副本保持了“同步”.</p>
+<blockquote>
+<p>尖叫提示：对于”follower副本是否与Leader副本保持了同步”的理解如下：</p>
+<p>(1)上面所说的同步不是指完全的同步，即并不是说一旦follower副本同步滞后与Leader副本，就会被踢出ISR列表.</p>
+<p>(2)Kafka的broker端有一个参数<strong><code>replica.lag.time.max.ms</code></strong>, 该参数表示follower副本滞后与Leader副本的最长时间间隔，默认是10秒.  这就意味着，只要follower副本落后于leader副本的时间间隔不超过10秒，就可以认为该follower副本与leader副本是同步的，所以哪怕当前follower副本落后于Leader副本几条消息，只要在10秒之内赶上Leader副本，就不会被踢出出局.</p>
+<p>（3）如果follower副本被踢出ISR列表，等到该副本追上了Leader副本的进度，该副本会被再次加入到ISR列表中，所以ISR是一个动态列表，并不是静态不变的。</p>
+</blockquote>
+<h2 id="retries"><a href="#retries" class="headerlink" title="retries"></a>retries</h2><p>生产者从服务器收到的错误有可能是临时性的错误（比如分区找不到首领）。在这种情况下， retries参数的值决定了生产者可以重发消息的次数，如果达到这个次数，生产者会放弃重试并返回错误。默认情况下，生产者会在每次重试之间等待100ms ，可以通过retry.backoff.ms 参数来配置时间间隔。</p>
+<p>比如，设置了acks=all和min.insync.replicas=2。由于某种原因，所有follower都挂了，由于min.insync.replicas=2，所以生产者无法收到来自Broker端的ack。</p>
+<p>此时我们会从Producer端收到一个错误消息：<code>&quot;Broker: Not enough in-sync replicas&quot;</code>。这就意味着Kafka不能在Broker上追加生产的消息(数据)了，因为此时的ISR的数量不够。此时在Broker端会有如下的错误消息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">org.apache.kafka.common.errors.NotEnoughReplicasException: The size of the current ISR Set(0) is insufficient to satisfy the min.isr requirement of 2 <span class="keyword">for</span> partition</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，Producer不会对此错误进行处理，这就会造成<strong>消息丢失</strong>，即*<em>at-most-once *</em>语义。我们可以通过配置重试次数来让生产者重新发送消息。比如配置retries=3，默认为0</p>
+<h2 id="enable-idempotence"><a href="#enable-idempotence" class="headerlink" title="enable.idempotence"></a>enable.idempotence</h2><p>在某些情况下，实际上已将消息提交给了所有同步副本，但是由于网络问题，Broker无法向Producer发送确认ack。由于我们设置<code>retries=3</code>，所以producer将重新发送消息3次，这可能会导致topic中消息重复。</p>
+<p>比如有一个producer向该topic发送1M消息，并且在提交消息之后但在生产者收到所有确认ack之前，broker失败了。在这种情况下，由于重试机制，最终可能在该topic上收到超过1M的消息，这也称为<strong>at-lease-once</strong>语义。</p>
+<p><strong>当然，我们想要实现的是exactly-once语义，即：即便生产者重新发送消息，消费者也应该只收到一次相同的消息</strong>。</p>
+<p>此时需要进行<strong>幂等</strong>操作，所谓<strong>幂等</strong>，即指一次执行一个操作或多次执行一个操作具有相同的效果。配置<strong>幂等</strong>很简单，通过配置<code>enable.idempotence=true</code>即可,默认为false。</p>
+<p>那么，<strong>幂等</strong>是如何实现的呢？由于消息是分<strong>batch(批次)</strong>发送的，每个<strong>batch(批次)</strong>都有一个序列号。在Broker端，会追踪每个分区的最大序列号。如果出现序列号较小或相等的<strong>batch(批次)</strong>，broker将不会将该<strong>batch(批次)</strong>写入topic。这样，除了保证了幂等性，还可以确保<strong>batch(批次)</strong>的顺序。</p>
+<h2 id="max-in-flight-requests-per-connection"><a href="#max-in-flight-requests-per-connection" class="headerlink" title="max.in.flight.requests.per.connection"></a>max.in.flight.requests.per.connection</h2><p>该参数指定了生产者在收到服务器晌应之前可以发送多少个消息。它的值越高，就会占用越多的内存，不过也会提升吞吐量。把它设为1可以保证消息是按照发送的顺序写入服务器的，即使发生了重试。</p>
+<p>因为如果将两个批次发送到单个分区，并且第一个批次失败并被重试，但是，接着第二个批次写入成功，则第二个批次中的记录可能会首先出现，这样就会发生乱序。</p>
+<p>如果没有启用幂等功能，但仍然希望按顺序发送消息，则应将此设置配置为1。但是，如果已经启用了幂等，则无需显式定义此配置。</p>
+<h2 id="buffer-memory"><a href="#buffer-memory" class="headerlink" title="buffer.memory"></a>buffer.memory</h2><p>该参数用来设置生产者内存缓冲区的大小，生产者用它缓冲要发送到服务器的消息。如果应用程序发送消息的速度超过发送到服务器的速度，会导致生产者空间不足。这个时候，send()方法调用要么被阻塞，要么抛出异常，取决于如何设置max.block.ms。</p>
+<p>当生产者调用时<code>send()</code>，消息并不会立即发送，而是会添加到内部缓冲区中。默认<code>buffer.memory</code>值为32MB。如果生产者发送消息的速度超过了将消息发送到broker的速度，或者存在网络问题，send()方法调用会被阻塞<strong>max.block.ms</strong>参数配置的时常，默认1分钟。</p>
+<h2 id="max-block-ms"><a href="#max-block-ms" class="headerlink" title="max.block.ms"></a>max.block.ms</h2><p>该参数指定了在调用send()方法或使用partitionsFor()方法获取元数据时生产者的阻塞时间。当生产者的发送缓冲区已满，或者没有可用的元数据时，这些方法就会被阻塞。在阻塞时间达到<strong>max.block.ms</strong>时，生产者会抛出超时异常。</p>
+<h2 id="linger-ms"><a href="#linger-ms" class="headerlink" title="linger.ms"></a>linger.ms</h2><p>该参数指定了生产者在发送批次之前等待更多消息加入批次的时间。kafka生产者会在批次填满或linger.ms达到上限时把批次发送出去。默认情况下，只要有可用的线程，生产者就会把消息发送出去，就算批次里只有一个消息。把linger.ms设置成比0大的数，让生产者在发送批次之前等待一会儿，使更多的消息加入到这个批次。虽然这样会增加延迟，但也会提升吞吐量（因为一次性发送更多的消息，每个消息的开销就变小了）。</p>
+<h2 id="batch-size"><a href="#batch-size" class="headerlink" title="batch.size"></a>batch.size</h2><p>当有多个消息需要被发送到同一个分区时，生产者会把它们放在同一个批次里。该参数指定了一个批次可以使用的内存大小，按照字节数计算（而不是消息个数）。当批次被填满，批次里的所有消息会被发送出去。不过生产者井不一定都会等到批次被填满才发送，这取决于<strong>linger.ms</strong>的配置，比如如果<strong>linger.ms</strong>时间到了，即便批次只包含一个消息，也会被立即发送。所以就算把批次大小设置得很大，也不会造成延迟，只是会占用更多的内存而已。但如果设置得太小，因为生产者需要更频繁地发送消息，会增加一些额外的开销。</p>
+<p>可以使用配置使用<strong>linger.ms</strong>和<strong>batch.size</strong>。<strong>linger.ms</strong>是准备好发送批次之前的延迟时间，默认值为0。这意味着即使批次中只有1条消息，批次也会立即发送。有时，会增加<strong>linger.ms</strong>以减少请求数量并提高吞吐量。但这将导致更多消息保留在内存中。<strong>batch.size</strong>是单个批次的最大大小，当满足这两个要求中的任何一个时，将发送批次。</p>
+<h2 id="compression-type"><a href="#compression-type" class="headerlink" title="compression.type"></a>compression.type</h2><p>默认情况下，消息发送时不会被压缩。该参数可以设置为<strong>snappy 、gzip 或lz4</strong> ，它指定了消息被发送给broker 之前使用哪一种压缩算也进行压缩。使用压缩可以降低网络传输开销和存储开销，而这往往是向Kafka 发送消息的瓶颈所在。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要分享了Kafka几个比较重要的配置参数，并对每个参数进行了详细解释，通过配置这些参数，可以充分发挥Kafka的优良特性。希望本文对你有所帮助。</p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/10/14/篇三-ClickHouse的数据类型/" target="_blank">篇三|ClickHouse的数据类型</a></li><li><a href="https://jiamaoxiang.top/2020/09/14/篇二-什么是ClickHouse的表引擎/" target="_blank">篇二|什么是ClickHouse的表引擎?</a></li><li><a href="https://jiamaoxiang.top/2020/09/13/篇一-ClickHouse快速入门/" target="_blank">篇一|ClickHouse快速入门</a></li><li><a href="https://jiamaoxiang.top/2020/09/08/面试-Kafka常见面试问题总结/" target="_blank">面试|Kafka常见面试问题总结</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/10/24/Kafka-producer的几个重要配置参数/">https://jiamaoxiang.top/2020/10/24/Kafka-producer的几个重要配置参数/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/10/24/Kafka-producer的几个重要配置参数/" data-id="ckgns8e9z002r0g7qv1o141e0" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACxElEQVR42u3awVLjQAwEUP7/p9mqvYJDtzQTODyfKDvEej5Ykx59fMTH5//j699fP/N0Nf/fr/dKvnl14OHh4Y1Kfzpel/50Jv+e19+QnPnhEeDh4eFd47XNYNMG8vbzVENSMx4eHt5f4CWv9bzc/BHk98XDw8P7m7z89/6swWweKx4eHt47eXmJNxbibdBwJWvBw8PDi3mbDbDf+vtN+3t4eHh45a56eySjAG2hq3rw8PDwLvDyH//tJ2/EsrNBBDw8PLwbvFOhah5e5OFCcrVoNnh4eHhHeZuf/ZvS28GCWbiMh4eHd4PXjgvMood2LKDdkPuhZjw8PLw1L3mJ7xfBp0a4EtI3AS4eHh7eUV4+RJUvgjdpQBs3FG0MDw8P7xAvJ91eNOd3L8ILPDw8vAu8djOsHY3Kb5zcK1mI59EzHh4e3oyXBApnw4h2VCsJJh6v4uHh4V3gtUNXyaK5LWLzcA/PlOHh4eHFvHZBnL/c8xji1KZXvbDGw8PDW/Bmi9pZibNWMYuM8fDw8N7DS17Hs6vt0rwdHYh2+fDw8PAWvB8Wo2Vx+RBVHuDOQpBhiXh4eHjd+nbYVc6OC8y234owFw8PD2/N22z5z8KItknkn3/se3h4eHgXePmX7svNF9yva4u24vDw8PCu8doX/WyctI05Zucf+x4eHh7eId7ZQdX2td4+ptkkKh4eHt5ZXt4SkpGCditrE15EETAeHh7eBV4eEOSxwmb7qo0zVgtrPDw8vBHvszxm4UIdv66j5KL/4OHh4U3ygeK1e6oXtaMDm8EvPDw8vBu8fSiQF/d6E6uNMIZhLh4eHt4hXl7cZuF7owlF+QoeHh7er/Jm5zebbe2DXjUGPDw8vKO82ZDWLCZuxxceLXh4eHjXeLMwIl9YJ3FDHlvUjQEPDw/vKG8WECSA/PGdXbgf2N/Dw8PD+/7qP577DmJfF3jSAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/Kafka/">Kafka</a></div><div class="post-nav"><a class="next" href="/2020/10/14/篇三-ClickHouse的数据类型/">篇三|ClickHouse的数据类型</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#acks"><span class="toc-number">1.</span> <span class="toc-text">acks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#min-insync-replicas"><span class="toc-number">2.</span> <span class="toc-text">min.insync.replicas</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#replica-lag-time-max-ms"><span class="toc-number">3.</span> <span class="toc-text">replica.lag.time.max.ms</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#retries"><span class="toc-number">4.</span> <span class="toc-text">retries</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#enable-idempotence"><span class="toc-number">5.</span> <span class="toc-text">enable.idempotence</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#max-in-flight-requests-per-connection"><span class="toc-number">6.</span> <span class="toc-text">max.in.flight.requests.per.connection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#buffer-memory"><span class="toc-number">7.</span> <span class="toc-text">buffer.memory</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#max-block-ms"><span class="toc-number">8.</span> <span class="toc-text">max.block.ms</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linger-ms"><span class="toc-number">9.</span> <span class="toc-text">linger.ms</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#batch-size"><span class="toc-number">10.</span> <span class="toc-text">batch.size</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#compression-type"><span class="toc-number">11.</span> <span class="toc-text">compression.type</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">12.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

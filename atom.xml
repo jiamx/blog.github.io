@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-10-14T13:40:20.694Z</updated>
+  <updated>2020-10-24T14:31:58.202Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kafka producer的几个重要配置参数</title>
+    <link href="https://jiamaoxiang.top/2020/10/24/Kafka-producer%E7%9A%84%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0/"/>
+    <id>https://jiamaoxiang.top/2020/10/24/Kafka-producer的几个重要配置参数/</id>
+    <published>2020-10-24T12:10:48.000Z</published>
+    <updated>2020-10-24T14:31:58.202Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Kafka" scheme="https://jiamaoxiang.top/categories/Kafka/"/>
+    
+    
+      <category term="Kafka" scheme="https://jiamaoxiang.top/tags/Kafka/"/>
+    
+  </entry>
   
   <entry>
     <title>篇三|ClickHouse的数据类型</title>
@@ -474,32 +500,6 @@
     <id>https://jiamaoxiang.top/2020/07/23/第三篇-Spark-SQL编程指南/</id>
     <published>2020-07-23T13:14:53.000Z</published>
     <updated>2020-07-26T14:40:14.575Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
-    
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>第二篇|Spark core编程指南</title>
-    <link href="https://jiamaoxiang.top/2020/07/18/%E7%AC%AC%E4%BA%8C%E7%AF%87-Spark-core%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
-    <id>https://jiamaoxiang.top/2020/07/18/第二篇-Spark-core编程指南/</id>
-    <published>2020-07-18T09:42:25.000Z</published>
-    <updated>2020-07-22T15:49:37.376Z</updated>
     
     <summary type="html">
     
