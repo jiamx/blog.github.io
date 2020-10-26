@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-10-19T14:03:32.747Z</updated>
+  <updated>2020-10-26T02:13:04.884Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -17,33 +17,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
-    <link href="https://jiamaoxiang.top/2020/10/26/%E7%AF%87%E5%9B%9B-ClickHouse%E7%9A%84%E5%8F%AF%E8%A7%86%E5%8C%96%E7%95%8C%E9%9D%A2%E4%B8%8E%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81%E7%9B%91%E6%8E%A7/%E7%AF%87%E5%9B%9BClickHouse%E7%9A%84%E5%8F%AF%E8%A7%86%E5%8C%96%E7%95%8C%E9%9D%A2%E4%B8%8E%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81%E7%9B%91%E6%8E%A7/"/>
-    <id>https://jiamaoxiang.top/2020/10/26/篇四-ClickHouse的可视化界面与集群状态监控/篇四ClickHouse的可视化界面与集群状态监控/</id>
-    <published>2020-10-26T01:48:43.517Z</published>
-    <updated>2020-10-19T14:03:32.747Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
     <title>篇四|ClickHouse的可视化界面与集群状态监控</title>
     <link href="https://jiamaoxiang.top/2020/10/26/%E7%AF%87%E5%9B%9B-ClickHouse%E7%9A%84%E5%8F%AF%E8%A7%86%E5%8C%96%E7%95%8C%E9%9D%A2%E4%B8%8E%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81%E7%9B%91%E6%8E%A7/"/>
     <id>https://jiamaoxiang.top/2020/10/26/篇四-ClickHouse的可视化界面与集群状态监控/</id>
     <published>2020-10-26T01:47:55.000Z</published>
-    <updated>2020-10-26T01:55:01.597Z</updated>
+    <updated>2020-10-26T02:13:04.884Z</updated>
     
     <summary type="html">
     
@@ -513,6 +491,32 @@
     
     
       <category term="-Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>第四篇|Spark Streaming编程指南(1)</title>
+    <link href="https://jiamaoxiang.top/2020/07/27/%E7%AC%AC%E5%9B%9B%E7%AF%87-Spark-Streaming%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
+    <id>https://jiamaoxiang.top/2020/07/27/第四篇-Spark-Streaming编程指南/</id>
+    <published>2020-07-27T05:25:45.000Z</published>
+    <updated>2020-07-29T10:18:57.145Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
+    
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
     
   </entry>
   
