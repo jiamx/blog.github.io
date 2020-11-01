@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-10-26T02:35:28.082Z</updated>
+  <updated>2020-11-01T08:45:12.299Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spark SQL百万级数据批量读写入MySQL</title>
+    <link href="https://jiamaoxiang.top/2020/11/01/Spark-SQL%E7%99%BE%E4%B8%87%E7%BA%A7%E6%95%B0%E6%8D%AE%E6%89%B9%E9%87%8F%E8%AF%BB%E5%86%99%E5%85%A5MySQL/"/>
+    <id>https://jiamaoxiang.top/2020/11/01/Spark-SQL百万级数据批量读写入MySQL/</id>
+    <published>2020-11-01T08:44:05.000Z</published>
+    <updated>2020-11-01T08:45:12.299Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
+    
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
+    
+  </entry>
   
   <entry>
     <title>篇四|ClickHouse的可视化界面与集群状态监控</title>
@@ -499,32 +525,6 @@
     
     
       <category term="-Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>第四篇|Spark Streaming编程指南(1)</title>
-    <link href="https://jiamaoxiang.top/2020/07/27/%E7%AC%AC%E5%9B%9B%E7%AF%87-Spark-Streaming%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/"/>
-    <id>https://jiamaoxiang.top/2020/07/27/第四篇-Spark-Streaming编程指南/</id>
-    <published>2020-07-27T05:25:45.000Z</published>
-    <updated>2020-10-26T02:25:06.001Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
-    
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
     
   </entry>
   
