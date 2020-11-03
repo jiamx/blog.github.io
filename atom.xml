@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-11-01T08:45:12.299Z</updated>
+  <updated>2020-11-03T14:01:14.885Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spark的五种JOIN策略解析</title>
+    <link href="https://jiamaoxiang.top/2020/11/01/Spark%E7%9A%84%E4%BA%94%E7%A7%8DJOIN%E6%96%B9%E5%BC%8F%E8%A7%A3%E6%9E%90/"/>
+    <id>https://jiamaoxiang.top/2020/11/01/Spark的五种JOIN方式解析/</id>
+    <published>2020-11-01T08:52:27.000Z</published>
+    <updated>2020-11-03T14:01:14.885Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
+    
+    
+      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
+    
+  </entry>
   
   <entry>
     <title>Spark SQL百万级数据批量读写入MySQL</title>
@@ -499,32 +525,6 @@
     
     
       <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>第五篇|Spark-Streaming编程指南(2)</title>
-    <link href="https://jiamaoxiang.top/2020/07/29/%E7%AC%AC%E4%BA%94%E7%AF%87-Spark-Streaming%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-2/"/>
-    <id>https://jiamaoxiang.top/2020/07/29/第五篇-Spark-Streaming编程指南-2/</id>
-    <published>2020-07-29T14:29:57.000Z</published>
-    <updated>2020-10-26T02:25:19.129Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
-    
-    
-      <category term="-Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
     
   </entry>
   
