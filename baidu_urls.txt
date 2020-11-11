@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/11/11/第十篇-SparkStreaming手动维护Kafka-Offset的几种方式/
 https://jiamaoxiang.top/2020/11/01/Spark的五种JOIN方式解析/
 https://jiamaoxiang.top/2020/11/01/Spark-SQL百万级数据批量读写入MySQL/
 https://jiamaoxiang.top/2020/10/26/篇四-ClickHouse的可视化界面与集群状态监控/
