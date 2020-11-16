@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-11-11T03:53:10.108Z</updated>
+  <updated>2020-11-16T01:44:09.072Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>面试|不可不知的十大Hive调优技巧最佳实践</title>
+    <link href="https://jiamaoxiang.top/2020/11/16/%E9%9D%A2%E8%AF%95-%E4%B8%8D%E5%8F%AF%E4%B8%8D%E7%9F%A5%E7%9A%84%E5%8D%81%E5%A4%A7Hive%E8%B0%83%E4%BC%98%E6%8A%80%E5%B7%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"/>
+    <id>https://jiamaoxiang.top/2020/11/16/面试-不可不知的十大Hive调优技巧最佳实践/</id>
+    <published>2020-11-16T01:40:45.000Z</published>
+    <updated>2020-11-16T01:44:09.072Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="Hive" scheme="https://jiamaoxiang.top/categories/Hive/"/>
+    
+    
+      <category term="Hive" scheme="https://jiamaoxiang.top/tags/Hive/"/>
+    
+  </entry>
   
   <entry>
     <title>第十篇|SparkStreaming手动维护Kafka Offset的几种方式</title>
@@ -499,32 +525,6 @@
     
     
       <category term="数仓" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E4%BB%93/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>第七篇|Spark平台下基于LDA的k-means算法实现</title>
-    <link href="https://jiamaoxiang.top/2020/08/02/%E7%AC%AC%E4%B8%83%E7%AF%87-Spark%E5%B9%B3%E5%8F%B0%E4%B8%8B%E5%9F%BA%E4%BA%8ELDA%E7%9A%84k-means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/"/>
-    <id>https://jiamaoxiang.top/2020/08/02/第七篇-Spark平台下基于LDA的k-means算法实现/</id>
-    <published>2020-08-02T14:59:27.000Z</published>
-    <updated>2020-10-26T02:24:38.134Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/categories/Spark/"/>
-    
-    
-      <category term="Spark" scheme="https://jiamaoxiang.top/tags/Spark/"/>
     
   </entry>
   

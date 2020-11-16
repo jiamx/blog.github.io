@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/11/16/面试-不可不知的十大Hive调优技巧最佳实践/
 https://jiamaoxiang.top/2020/11/11/第十篇-SparkStreaming手动维护Kafka-Offset的几种方式/
 https://jiamaoxiang.top/2020/11/01/Spark的五种JOIN方式解析/
 https://jiamaoxiang.top/2020/11/01/Spark-SQL百万级数据批量读写入MySQL/
