@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-11-17T09:23:48.947Z</updated>
+  <updated>2020-11-17T13:30:51.998Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>篇五|ClickHouse数据导入(Flink、Spark、Kafka、MySQL)</title>
+    <title>篇五|ClickHouse数据导入(Flink、Spark、Kafka、MySQL、Hive)</title>
     <link href="https://jiamaoxiang.top/2020/11/17/%E7%AC%AC%E4%BA%94%E7%AF%87-ClickHouse%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5-Flink%E3%80%81Spark%E3%80%81Kafka%E3%80%81MySQL/"/>
     <id>https://jiamaoxiang.top/2020/11/17/第五篇-ClickHouse数据导入-Flink、Spark、Kafka、MySQL/</id>
     <published>2020-11-17T07:32:39.000Z</published>
-    <updated>2020-11-17T09:23:48.947Z</updated>
+    <updated>2020-11-17T13:30:51.998Z</updated>
     
     <summary type="html">
     
