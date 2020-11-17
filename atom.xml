@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2020-11-16T01:44:09.072Z</updated>
+  <updated>2020-11-17T09:23:48.947Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>篇五|ClickHouse数据导入(Flink、Spark、Kafka、MySQL)</title>
+    <link href="https://jiamaoxiang.top/2020/11/17/%E7%AC%AC%E4%BA%94%E7%AF%87-ClickHouse%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5-Flink%E3%80%81Spark%E3%80%81Kafka%E3%80%81MySQL/"/>
+    <id>https://jiamaoxiang.top/2020/11/17/第五篇-ClickHouse数据导入-Flink、Spark、Kafka、MySQL/</id>
+    <published>2020-11-17T07:32:39.000Z</published>
+    <updated>2020-11-17T09:23:48.947Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="ClickHouse" scheme="https://jiamaoxiang.top/categories/ClickHouse/"/>
+    
+    
+      <category term="ClickHouse" scheme="https://jiamaoxiang.top/tags/ClickHouse/"/>
+    
+  </entry>
   
   <entry>
     <title>面试|不可不知的十大Hive调优技巧最佳实践</title>
@@ -499,32 +525,6 @@
     
     
       <category term="HBase" scheme="https://jiamaoxiang.top/tags/HBase/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>数仓面试|四个在工作后才知道的SQL密技</title>
-    <link href="https://jiamaoxiang.top/2020/08/06/%E6%95%B0%E4%BB%93%E9%9D%A2%E8%AF%95-%E5%9B%9B%E4%B8%AA%E5%9C%A8%E5%B7%A5%E4%BD%9C%E5%90%8E%E6%89%8D%E7%9F%A5%E9%81%93%E7%9A%84SQL%E5%AF%86%E6%8A%80/"/>
-    <id>https://jiamaoxiang.top/2020/08/06/数仓面试-四个在工作后才知道的SQL密技/</id>
-    <published>2020-08-06T07:41:47.000Z</published>
-    <updated>2020-10-26T02:38:11.241Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
-      <category term="数仓" scheme="https://jiamaoxiang.top/categories/%E6%95%B0%E4%BB%93/"/>
-    
-    
-      <category term="数仓" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E4%BB%93/"/>
     
   </entry>
   
