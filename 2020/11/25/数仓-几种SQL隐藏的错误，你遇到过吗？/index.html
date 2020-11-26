@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>数仓|几种SQL隐藏的错误，你遇到过吗？ | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">数仓|几种SQL隐藏的错误，你遇到过吗？</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">数仓|几种SQL隐藏的错误，你遇到过吗？</h1><div class="post-meta">Nov 25, 2020<span> | </span><span class="category"><a href="/categories/数仓/">数仓</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.4k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 5</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><a id="more"></a>
+
+<p>本文分享主要描述了几种书写SQL时常见的一些隐藏错误，主要包括：<strong>在运算符中使用null值、在聚合数据时使用null值、求平均值时使用判断条件、滤条件中使用and和or、查询的列字段之间缺少逗号分隔、inner join与left join</strong>。都是一些比较细节的点，希望本文对你有所帮助。</p>
+<!--more-->
+
+<p>公众号『大数据技术与数仓』，回复『资料』领取大数据资料包</p>
+<h2 id="在运算符中使用null值"><a href="#在运算符中使用null值" class="headerlink" title="在运算符中使用null值"></a>在运算符中使用null值</h2><p>在SQL中常见的运算符有算术运算符(+,-)，逻辑运算符(in,not in)，比较运算符(&gt;,&lt;)等等。但是，如果参与运算的数据中存在<strong>null</strong>值，这个时候我们就要小心了，因为<strong>对于null值参与的运算可能会返回null值</strong>。</p>
+<ul>
+<li><strong>情况1:与null值列相加</strong></li>
+</ul>
+<p>比如有如下表：</p>
+<table>
+<thead>
+<tr>
+<th>store</th>
+<th>Jan</th>
+<th>Feb</th>
+<th>Mar</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>100</td>
+<td>null</td>
+<td>190</td>
+</tr>
+<tr>
+<td>2</td>
+<td>200</td>
+<td>160</td>
+<td>150</td>
+</tr>
+<tr>
+<td>3</td>
+<td>150</td>
+<td>200</td>
+<td>180</td>
+</tr>
+</tbody></table>
+<p>当我们对每行的列字段相加时，会出现<strong>null</strong>值</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    Jan + Feb + Mar <span class="keyword">as</span> total_amount <span class="comment">-- 结果为null</span></span><br><span class="line"><span class="keyword">FROM</span> stores</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">store</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>比如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="number">100</span> + <span class="literal">null</span> + <span class="number">190</span>; <span class="comment">-- 结果为null</span></span><br></pre></td></tr></table></figure>
+
+<p>其实，我们计算的时候希望null值变为0，但是SQL并没有帮我们转换，所以遇到这种存在null值的情况，要加以小心，我们可以通过判断进行处理，比如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="number">100</span> + <span class="keyword">coalesce</span>(<span class="literal">null</span>,<span class="number">0</span>) + <span class="number">190</span>; <span class="comment">-- 结果为290</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>情况2：not in 操作</strong></li>
+</ul>
+<p>比如有如下表：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>tag</th>
+<th>score</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>优</td>
+<td>90</td>
+</tr>
+<tr>
+<td>2</td>
+<td>良</td>
+<td>70</td>
+</tr>
+<tr>
+<td>3</td>
+<td>null</td>
+<td>50</td>
+</tr>
+<tr>
+<td>4</td>
+<td>差</td>
+<td>40</td>
+</tr>
+</tbody></table>
+<p>当我们使用下面语句进行查询时：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">     *</span><br><span class="line"><span class="keyword">FROM</span> scores</span><br><span class="line"><span class="keyword">WHERE</span> tag <span class="keyword">not</span> <span class="keyword">in</span> (<span class="string">"优"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>结果输出为：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>tag</th>
+<th>score</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>良</td>
+<td>70</td>
+</tr>
+<tr>
+<td>4</td>
+<td>差</td>
+<td>40</td>
+</tr>
+</tbody></table>
+<p>其实对于id=3的数据，也应该出现在结果里，但是没有出现，是因为null判断之后返回null值，比如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="literal">null</span> <span class="keyword">not</span> <span class="keyword">in</span> (<span class="string">"tag1"</span>,<span class="string">"tag2"</span>); <span class="comment">-- 返回null值</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">coalesce</span>(<span class="literal">null</span>,<span class="string">""</span>) <span class="keyword">not</span> <span class="keyword">in</span> (<span class="string">"tag1"</span>,<span class="string">"tag2"</span>); <span class="comment">-- 返回true</span></span><br></pre></td></tr></table></figure>
+
+<p>所以避免上述情况发生，需要使用判断进行处理，比如如果为NULL值，则取值空字符串。</p>
+<h2 id="在聚合数据时使用null值"><a href="#在聚合数据时使用null值" class="headerlink" title="在聚合数据时使用null值"></a>在聚合数据时使用null值</h2><p>一般使用聚合函数时，需要特别注意聚合的字段是否包含null值。当然，如果是求和，比如sum，应该不会有所影响，因为null值不参与求和。但是，在我们求平均值的时候，需要格外注意null值，看下面的例子：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>amount</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>150</td>
+</tr>
+<tr>
+<td>2</td>
+<td>150</td>
+</tr>
+<tr>
+<td>3</td>
+<td>null</td>
+</tr>
+</tbody></table>
+<p>当我们对amount求平均时：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    <span class="keyword">avg</span>(amount) <span class="keyword">as</span> avg_amount</span><br><span class="line"><span class="keyword">FROM</span> orders</span><br></pre></td></tr></table></figure>
+
+<p>上面的结果会是什么呢？是<strong>150</strong>还是<strong>100</strong>呢？答案是：<strong>(150+150)/2=150</strong>,这个数据显示不是正确的，因为忽略了一行数据，解决上述问题我们可以使用判断当为null值时，取值0,，比如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    <span class="keyword">avg</span>(<span class="keyword">coalesce</span>(amount,<span class="number">0</span>)) <span class="keyword">as</span> avg_amount</span><br><span class="line"><span class="keyword">FROM</span> orders</span><br><span class="line"><span class="comment">-- 结果为(150+150+0)/3=100</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="求平均值时使用判断条件"><a href="#求平均值时使用判断条件" class="headerlink" title="求平均值时使用判断条件"></a>求平均值时使用判断条件</h2><p>还有一种情况是，当我们使用条件判断进行求平均值时，也要加以小心，稍不留神就会得到错误的结果，看下面的例子：如下表</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>amount</th>
+<th>status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>150</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>150</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>300</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>当我们使用条件判断，求平均值时：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line"><span class="keyword">avg</span>(<span class="keyword">if</span>(<span class="keyword">status</span> = <span class="number">1</span>,amount,<span class="number">0</span>)) <span class="keyword">as</span> avg_complete_amount</span><br><span class="line"><span class="keyword">FROM</span> orders</span><br></pre></td></tr></table></figure>
+
+<p>猜一下上面的结果会是什么呢？<strong>100</strong>还是<strong>150</strong>呢？答案是<strong>100</strong>，这个结果显然不是我们想要的，因为status=1的数据只有两行，正确结果应该是：<strong>(150+150)/2=150</strong>.</p>
+<p>那么怎么才能得到上面的结果呢？因为null值不参与计算，所以我们可以通过判断，当不满足条件时，取null值即可，SQL如下：下面SQL的判断是：<strong>if(status = 1,amount,null)</strong>，这样就可以输出正确结果<strong>150</strong>了。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line"><span class="keyword">avg</span>(<span class="keyword">if</span>(<span class="keyword">status</span> = <span class="number">1</span>,amount,<span class="literal">null</span>)) <span class="keyword">as</span> avg_complete_amount</span><br><span class="line"><span class="keyword">FROM</span> orders</span><br></pre></td></tr></table></figure>
+
+<h2 id="滤条件中使用and和or"><a href="#滤条件中使用and和or" class="headerlink" title="滤条件中使用and和or"></a>滤条件中使用and和or</h2><p>当我们使用一个复杂的条件语句时，很容易犯一个运算符优先级的错误。其中最为常见的就是：<strong>当编写SQL时，and先于or进行处理</strong>。</p>
+<p>比如有下面的表：</p>
+<table>
+<thead>
+<tr>
+<th>uid</th>
+<th>rating</th>
+<th>amount</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>A</td>
+<td>50</td>
+</tr>
+<tr>
+<td>2</td>
+<td>B</td>
+<td>75</td>
+</tr>
+<tr>
+<td>3</td>
+<td>C</td>
+<td>50</td>
+</tr>
+<tr>
+<td>4</td>
+<td>A</td>
+<td>150</td>
+</tr>
+<tr>
+<td>5</td>
+<td>B</td>
+<td>126</td>
+</tr>
+</tbody></table>
+<p>当我们要查询，用户等级rating为A或者B时，并且amount大于100的数据时：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    *</span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">    user_amount</span><br><span class="line"><span class="keyword">WHERE</span> rating = <span class="string">"A"</span> <span class="keyword">OR</span> rating = <span class="string">"B"</span> <span class="keyword">AND</span> amount &gt; <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<p>上面的结果会输出：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1       A       50 </span><br><span class="line">4       A       150</span><br><span class="line">5       B       126</span><br></pre></td></tr></table></figure>
+
+<p>很显然结果是错误的，这是什么原因的，细心的你会发现，由于<strong>AND</strong>条件的优先级高于<strong>OR</strong>，所以上面的SQL语句会先筛选条件为<strong>rating = “B” AND amount &gt; 100</strong>的数据，然后在筛选条件为<strong>rating = “A”</strong>的数据。解决上面的问题只需要加一个括号，区分一下优先级即可。如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">*</span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">user_amount</span><br><span class="line"><span class="keyword">WHERE</span> (rating = <span class="string">"A"</span> <span class="keyword">OR</span> rating = <span class="string">"B"</span>) <span class="keyword">AND</span> amount &gt; <span class="number">100</span>;</span><br><span class="line"><span class="comment">-- 结果为：</span></span><br><span class="line">4       A       150</span><br><span class="line">5       B       126</span><br></pre></td></tr></table></figure>
+
+<h2 id="查询的列字段之间缺少逗号分隔"><a href="#查询的列字段之间缺少逗号分隔" class="headerlink" title="查询的列字段之间缺少逗号分隔"></a>查询的列字段之间缺少逗号分隔</h2><p>如果不细心，会造成这种情况出现，就是一个字段作为了前面字段的别名，比如：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">     clo1,</span><br><span class="line">     clo2 clo3</span><br><span class="line">FROM tbl</span><br></pre></td></tr></table></figure>
+
+<p>上面的sql语句是可以被执行的，但是结果是col2的值对应的别名为clo3，并且数据会少一列，会让人感觉很诧异。</p>
+<h2 id="inner-join与left-join"><a href="#inner-join与left-join" class="headerlink" title="inner join与left join"></a>inner join与left join</h2><p>这种情况一般在没有搞清楚表之间的关系时，或者主表选择不清楚时会出现，一旦使用了错误的JOIN类型，得到的结果可能会多也可能会少。所以在进行连接查询时，区分JOIN类型也是值得注意的，下图是JOIN类型之间的区别。</p>
+<p><img src="//jiamaoxiang.top/2020/11/25/数仓-几种SQL隐藏的错误，你遇到过吗？/fzwkg.png" alt></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要分享了一些书写SQL时常见的隐含错误，在平时的工作中应当尽量注意避免，希望本文对你有所帮助。</p>
+<blockquote>
+<p>公众号『大数据技术与数仓』，回复『资料』领取大数据资料包</p>
+</blockquote>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2020/11/20/第十一篇-基于SparkSQL的电影分析项目实战/" target="_blank">第十一篇|基于SparkSQL的电影分析项目实战</a></li><li><a href="https://jiamaoxiang.top/2020/11/17/第五篇-ClickHouse数据导入-Flink、Spark、Kafka、MySQL/" target="_blank">篇五|ClickHouse数据导入(Flink、Spark、Kafka、MySQL、Hive)</a></li><li><a href="https://jiamaoxiang.top/2020/11/16/面试-不可不知的十大Hive调优技巧最佳实践/" target="_blank">面试|不可不知的十大Hive调优技巧最佳实践</a></li><li><a href="https://jiamaoxiang.top/2020/11/11/第十篇-SparkStreaming手动维护Kafka-Offset的几种方式/" target="_blank">第十篇|SparkStreaming手动维护Kafka Offset的几种方式</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/11/25/数仓-几种SQL隐藏的错误，你遇到过吗？/">https://jiamaoxiang.top/2020/11/25/数仓-几种SQL隐藏的错误，你遇到过吗？/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2020/11/25/数仓-几种SQL隐藏的错误，你遇到过吗？/" data-id="ckhyakhdf001b4s7qpir45h1g" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADNElEQVR42u3awY4iMQwEUP7/p1lpruxAlc1IdHh9WrE9UV76YKXs2y1+7j/P4y/J8/j+45r5+7/t5PYXDzY2NvZF2Pmmn/9VcmT7L5Mf34sdYmNjYx/Hzrc7K1R5MXuOnB0rNjY2NvbsYvB805ti+fyTYGNjY2MnBSy5HrRhUx45zQohNjY29tnszeY28VN+2WgL7duyNGxsbOyPZ7eN3k/+9x/2t7GxsbE/kn1fPHmsn8dPs0ir3jk2Njb2Qez8MjBrAGzGbtqLTf5JsLGxsc9jt0Mws7DmeYlqSW1LONotNjY29gXZSSi/ae7OmrKzLKgYA8LGxsY+iD2rdXk8lF8Y8sGd9kL14ptjY2NjX5w9G69pC1i7WlLY2tVe1G1sbGzsi7PzwjBr/c6OL18t+V9sbGzsU9nt0rM382LWjvXMoihsbGzs89h5sD6LdfZDP/lwT71zbGxs7CPYswZq+86sKLbNg+KahI2NjX0Qe1Mk2t9nUVS7cnFxwsbGxj6InVwMNoCkhdyODbXt4Sh5wsbGxr4UO0G2odJm5fav8otN0d/GxsbGviC7BeelYl9XkwCrLmzY2NjYB7HbgH42xNNGP3mTeBNCYWNjY5/BzstDG+Xn7dh9oap/x8bGxj6UnUdFbbmahUrtJyk+FTY2NvZB7Fk0nw/05NHPpji1o0XY2NjYJ7FnozlJgcnX2cDy4/7PVQQbGxv7CHYb+rSw/EIyK59tBIaNjY39PeyksZoM2czKz+bykzeDsbGxsc9mt0HPZtCnbSG0h/7rTrCxsbGPY+/DoPyykR9iPgxUP9jY2NgHsdthnbah++JKsB79efMxYWNjYx/Hfr5c8vu+lM4ip2E0ho2NjX0Qu20A5O/kQVJSXPN33nxjw8bGxv4A9r189sUm2XRLygsnNjY29nnsTWY+G6bJGxJtE3oTTmFjY2NfnZ0UrfycNiu0A0PtZyi60NjY2NgXZG8avfuLRBsMvS3ux8bGxv5idtt5yAc6NyOe+R6wsbGxv5PdjtfP4qo8eMqpq6sINjY29kXYeVHZjELm6+dj8cnRYGNjY5/N3iQw+aZna7bFcj/WiY2NjX0p9j+GnIGlc1s+fQAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/数仓/">数仓</a></div><div class="post-nav"><a class="next" href="/2020/11/20/第十一篇-基于SparkSQL的电影分析项目实战/">第十一篇|基于SparkSQL的电影分析项目实战</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#在运算符中使用null值"><span class="toc-number">1.</span> <span class="toc-text">在运算符中使用null值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#在聚合数据时使用null值"><span class="toc-number">2.</span> <span class="toc-text">在聚合数据时使用null值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#求平均值时使用判断条件"><span class="toc-number">3.</span> <span class="toc-text">求平均值时使用判断条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#滤条件中使用and和or"><span class="toc-number">4.</span> <span class="toc-text">滤条件中使用and和or</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询的列字段之间缺少逗号分隔"><span class="toc-number">5.</span> <span class="toc-text">查询的列字段之间缺少逗号分隔</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#inner-join与left-join"><span class="toc-number">6.</span> <span class="toc-text">inner join与left join</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2020 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
