@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/12/15/使用自定义分区器解决Spark-DataSet数据分区不均匀的问题/
 https://jiamaoxiang.top/2020/12/11/秒懂推荐系统-Spark平台下基于物品的协同过滤推荐系统构建/
 https://jiamaoxiang.top/2020/12/06/如何管理Spark的分区/
 https://jiamaoxiang.top/2020/11/26/数仓开发需要了解的5大SQL分析函数/
