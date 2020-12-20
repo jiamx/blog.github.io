@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2020/12/18/Flink集成Hive之快速入门-以Flink1-12为例/
 https://jiamaoxiang.top/2020/12/15/使用自定义分区器解决Spark-DataSet数据分区不均匀的问题/
 https://jiamaoxiang.top/2020/12/11/秒懂推荐系统-Spark平台下基于物品的协同过滤推荐系统构建/
 https://jiamaoxiang.top/2020/12/06/如何管理Spark的分区/
