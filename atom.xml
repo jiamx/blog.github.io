@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2021-01-05T10:29:23.169Z</updated>
+  <updated>2021-01-05T10:31:55.389Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -21,21 +21,7 @@
     <link href="https://jiamaoxiang.top/2021/01/05/Flink1-12%E7%89%88%E6%9C%ACUpsert-Kafka-Connector%E4%BD%BF%E7%94%A8/"/>
     <id>https://jiamaoxiang.top/2021/01/05/Flink1-12版本Upsert-Kafka-Connector使用/</id>
     <published>2021-01-05T10:29:23.000Z</published>
-    <updated>2021-01-05T10:29:23.169Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>不可不知的5个有用的开窗函数</title>
-    <link href="https://jiamaoxiang.top/2020/12/31/%E4%B8%8D%E5%8F%AF%E4%B8%8D%E7%9F%A5%E7%9A%845%E4%B8%AA%E6%9C%89%E7%94%A8%E7%9A%84%E5%BC%80%E7%AA%97%E5%87%BD%E6%95%B0/"/>
-    <id>https://jiamaoxiang.top/2020/12/31/不可不知的5个有用的开窗函数/</id>
-    <published>2020-12-31T09:23:17.000Z</published>
-    <updated>2020-12-31T09:53:27.936Z</updated>
+    <updated>2021-01-05T10:31:55.389Z</updated>
     
     <summary type="html">
     
@@ -49,10 +35,10 @@
     
     </summary>
     
-      <category term="数仓" scheme="https://jiamaoxiang.top/categories/%E6%95%B0%E4%BB%93/"/>
+      <category term="Flink" scheme="https://jiamaoxiang.top/categories/Flink/"/>
     
     
-      <category term="数仓" scheme="https://jiamaoxiang.top/tags/%E6%95%B0%E4%BB%93/"/>
+      <category term="Flink" scheme="https://jiamaoxiang.top/tags/Flink/"/>
     
   </entry>
   
@@ -494,6 +480,32 @@
     <id>https://jiamaoxiang.top/2020/09/14/篇二-什么是ClickHouse的表引擎/</id>
     <published>2020-09-14T01:55:35.000Z</published>
     <updated>2020-10-26T02:35:04.971Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="ClickHouse" scheme="https://jiamaoxiang.top/categories/ClickHouse/"/>
+    
+    
+      <category term="ClickHouse" scheme="https://jiamaoxiang.top/tags/ClickHouse/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>篇一|ClickHouse快速入门</title>
+    <link href="https://jiamaoxiang.top/2020/09/13/%E7%AF%87%E4%B8%80-ClickHouse%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/"/>
+    <id>https://jiamaoxiang.top/2020/09/13/篇一-ClickHouse快速入门/</id>
+    <published>2020-09-13T09:35:35.000Z</published>
+    <updated>2020-10-26T02:35:41.178Z</updated>
     
     <summary type="html">
     

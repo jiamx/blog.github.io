@@ -8,32 +8,19 @@
       <link href="/2021/01/05/Flink1-12%E7%89%88%E6%9C%ACUpsert-Kafka-Connector%E4%BD%BF%E7%94%A8/"/>
       <url>/2021/01/05/Flink1-12%E7%89%88%E6%9C%ACUpsert-Kafka-Connector%E4%BD%BF%E7%94%A8/</url>
       
-        <content type="html"><![CDATA[]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>不可不知的5个有用的开窗函数</title>
-      <link href="/2020/12/31/%E4%B8%8D%E5%8F%AF%E4%B8%8D%E7%9F%A5%E7%9A%845%E4%B8%AA%E6%9C%89%E7%94%A8%E7%9A%84%E5%BC%80%E7%AA%97%E5%87%BD%E6%95%B0/"/>
-      <url>/2020/12/31/%E4%B8%8D%E5%8F%AF%E4%B8%8D%E7%9F%A5%E7%9A%845%E4%B8%AA%E6%9C%89%E7%94%A8%E7%9A%84%E5%BC%80%E7%AA%97%E5%87%BD%E6%95%B0/</url>
-      
-        <content type="html"><![CDATA[<p>如果您在工作中使用数据（例如，数据分析师，产品分析师，数据科学家，数据工程师等），我强烈建议您尝试理解这些内容。他们一定会派上用场！</p><h2 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 建表</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">users</span>(</span><br><span class="line">    <span class="keyword">name</span> <span class="keyword">STRING</span> <span class="keyword">comment</span> <span class="string">'姓名'</span>,</span><br><span class="line">    age  <span class="built_in">INT</span>  <span class="keyword">comment</span> <span class="string">'年龄'</span>,</span><br><span class="line">    gender <span class="keyword">STRING</span> <span class="keyword">comment</span> <span class="string">'性别'</span>,</span><br><span class="line">    amount <span class="built_in">DECIMAL</span>(<span class="number">10</span>,<span class="number">2</span>) <span class="keyword">comment</span> <span class="string">'金额'</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">ROW</span> <span class="keyword">FORMAT</span> <span class="keyword">DELIMITED</span></span><br><span class="line"><span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">','</span></span><br><span class="line">;</span><br><span class="line"><span class="comment">-- 装载数据</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="keyword">users</span> </span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">'jack'</span>,<span class="number">23</span>,<span class="string">'male'</span>,<span class="number">100</span>),</span><br><span class="line">       (<span class="string">'tom'</span>,<span class="number">22</span>,<span class="string">'male'</span>,<span class="number">120</span>),</span><br><span class="line">       (<span class="string">'tony'</span>,<span class="number">25</span>,<span class="string">'male'</span>,<span class="number">130</span>),</span><br><span class="line">       (<span class="string">'lili'</span>,<span class="number">21</span>,<span class="string">'female'</span>,<span class="number">102</span>),</span><br><span class="line">       (<span class="string">'lihua'</span>,<span class="number">23</span>,<span class="string">'male'</span>,<span class="number">100</span>),</span><br><span class="line">       (<span class="string">'jessica'</span>,<span class="number">20</span>,<span class="string">'female'</span>,<span class="number">90</span>),</span><br><span class="line">       (<span class="string">'angela'</span>,<span class="number">33</span>,<span class="string">'female'</span>,<span class="number">150</span>),</span><br><span class="line">       (<span class="string">'martin'</span>,<span class="number">25</span>,<span class="string">'male'</span>,<span class="number">160</span>);</span><br></pre></td></tr></table></figure><h2 id="Row-Number"><a href="#Row-Number" class="headerlink" title="Row Number"></a>Row Number</h2><ul><li><p><strong>作用</strong><br>ROW_NUMBER只是返回每行的编号，第一条记录从1开始。</p></li><li><p><strong>什么时候有用？<br>**当您要获取特定表的第一条或最后一条记录时，行号非常有用。例如，如果您有一个客户购买表，并且希望获得每个客户的第一次购买，则可以</strong>PARTITION BY customer (name/id)  ORDER BY purchase date. Then you can filter the table WHERE row number = 1.**</p></li><li><p>*<em>示例：<br>*</em>使用上面的示例，假设我要对每行应用行号，并按性别划分，从最高GPA到最低GPA。然后，我可以执行以下查询以获得以下结</p></li></ul><h2 id="Sum-Count"><a href="#Sum-Count" class="headerlink" title="Sum/Count"></a>Sum/Count</h2><ul><li><p><strong>作用</strong><br>**SUM（）和COUNT（）是聚合函数，用于对列中的值求和或对列中不为空的值进行计数。</p></li><li><p>*<em>-什么时候有用？<br>*</em>通过在窗口函数中使用SUM（）或COUNT（），您可以计算累积总和或累积计数。如果您要创建图表来显示特定指标（即订单数，收入等）随时间的增长，则此功能非常有用。</p></li><li><p>*<em>示例：<br>*</em>尽管此示例不一定能做到公正，但它可以使您了解其工作原理。</p></li></ul><h2 id="Min-Max"><a href="#Min-Max" class="headerlink" title="Min/Max"></a>Min/Max</h2><ul><li><p><strong>作用</strong><br>就像在聚合函数中使用MIN（）/ MAX（）一样，您也可以在window函数中使用它。</p></li><li><p>*<em>什么时候有用？<br>*</em>如果要将每行与最高/最低值进行比较，则最小值/最大值很有用。</p></li><li><p>*<em>示例：<br>*</em>在下面的示例中，我们可以使用它来比较每个学生的GPA和每个性别的GPA最高。您可以更进一步，并创建一个新列来计算两者之间的差异。</p></li></ul><h2 id="Lag-Lead"><a href="#Lag-Lead" class="headerlink" title="Lag/Lead"></a>Lag/Lead</h2><ul><li><p><strong>作用</strong><br>**当您想比较前几行或后几行的值时，LEAD（）和LAG（）很有用。</p></li><li><p>*<em>示例：<br>*</em>假设我想将每个学生的GPA与下一个学生的GPA进行比较。我可以使用LAG（）函数来实现这一点。</p></li></ul><h2 id="Dense-Rank"><a href="#Dense-Rank" class="headerlink" title="Dense Rank"></a>Dense Rank</h2><ul><li><p>*<em>作用<br>*</em>DENSE_RANK与ROW_NUMBER类似，不同之处在于它返回相同的等级（数字）以得到相等的值。</p></li><li><p>*<em>什么时候有用？<br>*</em>当您要基于一个或多个特定变量对数据进行排名时，DENSE_RANK很有用。</p></li><li><p>*<em>示例：<br>*</em>如果我们想对学生的GPA从最低到最高进行排名，可以使用以下代码来实现。</p></li></ul>]]></content>
+        <content type="html"><![CDATA[<h2 id="Table-API-SQL-Upsert-Kafka-Connector"><a href="#Table-API-SQL-Upsert-Kafka-Connector" class="headerlink" title="Table API/SQL: Upsert Kafka Connector"></a><strong>Table API/SQL: Upsert Kafka Connector</strong></h2><p>在某些场景中，例如读取 compacted topic 或者输出（更新）聚合结果的时候，需要将 Kafka 消息记录的 key 当成主键处理，用来确定一条数据是应该作为插入、删除还是更新记录来处理。为了实现该功能，社区为 Kafka 专门新增了一个 upsert connector（upsert-kafka），该 connector 扩展自现有的 Kafka connector，工作在 upsert 模式（FLIP-149）下。新的 upsert-kafka connector 既可以作为 source 使用，也可以作为 sink 使用，并且提供了与现有的 kafka connector 相同的基本功能和持久性保证，因为两者之间复用了大部分代码。</p><p>要使用 upsert-kafka connector，必须在创建表时定义主键，并为键（key.format）和值（value.format）指定序列化反序列化格式。完整的示例，请查看最新的文档[10]。</p>]]></content>
       
       
       <categories>
           
-          <category> 数仓 </category>
+          <category> Flink </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 数仓 </tag>
+            <tag> Flink </tag>
             
         </tags>
       
