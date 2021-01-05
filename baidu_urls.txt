@@ -1,3 +1,6 @@
+https://jiamaoxiang.top/2021/01/05/Flink1-12版本Upsert-Kafka-Connector使用/
+https://jiamaoxiang.top/2020/12/31/不可不知的5个有用的开窗函数/
+https://jiamaoxiang.top/2020/12/22/Flink-on-Hive构建流批一体数仓/
 https://jiamaoxiang.top/2020/12/21/Flink集成Hive之Hive-Catalog与Hive-Dialect-以Flink1-12为例/
 https://jiamaoxiang.top/2020/12/18/Flink集成Hive之快速入门-以Flink1-12为例/
 https://jiamaoxiang.top/2020/12/15/使用自定义分区器解决Spark-DataSet数据分区不均匀的问题/
