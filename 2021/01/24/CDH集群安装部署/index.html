@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录朴实无华且枯燥的生活"><title>CDH集群安装部署 | Jmx's Blog</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '912b6cfc43243cd27aeb428f7dbf7823';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">CDH集群安装部署</h1><a id="logo" href="/.">Jmx's Blog</a><p class="description">Keep it Simple and Stupid!</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-pied-piper-alt"> 关于</i></a><a href="/tags"><i class="fa fa-tags"> 标签</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">CDH集群安装部署</h1><div class="post-meta">Jan 24, 2021<span> | </span><span class="category"><a href="/categories/CDH/">CDH</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 2.2k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-hourglass-half"></i><span class="post-count"> 11</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="post-content"><h1 id="大数据平台软件清单"><a href="#大数据平台软件清单" class="headerlink" title="大数据平台软件清单"></a>大数据平台软件清单</h1><p>本文部署的大数据基础平台为CDH,操作系统的版本为CentOS6.8,JDK的版本为1.8，Cloudera Manager与CDH的版本为5.15.1，数据库采用MySQL5.7，JDBC驱动的版本为5.1.40，以上所有软件均为开源版本，具体如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>NO.</th>
+<th>软件名称</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>操作系统</td>
+<td>CentOS6.8 64位</td>
+</tr>
+<tr>
+<td>2</td>
+<td>JDK</td>
+<td>1.8.0_73</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Cloudera  Manager</td>
+<td>5.15.1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>CDH</td>
+<td>5.15.1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>数据库</td>
+<td>MySQL5.7</td>
+</tr>
+<tr>
+<td>6</td>
+<td>JDBC驱动</td>
+<td>5.1.40</td>
+</tr>
+</tbody></table>
+<h1 id="安装前准备"><a href="#安装前准备" class="headerlink" title="安装前准备"></a>安装前准备</h1><h2 id="配置网络名称和SSH"><a href="#配置网络名称和SSH" class="headerlink" title="配置网络名称和SSH"></a><strong>配置网络名称和SSH</strong></h2><p>(1)编辑/etc/sysconfig/network文件，修改HOSTNAME，将主机名修改为kms-1.example.com，三台主机名依次为<strong>kms-1.example.com、kms-2.example.com、kms-3.example.com</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># vi /etc/sysconfig/network</span></span><br></pre></td></tr></table></figure>
+
+<p>(2)编辑/etc/hosts文件，配置主机IP与主机名</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># vi /etc/hosts</span></span><br></pre></td></tr></table></figure>
+
+<p>添加配置的内容如下所示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">192.168.10.200   kms-1.apache.com kms-1  </span><br><span class="line">192.168.10.201   kms-2.apache.com kms-2  </span><br><span class="line">192.168.10.202   kms-3.apache.com kms-3</span><br></pre></td></tr></table></figure>
+
+<p>(3)执行 ssh-keygen -t rsa命令，生成密钥,生成的密钥存在于/home/kms/.ssh目下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># ssh-keygen -t rsa</span></span><br></pre></td></tr></table></figure>
+
+<p>(4)执行ssh-copy-id命令,将公钥发送至其他主机</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># ssh-copy-id kms-1.example.com  </span></span><br><span class="line">[root@kms-1  ~]<span class="comment"># ssh-copy-id kms-2.example.com  </span></span><br><span class="line">[root@kms-1  ~]<span class="comment"># ssh-copy-id kms-3.example.com</span></span><br></pre></td></tr></table></figure>
+
+<p>首先免密登录本地</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/1.png" alt></p>
+<p>免密登录本地主机</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/2.png" alt></p>
+<p>(5)在其他主机执行上述相同操作</p>
+<h2 id="集群时间同步"><a href="#集群时间同步" class="headerlink" title="集群时间同步"></a><strong>集群时间同步</strong></h2><p>(1)安装ntp，如果操作系统已经安装了，可以不用再安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># yum install -y ntp</span></span><br></pre></td></tr></table></figure>
+
+<p>(2)设置ntp开机启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># chkconfig ntpd on</span></span><br></pre></td></tr></table></figure>
+
+<p>(3)检查是否设置成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># chkconfig --list ntpd</span></span><br></pre></td></tr></table></figure>
+
+<p>(4)在其他主机上执行上述步骤</p>
+<p>(5)主节点ntpserver配置，编辑/var/lib/ntp/drift文件，添加如下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 ~]<span class="comment"># vi /var/lib/ntp/drift  </span></span><br><span class="line">restrict 127.0.0.1   </span><br><span class="line">restrict -6 ::1   </span><br><span class="line">restrict default nomodify notrap     </span><br><span class="line">server 202.120.2.101 prefer     </span><br><span class="line">includefile /etc/ntp/crypto/pw     </span><br><span class="line">keys /etc/ntp/keys</span><br></pre></td></tr></table></figure>
+
+<p>(6)启动主节点ntp服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># service ntpd start</span></span><br></pre></td></tr></table></figure>
+
+<p>(7)执行ntpstat命令查看同步状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># ntpstat</span></span><br></pre></td></tr></table></figure>
+
+<p>(8)从节点ntp客户端配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-2 ~]<span class="comment"># vi /var/lib/ntp/drift  restrict 127.0.0.1  </span></span><br><span class="line">restrict -6 ::1  </span><br><span class="line">restrict default nomodify notrap  </span><br><span class="line">server kms-1.example.com  </span><br><span class="line">includefile /etc/ntp/crypto/pw  </span><br><span class="line">keys /etc/ntp/keys</span><br></pre></td></tr></table></figure>
+
+<p>(9)手动与主节点时间同步</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-2  ~]<span class="comment"># ntpdate -u kms-1.example.com</span></span><br></pre></td></tr></table></figure>
+
+<p>(10)启动从节点ntp服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-2  ~]<span class="comment"># service ntpd start</span></span><br></pre></td></tr></table></figure>
+
+<p>(11)查看从节点的时间同步状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-2  ~]<span class="comment"># ntpstat</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="关闭防火墙与SELINUX"><a href="#关闭防火墙与SELINUX" class="headerlink" title="关闭防火墙与SELINUX"></a><strong>关闭防火墙与SELINUX</strong></h2><p>(1)执行chkconfig iptables off</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># chkconfig iptables off</span></span><br></pre></td></tr></table></figure>
+
+<p>(2)执行service iptables stop</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># service iptables stop</span></span><br></pre></td></tr></table></figure>
+
+<p>(3)查看状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># chkconfig --list iptables</span></span><br></pre></td></tr></table></figure>
+
+<p>(4)编辑/etc/sysconfig/selinux，将SELINUX=enforcing改为SELINUX=disabled</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># vi /etc/sysconfig/selinux</span></span><br></pre></td></tr></table></figure>
+
+<p>(5)在其他节点执行上述步骤</p>
+<p>(6)重启所有主机</p>
+<h2 id="安装JDK与MySQL"><a href="#安装JDK与MySQL" class="headerlink" title="安装JDK与MySQL"></a><strong>安装JDK与MySQL</strong></h2><p>(1)解压tar包到/usr/java目录下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  softwares]<span class="comment"># tar -xzvf jdk-8u73-linux-x64.tar.gz -C /usr/java/</span></span><br></pre></td></tr></table></figure>
+
+<p>(2)设置java环境变量在文件末尾添加下面的内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  jdk1.8.0_73]<span class="comment"># vi /etc/profile  export  JAVA_HOME=/usr/java/jdk1.8.0_73   </span></span><br><span class="line"><span class="built_in">export</span>  PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span>   </span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br></pre></td></tr></table></figure>
+
+<p>(3)让环境变量生效</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  jdk1.8.0_73]<span class="comment"># source /etc/profile</span></span><br></pre></td></tr></table></figure>
+
+<p>(4)查看java</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  jdk1.8.0_73]<span class="comment"># java -version</span></span><br></pre></td></tr></table></figure>
+
+<p>(5)在其他主机上执行上述步骤</p>
+<p>(6)卸载已有的已有的mysql-libs</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  mysql5.7]<span class="comment"># rpm -qa |grep mysql  </span></span><br><span class="line">[root@kms-1  mysql5.7]<span class="comment"># rpm -e --nodeps mysql-libs-5.1.73-7.el6.x86_64</span></span><br></pre></td></tr></table></figure>
+
+<p>(7)使用RPM包安装MySQL</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 mysql5.7]<span class="comment"># rpm -ivh  mysql-community-common-5.7.15-1.el6.x86_64.rpm  [root@kms-1 mysql5.7]# rpm -ivh  mysql-community-libs-5.7.15-1.el6.x86_64.rpm  [root@kms-1 mysql5.7]# rpm -ivh  mysql-community-client-5.7.15-1.el6.x86_64.rpm  [root@kms-1 mysql5.7]# rpm -ivh  mysql-community-server-5.7.15-1.el6.x86_64.rpm</span></span><br></pre></td></tr></table></figure>
+
+<p>(8)设置开机启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  mysql5.7]<span class="comment"># chkconfig mysqld on</span></span><br></pre></td></tr></table></figure>
+
+<p>(9)启动MySQL服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  mysql5.7]<span class="comment"># chkconfig mysqld on</span></span><br></pre></td></tr></table></figure>
+
+<p>(10)关闭密码校验</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  mysql5.7]<span class="comment"># echo "validate_password=off"&gt;&gt; /etc/my.cnf</span></span><br></pre></td></tr></table></figure>
+
+<p>(11)修改/etc/my.cnf</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  mysql5.7]<span class="comment"># vi /etc/my.cnf</span></span><br></pre></td></tr></table></figure>
+
+<p>添加如下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line"><span class="comment">############################</span></span><br><span class="line">[client]     </span><br><span class="line">default-character-set=utf8     </span><br><span class="line">[mysql]     </span><br><span class="line">default-character-set=utf8</span><br></pre></td></tr></table></figure>
+
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/3.png" alt></p>
+<p>(12)重启MySQL服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># service mysqld restart</span></span><br></pre></td></tr></table></figure>
+
+<p>(13)查看root用户初始密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># cat /var/log/mysqld.log | more | grep password</span></span><br></pre></td></tr></table></figure>
+
+<p>(14)登录MySQL修改密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># mysql -uroot -p  mysql&gt; set  password='123qwe';</span></span><br></pre></td></tr></table></figure>
+
+<p>(15)为Cloudera组件创建数据库</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">mysql&gt;CREATE DATABASE scm DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON scm.* TO 'scm'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt;CREATE DATABASE amon DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON amon.* TO ' amon'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt;CREATE DATABASE rman DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON rman.* TO ' rman'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt;CREATE DATABASE hue DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON hue.* TO ' hue'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt;CREATE DATABASE metastore DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON metastore.* TO 'hive'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt;CREATE DATABASE sentry DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON sentry.* TO ' sentry'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt;CREATE DATABASE nav DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON nav.* TO ' nav'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt;CREATE DATABASE navms DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON navms.* TO ' navms'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt;CREATE DATABASE oozie DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt;GRANT ALL ON oozie.* TO ' oozie'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt; GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '123qwe';</span><br><span class="line">mysql&gt; flush privileges;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Linux参数配置"><a href="#Linux参数配置" class="headerlink" title="Linux参数配置"></a><strong>Linux参数配置</strong></h2><p>(1)查看swappiness</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># cat /proc/sys/vm/swappiness</span></span><br></pre></td></tr></table></figure>
+
+<p>(2)设置swappiness的值</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># echo 10 &gt; /proc/sys/vm/swappiness  </span></span><br><span class="line">[root@kms-1  ~]<span class="comment"># echo vm.swappiness = 10 &gt;&gt; /etc/sysctl.conf</span></span><br></pre></td></tr></table></figure>
+
+<p>(3) 查看透明大页是否启用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># cat /sys/kernel/mm/transparent_hugepage/defrag  </span></span><br><span class="line">[root@kms-1  ~]<span class="comment"># cat /sys/kernel/mm/transparent_hugepage/enabled</span></span><br></pre></td></tr></table></figure>
+
+<p>(4)关闭透明大页面</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># vi /etc/rc.d/rc.local</span></span><br></pre></td></tr></table></figure>
+
+<p>在最后一行添加如下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">test</span> -f /sys/kernel/mm/transparent_hugepage/enabled; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> never &gt; /sys/kernel/mm/transparent_hugepage/enabled</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">test</span> -f /sys/kernel/mm/transparent_hugepage/defrag; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> never &gt; /sys/kernel/mm/transparent_hugepage/defrag</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<p>(5)赋予rc.local具有可执行权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># chmod +x /etc/rc.d/rc.local</span></span><br></pre></td></tr></table></figure>
+
+<p>(6) 查看文件句柄数</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># ulimit -n</span></span><br></pre></td></tr></table></figure>
+
+<p>(7)修改限制</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]<span class="comment"># vi /etc/security/limits.conf</span></span><br></pre></td></tr></table></figure>
+
+<p>添加如下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">* soft nofile  100000  * hard nofile  100000</span><br></pre></td></tr></table></figure>
+
+<p>(8)在其他主机上执行上述操作，并重启主机</p>
+<h1 id="部署Cloudera-Manager"><a href="#部署Cloudera-Manager" class="headerlink" title="部署Cloudera Manager"></a>部署Cloudera Manager</h1><h2 id="安装Cloudera-Manager"><a href="#安装Cloudera-Manager" class="headerlink" title="安装Cloudera Manager"></a>安装Cloudera Manager</h2><p>(1)解压安装cloudera-manager</p>
+<p>cloudera manager 的目录默认位置在/opt 下， 将解压后的cm-5.15.1 和cloudera 目录放到/opt 目录下。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1  ~]tar -xzvf  cloudera-manager-el6-cm5.15.1_x86_64.tar.gz   -C /opt</span><br></pre></td></tr></table></figure>
+
+<p>(2)安装cloudera-manager数据库,将驱动改名，并放到/opt/cm-5.15.1/share/cmf/lib/和/usr/share/java目录中</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 mysql5.7]<span class="comment"># cp  mysql-connector-java.jar /opt/cm5.15.1/share/cmf/lib/ </span></span><br><span class="line">[root@kms-1 mysql5.7]<span class="comment"># cp  mysql-connector-java.jar /usr/share/java/</span></span><br></pre></td></tr></table></figure>
+
+<p>(3)初始化CM5 的数据库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/opt/cm-5.15.1/share/cmf/schema/scm_prepare_database.sh mysql scm scm</span><br></pre></td></tr></table></figure>
+
+<p>(4)配置Agent </p>
+<p>将config.ini中的server_host 修改为主节点的主机名。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 ~]<span class="comment"># vi  /opt/cm-5.15.1/etc/cloudera-scm-agent/config.ini # Hostname of the CM server.  server_host=kms-1.example.com</span></span><br></pre></td></tr></table></figure>
+
+<p>同步Agent 到其他节点</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 opt]<span class="comment"># scp -r cm-5.15.1/ kms-2.example.com:/opt/  [root@kms-1 opt]# scp -r cm-5.15.1/ kms-3.example.com:/opt/</span></span><br></pre></td></tr></table></figure>
+
+<p>(5)在所有节点创建cloudera-scm 用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 ~]<span class="comment"># useradd --system  --home=/opt/cm-5.15.1/run/cloudera-scm-server/ --no-create-home --shell=/bin/false  --comment "Cloudera SCM User" cloudera-scm</span></span><br></pre></td></tr></table></figure>
+
+<p>(6)准备Parcels包</p>
+<p>将CHD5 相关的Parcel 包放到主节点的/opt/cloudera/parcel-repo/目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 parcel-repo]<span class="comment"># cp  /opt/softwares/CDH5.15.1/* .</span></span><br></pre></td></tr></table></figure>
+
+<p>相关的文件如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CDH-5.15.1-1.cdh5.15.1.p0.4-el6.parcel</span><br><span class="line">CDH-5.15.1-1.cdh5.15.1.p0.4-el6.parcel.sha1</span><br><span class="line">manifest.json</span><br></pre></td></tr></table></figure>
+
+<p>将CDH-5.15.1-1.cdh5.15.1.p0.4-el6.parcel.sha1 重命名为CDH-5.15.1-1.cdh5.15.1.p0.4-el6.parcel.sha</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 parcel-repo]<span class="comment"># mv CDH-5.15.1-1.cdh5.15.1.p0.4-el6.parcel.sha1  CDH-5.15.1-1.cdh5.15.1.p0.4-el6.parcel.sha</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="访问CM-Server与Agent"><a href="#访问CM-Server与Agent" class="headerlink" title="访问CM Server与Agent"></a>访问CM Server与Agent</h2><p>(1)在主节点上启动cloudera-scm-server</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 ~]<span class="comment">#  /opt/cm-5.15.1/etc/init.d/cloudera-scm-server start</span></span><br></pre></td></tr></table></figure>
+
+<p>(2)在所有节点上，启动cloudera-scm-agent ：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kms-1 ~]<span class="comment">#  /opt/cm-5.15.1/etc/init.d/cloudera-scm-agent start</span></span><br></pre></td></tr></table></figure>
+
+<p>(3)在浏览器中访问<a href="http://192.168.10.200:7180,用户名和密码均为admin" target="_blank" rel="noopener">http://192.168.10.200:7180,用户名和密码均为admin</a></p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/4.png" alt></p>
+<h1 id="部署CDH"><a href="#部署CDH" class="headerlink" title="部署CDH"></a>部署CDH</h1><h2 id="选择部署的版本与主机"><a href="#选择部署的版本与主机" class="headerlink" title="选择部署的版本与主机"></a><strong>选择部署的版本与主机</strong></h2><p> (1)登录后用户许可条款和条件</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/5.png" alt></p>
+<p>(2)选择部署版本</p>
+<p> <img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/6.png" alt></p>
+<p>(3)选择免费版本后点击继续</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/7.png" alt>(4)指定主机，选择当前管理的主机后点击继续</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/8.png" alt></p>
+<h2 id="群集安装"><a href="#群集安装" class="headerlink" title="群集安装"></a>群集安装</h2><p>(1)选择本地的Parcel版本后点击继续</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/9.png" alt></p>
+<p>(2)等待安装选定的parcel完成，点击继续</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/10.png" alt></p>
+<p>(3)检查主机的正确性，点击完成</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/11.png" alt></p>
+<h2 id="群集设置"><a href="#群集设置" class="headerlink" title="群集设置"></a>群集设置</h2><p> (1)选择安装所有服务，点击继续</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/12.png" alt><br>(2)自定义角色分配</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/13.png" alt></p>
+<p>(3)数据库设置，测试连接成功之后，点击继续</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/14.png" alt></p>
+<p>(4)选择默认配置，点击继续</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/15.png" alt></p>
+<p>(5)其中服务成功之后，点击继续</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/16.png" alt></p>
+<p>(6)安装完成</p>
+<p><img src="//jiamaoxiang.top/2021/01/24/CDH集群安装部署/17.png" alt></p>
+</div><div class="recommended_posts"><h3>相关推荐 ☟</h3><li><a href="https://jiamaoxiang.top/2021/01/16/Greenplum5-9生产环境集群部署/" target="_blank">Greenplum5.9生产环境集群部署</a></li><li><a href="https://jiamaoxiang.top/2021/01/08/实时数仓-以upsert的方式读写Kafka数据——以Flink1-12为例/" target="_blank">实时数仓|以upsert的方式读写Kafka数据——以Flink1.12为例</a></li><li><a href="https://jiamaoxiang.top/2020/12/22/Flink-on-Hive构建流批一体数仓/" target="_blank">Flink on Hive构建流批一体数仓</a></li><li><a href="https://jiamaoxiang.top/2020/12/21/Flink集成Hive之Hive-Catalog与Hive-Dialect-以Flink1-12为例/" target="_blank">Flink集成Hive之Hive Catalog与Hive Dialect--以Flink1.12为例</a></li></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jia MaoXiang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2021/01/24/CDH集群安装部署/">https://jiamaoxiang.top/2021/01/24/CDH集群安装部署/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本文为博主原创文章，遵循CC BY-SA 4.0版权协议，转载请附上原文出处链接和本声明</li></ul></div><br><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="https://jiamaoxiang.top/2021/01/24/CDH集群安装部署/" data-id="ckkb751xz001t187q9t27wcgv" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACKUlEQVR42u3aQW6EMAwF0Ln/panUVSsE/XZCJZKX1ajDEB4L1479+cTr+F7nv/xc5yuTX52vP/9q2sLAwHgt47hdVxskj3v17dU19/teXYOBgbEPI98mf/Teq6m+AgwMDIxqkpeE5qugiYGBgTGLkYfavBjGwMDASBh50IxuWgy1IykmBgbGDoxqY+A/Pz/Y38DAwHgJ4yiuXnB8ojz+dX8MDIylGfnYRLVtMFIG59H1U53+wMDAeCGjd7BVPdafFb4v98LAwFiaUS0ge49VTR/zgQwMDIx9GHl6Vz2YK7chW8McGBgYazPuy9fkgfLEsTeWEb0UDAyMbRi94/77z9XCNQ/xl/0NDAyM5RgjobCa/OWJYG/sAwMDY2dGPgyRkHqlcvm4DQMDYxtGNdj1EsF8l+iVYWBgLMroBdZZTYK8DI6GLTAwMJZmjATHXgnaw0czIxgYGAsx8lSv1yvMy9qRAhgDA2NPRpVUOA6LGwOF+2NgYCzNGAmX1WZktZFQjqgYGBiLMqptxd4Q2IQRivvnwcDA2IzRGzyNDu6LSWfhnwEGBsbSjPzgPkFWk8i5DQMMDIxVGUdx9bZJ8PlBGwYGxm6MkYBY5eUFc550YmBg7MOohsV8CGPW4V1UxGJgYGzA6B3W5y9iPHAP1d8YGBjbMPLsMm8t5KXpHyEeAwMDI240jtfNGBgYGM+dU42MUFTTTQwMjN0Y1SA4uefQSkabu2BgYLyP8QXyuVCW5uHxdAAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/CDH/">CDH</a></div><div class="post-nav"><a class="next" href="/2021/01/16/Greenplum5-9生产环境集群部署/">Greenplum5.9生产环境集群部署</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar-toc"><div class="stoc-article" id="sidebar-stoc"><strong class="stoc-title"><i class="fa fa-list-ul"> 目录</i></strong><div class="toc-nav" id="stoc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#大数据平台软件清单"><span class="toc-number">1.</span> <span class="toc-text">大数据平台软件清单</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装前准备"><span class="toc-number">2.</span> <span class="toc-text">安装前准备</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#配置网络名称和SSH"><span class="toc-number">2.1.</span> <span class="toc-text">配置网络名称和SSH</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集群时间同步"><span class="toc-number">2.2.</span> <span class="toc-text">集群时间同步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关闭防火墙与SELINUX"><span class="toc-number">2.3.</span> <span class="toc-text">关闭防火墙与SELINUX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装JDK与MySQL"><span class="toc-number">2.4.</span> <span class="toc-text">安装JDK与MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux参数配置"><span class="toc-number">2.5.</span> <span class="toc-text">Linux参数配置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#部署Cloudera-Manager"><span class="toc-number">3.</span> <span class="toc-text">部署Cloudera Manager</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Cloudera-Manager"><span class="toc-number">3.1.</span> <span class="toc-text">安装Cloudera Manager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问CM-Server与Agent"><span class="toc-number">3.2.</span> <span class="toc-text">访问CM Server与Agent</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#部署CDH"><span class="toc-number">4.</span> <span class="toc-text">部署CDH</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#选择部署的版本与主机"><span class="toc-number">4.1.</span> <span class="toc-text">选择部署的版本与主机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#群集安装"><span class="toc-number">4.2.</span> <span class="toc-text">群集安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#群集设置"><span class="toc-number">4.3.</span> <span class="toc-text">群集设置</span></a></li></ol></li></ol></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 - 2021 <a href="/." rel="nofollow">Jmx's Blog.</a>All rights reserved.<br>Thoughts on technology, life and everything else.</div></div></div><script type="text/javascript" src="/js/toc.js?v=0.0.0"></script><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" color="100,99,98" opacity="0.5" zindex="0.7" count="150" src="//lib.baomitu.com/canvas-nest.js/2.0.4/canvas-nest.umd.js"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
