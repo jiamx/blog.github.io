@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jiamaoxiang.top/"/>
-  <updated>2021-01-24T13:46:57.732Z</updated>
+  <updated>2021-05-04T06:28:37.931Z</updated>
   <id>https://jiamaoxiang.top/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>程序员该如何写一篇高质量的技术文章</title>
+    <link href="https://jiamaoxiang.top/2021/05/04/%E7%A8%8B%E5%BA%8F%E5%91%98%E8%AF%A5%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E7%AF%87%E9%AB%98%E8%B4%A8%E9%87%8F%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/"/>
+    <id>https://jiamaoxiang.top/2021/05/04/程序员该如何写一篇高质量的技术文章/</id>
+    <published>2021-05-04T06:25:00.000Z</published>
+    <updated>2021-05-04T06:28:37.931Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+        
+      
+    
+    </summary>
+    
+      <category term="写作" scheme="https://jiamaoxiang.top/categories/%E5%86%99%E4%BD%9C/"/>
+    
+    
+      <category term="写作" scheme="https://jiamaoxiang.top/tags/%E5%86%99%E4%BD%9C/"/>
+    
+  </entry>
   
   <entry>
     <title>CDH集群安装部署</title>
@@ -501,28 +527,6 @@
     
     
       <category term="Kafka" scheme="https://jiamaoxiang.top/tags/Kafka/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>篇三|ClickHouse的数据类型</title>
-    <link href="https://jiamaoxiang.top/2020/10/14/%E7%AF%87%E4%B8%89-ClickHouse%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
-    <id>https://jiamaoxiang.top/2020/10/14/篇三-ClickHouse的数据类型/</id>
-    <published>2020-10-14T13:38:38.000Z</published>
-    <updated>2020-10-14T13:40:20.694Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          
-        
-      
-    
-    </summary>
-    
     
   </entry>
   

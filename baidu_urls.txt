@@ -1,3 +1,4 @@
+https://jiamaoxiang.top/2021/05/04/程序员该如何写一篇高质量的技术文章/
 https://jiamaoxiang.top/2021/01/24/CDH集群安装部署/
 https://jiamaoxiang.top/2021/01/16/Greenplum5-9生产环境集群部署/
 https://jiamaoxiang.top/2021/01/08/实时数仓-以upsert的方式读写Kafka数据——以Flink1-12为例/
